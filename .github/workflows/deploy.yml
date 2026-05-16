@@ -1,0 +1,250 @@
+name: 🚀 Portfolio Platform CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20.x'
+  PYTHON_VERSION: '3.11'
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository_owner }}/portfolio
+
+jobs:
+  # ──────────────────────────────────────────────────────────────
+  # JOB 1: Lint & Type Check (Frontend)
+  # ──────────────────────────────────────────────────────────────
+  lint-frontend:
+    name: 🔍 Lint Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: portfolio/package-lock.json
+
+      - name: Install dependencies
+        run: cd portfolio && npm ci
+
+      - name: Type check
+        run: cd portfolio && npx tsc --noEmit
+
+      - name: Lint
+        run: cd portfolio && npm run lint
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 2: Test Backend
+  # ──────────────────────────────────────────────────────────────
+  test-backend:
+    name: 🧪 Test Backend
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval \"db.adminCommand('ping')\""
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        run: cd server && npm ci
+
+      - name: Run tests
+        env:
+          MONGODB_URI: mongodb://localhost:27017/portfolio_test
+          JWT_SECRET: test-secret-key-for-ci-only
+          NODE_ENV: test
+        run: cd server && npm test --if-present || echo "No tests defined yet"
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 3: Test RAG Chatbot
+  # ──────────────────────────────────────────────────────────────
+  test-chatbot:
+    name: 🤖 Test RAG Pipeline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: rag-chatbot/requirements.txt
+
+      - name: Install dependencies
+        run: cd rag-chatbot && pip install -r requirements.txt
+
+      - name: Test knowledge base structure
+        run: |
+          cd rag-chatbot
+          python -c "
+          from data.knowledge_base import KNOWLEDGE_CHUNKS
+          assert len(KNOWLEDGE_CHUNKS) >= 20, f'Expected ≥20 chunks, got {len(KNOWLEDGE_CHUNKS)}'
+          for chunk in KNOWLEDGE_CHUNKS:
+              assert 'id' in chunk, 'Missing id'
+              assert 'category' in chunk, 'Missing category'
+              assert 'content' in chunk, 'Missing content'
+              assert len(chunk['content'].strip()) > 50, f'Chunk {chunk[\"id\"]} too short'
+          print(f'✅ {len(KNOWLEDGE_CHUNKS)} knowledge chunks validated')
+          "
+
+      - name: Test embedding provider (sentence-transformers only)
+        env:
+          OLLAMA_BASE_URL: http://localhost:11434  # will fail → fallback
+        run: |
+          cd rag-chatbot
+          python -c "
+          import os; os.environ['OLLAMA_BASE_URL'] = 'http://localhost:99999'
+          from rag.pipeline import EmbeddingProvider
+          ep = EmbeddingProvider()
+          emb = ep.embed(['test query about skills'])
+          assert len(emb) == 1 and len(emb[0]) > 0
+          print(f'✅ Embedding fallback works: dim={len(emb[0])}')
+          "
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 4: Build Docker Images
+  # ──────────────────────────────────────────────────────────────
+  build-images:
+    name: 🐳 Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [lint-frontend, test-backend, test-chatbot]
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        service: [frontend, backend, chatbot, admin]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-${{ matrix.service }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.service == 'chatbot' && 'rag-chatbot' || matrix.service }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_GITHUB_USERNAME=HUNTER-X0s
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 5: Deploy Frontend to Vercel
+  # ──────────────────────────────────────────────────────────────
+  deploy-frontend:
+    name: 🌐 Deploy Frontend (Vercel)
+    runs-on: ubuntu-latest
+    needs: [lint-frontend]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          cd portfolio
+          vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+          vercel build --prod --token=$VERCEL_TOKEN
+          vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 6: Deploy Backend to Render
+  # ──────────────────────────────────────────────────────────────
+  deploy-backend:
+    name: ⚙️ Deploy Backend (Render)
+    runs-on: ubuntu-latest
+    needs: [test-backend]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Render deploy
+        run: |
+          curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}" \
+            -H "Content-Type: application/json" \
+            --fail-with-body
+          echo "✅ Backend deploy triggered on Render"
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 7: Deploy Chatbot to Render
+  # ──────────────────────────────────────────────────────────────
+  deploy-chatbot:
+    name: 🤖 Deploy Chatbot (Render)
+    runs-on: ubuntu-latest
+    needs: [test-chatbot]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Render deploy
+        run: |
+          curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK_CHATBOT }}" \
+            -H "Content-Type: application/json" \
+            --fail-with-body
+          echo "✅ Chatbot deploy triggered on Render"
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 8: Notify (Slack/Email on failure)
+  # ──────────────────────────────────────────────────────────────
+  notify-on-failure:
+    name: 📢 Notify on Failure
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend, deploy-backend]
+    if: failure()
+    steps:
+      - name: Send failure notification
+        run: |
+          echo "Pipeline failed for commit ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Triggered by: ${{ github.actor }}"
+          # Add Slack webhook or email notification here

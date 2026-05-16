@@ -1,0 +1,494 @@
+=====================================================================
+ANURAG SWAIN — ROLE-OPTIMIZED RESUME VARIATIONS (ATS-Friendly)
+Generated: April 2026
+=====================================================================
+Contact: anurag.swain35@gmail.com | +91-7008973337
+Location: Bhubaneswar, Odisha, India
+GitHub: https://github.com/HUNTER-X0s
+LinkedIn: https://www.linkedin.com/in/anurag-swain-cse07/
+Twitter: https://x.com/Anurag_hunter07
+=====================================================================
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESUME 1: FULL-STACK DEVELOPER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANURAG SWAIN
+Full-Stack Developer
+anurag.swain35@gmail.com | +91-7008973337 | Bhubaneswar, Odisha
+GitHub: HUNTER-X0s | LinkedIn: anurag-swain-cse07
+
+─────────────────────────────────
+PROFESSIONAL SUMMARY
+─────────────────────────────────
+Motivated 3rd-year B.Tech CSE student (CGPA 8.10/10, GCE Kalahandi) with
+proven full-stack development experience from a 3-month web development
+internship at EISystems Technologies. Proficient in React.js, Next.js, Node.js,
+Express.js, and MongoDB. Complementary AI/ML background (3 additional
+internships) enables building AI-enhanced web products. Seeking full-stack
+SDE opportunities.
+
+─────────────────────────────────
+TECHNICAL SKILLS
+─────────────────────────────────
+Frontend: React.js, Next.js, JavaScript (ES6+), HTML5, CSS3, Tailwind CSS, Bootstrap
+Backend:  Node.js, Express.js, Python, REST API Design, PHP
+Database: MongoDB, MySQL, SQL, DBMS
+Tools:    Git, GitHub, Figma, Canva, VS Code, Jupyter Notebook
+CS Core:  Data Structures & Algorithms, OOP, Computer Networks, OS
+
+─────────────────────────────────
+EXPERIENCE
+─────────────────────────────────
+Web Development Intern | EISystems Technologies                Jul 2025 – Sep 2025
+• Engineered responsive full-stack web applications using React.js and Next.js
+  frontend with Node.js + Express.js backend, delivering complete features
+  independently within agile sprint cycles
+• Designed and implemented RESTful API endpoints with MongoDB integration,
+  reducing data retrieval latency through efficient schema design
+• Applied React hooks (useState, useEffect, useContext) for maintainable
+  component-based architecture; implemented code splitting for performance
+• Optimized application performance through lazy loading and API response
+  caching strategies
+
+Artificial Intelligence Intern | Infosys                       Aug 2025 – Oct 2025
+• Developed Python-based AI chatbot with NLP intent classification and
+  multi-turn dialogue management (GitHub: AI_CHAT_BOT, ⭐1 star)
+• Integrated LLM APIs for context-aware response generation
+• Applied ML best practices: model evaluation, prompt engineering, versioning
+
+─────────────────────────────────
+PROJECTS
+─────────────────────────────────
+Currency Converter (JavaScript, HTML/CSS)
+• Responsive web app converting 150+ global currencies with live exchange rates
+• Real-time conversion with debounced inputs and local storage caching
+• Live: https://hunter-x0s.github.io/Currency_Converter/
+
+AI Chat Bot (Python, NLP)
+• Multi-turn conversational AI chatbot with intent classification
+• GitHub: https://github.com/HUNTER-X0s/AI_CHAT_BOT | ⭐1 star
+
+Developer Portfolio (JavaScript)
+• Personal portfolio website with responsive design and smooth animations
+• Live: https://hunter-x0s.github.io/anurag-portfolio/
+
+─────────────────────────────────
+EDUCATION
+─────────────────────────────────
+B.Tech — Computer Science and Engineering          2023 – 2027
+Government College of Engineering, Kalahandi (BPUT)
+CGPA: 8.10 / 10.00 | KiloBots Robotics Club Member
+
+Senior Secondary (Class XII) — Science (PCMB)     2021 – 2023
+Kendriya Vidyalaya No-6, Pokhariput, Bhubaneswar (CBSE)
+Ashoka House Sports Captain | Chess & Badminton Player
+
+─────────────────────────────────
+CERTIFICATIONS
+─────────────────────────────────
+• Web Development Internship Certificate — EISystems Technologies (Sep 2025)
+• Artificial Intelligence Internship Certificate — Infosys (Oct 2025)
+
+─────────────────────────────────
+LANGUAGES
+─────────────────────────────────
+English (Professional) | Hindi (Native) | Odia (Native) | Bengali (Intermediate)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESUME 2: AI / ML ENGINEER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANURAG SWAIN
+AI / ML Engineer
+anurag.swain35@gmail.com | +91-7008973337 | Bhubaneswar, Odisha
+GitHub: HUNTER-X0s | LinkedIn: anurag-swain-cse07
+
+─────────────────────────────────
+PROFESSIONAL SUMMARY
+─────────────────────────────────
+Ambitious 3rd-year B.Tech CSE student (CGPA 8.10/10, GCE Kalahandi) with
+4 hands-on AI/ML internships completed in 2025 at Infosys, MicroGenesis
+TechSoft (Bangalore), Edunet Foundation (IBM Skills Build), and Shadow Fox.
+Proficient in Python, Scikit-Learn, TensorFlow, PyTorch, Keras, OpenCV, and
+NLP. Delivered an AICTE-certified EV Demand Prediction system, an IBM-
+recognized autonomous Research Agent, and a deployed NLP chatbot (⭐1).
+
+─────────────────────────────────
+TECHNICAL SKILLS
+─────────────────────────────────
+Languages:  Python, JavaScript, C/C++, Java
+AI/ML/DL:   Scikit-Learn, TensorFlow, Keras, PyTorch, OpenCV, NLP, Computer Vision
+ML Methods: Regression, Classification, Clustering, Transfer Learning, CNNs
+Data Stack: Pandas, NumPy, Matplotlib, Seaborn, Jupyter Notebook
+Cloud/APIs: IBM Watson, IBM Cloud, LLM APIs, REST APIs
+Tools:      Git, GitHub, VS Code, Linux
+
+─────────────────────────────────
+EXPERIENCE
+─────────────────────────────────
+Artificial Intelligence Intern | Infosys (Remote)             Aug 2025 – Oct 2025
+• Developed AI conversational chatbot in Python with NLP intent classification,
+  entity recognition, and context-aware multi-turn dialogue management
+• Integrated LLM APIs for response generation; applied systematic prompt
+  engineering to improve response quality metrics
+• Implemented conversation memory module maintaining session context across
+  exchanges; delivered technical demo to Infosys evaluators
+
+Deep Learning Intern | MicroGenesis TechSoft, Bangalore       Jun 2025 – Jul 2025
+• Designed and trained deep learning computer vision models using TensorFlow,
+  PyTorch, and Keras at a professional Bangalore AI/ML firm (Hybrid)
+• Implemented OpenCV-based preprocessing pipelines for real-time image/video
+  frame analysis (edge detection, contour extraction, morphological operations)
+• Applied transfer learning with pre-trained CNN architectures (VGG, ResNet)
+  significantly reducing training time while maintaining competitive accuracy
+• Conducted comprehensive model evaluation: precision, recall, F1, confusion
+  matrices, loss/accuracy curves; produced technical internship reports
+
+AI & Data Analytics Intern | Edunet Foundation (Remote)       Jul 2025 – Aug 2025
+• Built EV Vehicle Charging Demand Prediction ML pipeline (AICTE Cycle-2)
+  using Scikit-Learn Random Forest regression with temporal feature engineering
+• Developed IBM Skills Build Research Agent — autonomous AI system for
+  multi-source information retrieval and NLP-based synthesis (capstone project)
+• Applied IBM Watson and IBM Cloud APIs for enterprise AI system integration
+
+Data Science Intern | Shadow Fox (Remote)                     2025
+• Executed end-to-end data science projects: EDA, feature engineering,
+  model building (classification/regression), and visualization reporting
+• Applied Pandas, NumPy, Scikit-Learn, Matplotlib, Seaborn pipeline across
+  multiple domain datasets; documented in reproducible Jupyter Notebooks
+
+─────────────────────────────────
+PROJECTS
+─────────────────────────────────
+EV Vehicle Charging Demand Prediction (Python, Scikit-Learn)
+• ML regression pipeline forecasting EV demand; Random Forest (best model)
+• Feature engineering: temporal encoding, rolling averages, lag features
+• AICTE Internship Cycle-2 certified | GitHub: ⭐1 star
+• https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION
+
+Research Agent — IBM Skills Build (Python, IBM Watson, NLP)
+• Autonomous AI agent: query decomposition → web retrieval → NLP summarization
+• Structured research report generation with citations
+• IBM Skills Build internship capstone project
+• https://github.com/HUNTER-X0s/RESEARCH_AGENT
+
+AI Chat Bot (Python, NLP, LLM APIs)
+• Multi-turn conversational chatbot with intent classification
+• Community recognized: ⭐1 GitHub star
+• https://github.com/HUNTER-X0s/AI_CHAT_BOT
+
+─────────────────────────────────
+EDUCATION
+─────────────────────────────────
+B.Tech — Computer Science and Engineering          2023 – 2027
+Government College of Engineering, Kalahandi (BPUT)
+CGPA: 8.10 / 10.00 | Courses: AI/ML, Deep Learning, Cloud Computing, SE
+
+─────────────────────────────────
+CERTIFICATIONS
+─────────────────────────────────
+• AI Internship Certificate — Infosys (Oct 2025)
+• Deep Learning Internship Certificate — MicroGenesis TechSoft (Jul 2025)
+• AI & Data Analytics Certificate — Edunet Foundation (Aug 2025)
+• IBM Skills Build (AI & Cloud Technologies) — Edunet Foundation (Aug 2025)
+• AICTE Internship Cycle-2 Certificate — EV Demand Prediction (Aug 2025)
+• Data Science Internship Certificate — Shadow Fox (2025)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESUME 3: DATA SCIENTIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANURAG SWAIN
+Data Scientist
+anurag.swain35@gmail.com | +91-7008973337 | Bhubaneswar, Odisha
+GitHub: HUNTER-X0s | LinkedIn: anurag-swain-cse07
+
+─────────────────────────────────
+PROFESSIONAL SUMMARY
+─────────────────────────────────
+Detail-oriented B.Tech CSE student (CGPA 8.10, GCE Kalahandi) with 3
+data-focused internships in 2025: Shadow Fox (Data Science), Edunet
+Foundation (AI & Data Analytics), and MicroGenesis TechSoft (Deep Learning).
+Delivered AICTE-certified EV Demand Prediction and IBM-recognized Research
+Agent. Proficient in Python data stack, statistical ML, and BI visualization
+with Tableau and Power BI.
+
+─────────────────────────────────
+TECHNICAL SKILLS
+─────────────────────────────────
+Languages:    Python, SQL, JavaScript
+Data Stack:   Pandas, NumPy, Matplotlib, Seaborn, Jupyter Notebook
+ML/Stats:     Scikit-Learn, Regression, Classification, Cross-Validation, Feature Engineering
+DL Frameworks:TensorFlow, PyTorch, Keras
+BI Tools:     Tableau, Microsoft Power BI, Data Visualization
+Database:     MySQL, MongoDB, SQL
+Tools:        Git, GitHub, VS Code, IBM Watson
+
+─────────────────────────────────
+EXPERIENCE
+─────────────────────────────────
+AI & Data Analytics Intern | Edunet Foundation (Remote)       Jul 2025 – Aug 2025
+• Built EV Vehicle Charging Demand Prediction (AICTE Cycle-2): end-to-end ML
+  regression pipeline with Random Forest achieving strong R² on held-out data
+• Developed IBM Skills Build Research Agent for automated multi-source data
+  synthesis using NLP and IBM Watson APIs
+• Created interactive BI dashboards in Tableau and Microsoft Power BI visualizing
+  key trends and patterns from structured analytical datasets
+
+Data Science Intern | Shadow Fox (Remote)                     2025
+• Executed complete data science workflows across multiple domain projects:
+  data ingestion → EDA → feature engineering → model training → evaluation
+• Applied SMOTE for imbalanced dataset handling; built classification and
+  regression models with cross-validation and ROC-AUC evaluation
+• Produced business-friendly visualization reports communicating insights to
+  non-technical stakeholders using Seaborn and Matplotlib
+
+Deep Learning Intern | MicroGenesis TechSoft, Bangalore       Jun 2025 – Jul 2025
+• Conducted comprehensive data preparation: collection, augmentation,
+  normalization, and train/val/test splitting for deep learning datasets
+• Evaluated models with precision, recall, F1, confusion matrices, and
+  loss curves; documented findings in technical research reports
+
+─────────────────────────────────
+PROJECTS
+─────────────────────────────────
+EV Vehicle Charging Demand Prediction
+• Supervised ML regression: temporal feature engineering + Random Forest
+• Reduced prediction error vs naive baseline; AICTE Cycle-2 certified
+• GitHub ⭐1: https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION
+
+Data Science Portfolio — Shadow Fox Internship
+• 3+ end-to-end ML projects: EDA, feature selection, modeling, visualization
+• https://github.com/HUNTER-X0s/SHADOW-FOX_DATASCIENCE_INTERNSHIP
+
+Research Agent (NLP + IBM Watson)
+• Multi-source data synthesis with NLP summarization and structured output
+• https://github.com/HUNTER-X0s/RESEARCH_AGENT
+
+─────────────────────────────────
+EDUCATION & CERTIFICATIONS
+─────────────────────────────────
+B.Tech CSE, GCE Kalahandi | CGPA: 8.10 | 2023–2027
+• AICTE Internship Cycle-2 Certificate (Aug 2025)
+• AI & Data Analytics Certificate — Edunet Foundation (Aug 2025)
+• IBM Skills Build (AI & Cloud) — Edunet Foundation/IBM (Aug 2025)
+• Data Science Internship Certificate — Shadow Fox (2025)
+• Deep Learning Certificate — MicroGenesis TechSoft (Jul 2025)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESUME 4: DEEP LEARNING ENGINEER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANURAG SWAIN
+Deep Learning Engineer
+anurag.swain35@gmail.com | +91-7008973337 | Bhubaneswar, Odisha
+
+─────────────────────────────────
+SUMMARY
+─────────────────────────────────
+B.Tech CSE student (CGPA 8.10, GCE Kalahandi) with professional deep
+learning experience from MicroGenesis TechSoft, Bangalore (hybrid
+internship, Jun–Jul 2025). Hands-on with PyTorch, TensorFlow, Keras,
+and OpenCV for CNN-based computer vision. Complementary NLP work via
+Infosys AI internship (NLP chatbot) and IBM Research Agent project.
+
+─────────────────────────────────
+SKILLS
+─────────────────────────────────
+DL Frameworks: PyTorch, TensorFlow, Keras
+CV:            OpenCV, CNN (VGG, ResNet), Transfer Learning, Image Augmentation
+NLP:           Intent Classification, LLM APIs, Dialogue Management
+ML:            Scikit-Learn, Feature Engineering, Model Evaluation
+Languages:     Python (primary), JavaScript, C/C++, Java
+Data:          Pandas, NumPy, Matplotlib, Seaborn, Jupyter
+
+─────────────────────────────────
+EXPERIENCE
+─────────────────────────────────
+Deep Learning Intern | MicroGenesis TechSoft, Bangalore       Jun 2025 – Jul 2025
+• Designed, trained, and evaluated DL models in PyTorch, TensorFlow, and Keras
+  simultaneously — breadth across all major DL frameworks
+• Implemented OpenCV preprocessing: edge detection, morphological operations,
+  contour extraction, real-time frame analysis for computer vision pipeline
+• Applied transfer learning with VGG and ResNet; fine-tuned for custom
+  classification tasks reducing training compute by ~60%
+• Performed data augmentation (rotation, flip, noise, normalization) and
+  train/val/test pipeline design for robust generalization
+• Evaluated models with confusion matrices, precision/recall/F1, and
+  loss/accuracy learning curves across multiple epochs
+
+AI Intern | Infosys                                            Aug 2025 – Oct 2025
+• Built NLP chatbot (Python) with intent classification and LLM API integration
+  (GitHub: AI_CHAT_BOT, ⭐1 star)
+
+AI & Cloud Intern | Edunet / IBM                               Jul 2025 – Aug 2025
+• Developed Research Agent: NLP summarization + IBM Watson API integration
+
+─────────────────────────────────
+PROJECTS
+─────────────────────────────────
+AI Chat Bot (Python, NLP, LLMs) — GitHub ⭐1
+Research Agent (IBM Watson, NLP) — IBM Skills Build Capstone
+EV Demand Prediction (Scikit-Learn, Python) — AICTE Certified, GitHub ⭐1
+
+─────────────────────────────────
+EDUCATION & CERTIFICATIONS
+─────────────────────────────────
+B.Tech CSE, GCE Kalahandi | CGPA: 8.10 | 2023–2027
+• Deep Learning Internship Certificate — MicroGenesis TechSoft (Jul 2025)
+• AI Internship Certificate — Infosys (Oct 2025)
+• IBM Skills Build Certificate — Edunet Foundation (Aug 2025)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESUME 5: DATA ANALYST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANURAG SWAIN
+Data Analyst
+anurag.swain35@gmail.com | +91-7008973337 | Bhubaneswar, Odisha
+
+─────────────────────────────────
+SUMMARY
+─────────────────────────────────
+B.Tech CSE student (CGPA 8.10, GCE Kalahandi) with hands-on data analytics
+experience from Edunet Foundation (Tableau, Power BI, AI Analytics) and
+Shadow Fox (EDA, Python analytics). Strong SQL/MySQL and Python data
+manipulation skills. Built AICTE-certified EV demand analysis project.
+
+─────────────────────────────────
+SKILLS
+─────────────────────────────────
+BI Tools:  Tableau, Microsoft Power BI, Data Visualization
+Languages: Python, SQL, JavaScript
+Data:      Pandas, NumPy, Matplotlib, Seaborn, Jupyter Notebook
+Database:  MySQL, MongoDB, SQL Queries, DBMS
+Analysis:  EDA, Feature Engineering, Statistical Analysis, Trend Analysis
+Tools:     Git, GitHub, Excel, VS Code
+
+─────────────────────────────────
+EXPERIENCE
+─────────────────────────────────
+AI & Data Analytics Intern | Edunet Foundation               Jul 2025 – Aug 2025
+• Designed interactive Tableau and Power BI dashboards visualizing key metrics,
+  trend patterns, and actionable insights from structured datasets
+• Built EV Charging Demand analysis pipeline using Python and Pandas,
+  identifying temporal demand patterns and peak-hour correlations
+• Communicated data findings to stakeholders through clear visualization reports
+  translating complex statistical results into business-friendly narratives
+
+Data Science Intern | Shadow Fox                              2025
+• Conducted comprehensive EDA on multiple real-world datasets: missing value
+  analysis, distribution plots, correlation heatmaps, outlier detection
+• Applied feature engineering and statistical validation to prepare clean
+  datasets for predictive modeling workflows
+
+─────────────────────────────────
+PROJECTS
+─────────────────────────────────
+EV Vehicle Charging Demand Prediction
+• Data analysis + ML pipeline revealing demand drivers; AICTE Cycle-2 certified
+• https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION
+
+Data Science Portfolio — Shadow Fox
+• https://github.com/HUNTER-X0s/SHADOW-FOX_DATASCIENCE_INTERNSHIP
+
+─────────────────────────────────
+EDUCATION & CERTIFICATIONS
+─────────────────────────────────
+B.Tech CSE, GCE Kalahandi | CGPA: 8.10 | 2023–2027
+• AI & Data Analytics Internship Certificate — Edunet Foundation (Aug 2025)
+• AICTE Internship Cycle-2 Certificate (Aug 2025)
+• Data Science Internship Certificate — Shadow Fox (2025)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESUME 6: FRONTEND DEVELOPER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANURAG SWAIN
+Frontend Developer
+anurag.swain35@gmail.com | +91-7008973337 | Bhubaneswar, Odisha
+
+─────────────────────────────────
+SUMMARY
+─────────────────────────────────
+B.Tech CSE student (CGPA 8.10, GCE Kalahandi) with frontend development
+experience from a 3-month internship at EISystems Technologies (React.js,
+Next.js). Built production-ready responsive UIs, applied component architecture,
+and shipped the live Currency Converter app (150+ currencies, ⭐1 GitHub star).
+Design-aware with Figma and Canva experience.
+
+─────────────────────────────────
+SKILLS
+─────────────────────────────────
+Frontend:  React.js, Next.js, JavaScript (ES6+), HTML5, CSS3, Tailwind CSS, Bootstrap
+Design:    Figma, Canva, Responsive Design, CSS Flexbox/Grid, UI/UX principles
+Tools:     Git, GitHub, VS Code, Chrome DevTools
+Backend:   Node.js, Express.js (collaboration experience)
+Languages: JavaScript, Python, C/C++, Java
+
+─────────────────────────────────
+EXPERIENCE
+─────────────────────────────────
+Web Development Intern | EISystems Technologies              Jul 2025 – Sep 2025
+• Built responsive React.js and Next.js frontend applications with clean
+  component-based architecture using React hooks (useState, useEffect, useContext)
+• Implemented performance optimizations: code splitting, lazy loading, image
+  optimization — measurably improving Core Web Vitals scores
+• Collaborated with backend team consuming REST APIs and integrating dynamic
+  data rendering with proper loading states and error handling
+• Delivered pixel-perfect UI implementations from design specifications within
+  weekly agile sprint milestones
+
+─────────────────────────────────
+PROJECTS
+─────────────────────────────────
+Real-Time Currency Converter (JavaScript, HTML, CSS)
+• Responsive SPA: 150+ currencies, live exchange rates, local storage caching
+• Clean vanilla JS architecture with debounced inputs for performance
+• Live: https://hunter-x0s.github.io/Currency_Converter/ | GitHub ⭐1
+
+Developer Portfolio (JavaScript)
+• Personal brand platform with responsive design and animations
+• Live: https://hunter-x0s.github.io/anurag-portfolio/
+
+AI Chat Bot UI Layer (Python + UI integration)
+• Frontend interface for conversational AI chatbot system
+• https://github.com/HUNTER-X0s/AI_CHAT_BOT
+
+─────────────────────────────────
+EDUCATION & CERTIFICATIONS
+─────────────────────────────────
+B.Tech CSE, GCE Kalahandi | CGPA: 8.10 | 2023–2027
+• Web Development Internship Certificate — EISystems Technologies (Sep 2025)
+• Artificial Intelligence Internship Certificate — Infosys (Oct 2025)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COMMON SECTIONS (All Resumes)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+HOBBIES & INTERESTS
+• Competitive Chess — Strategic thinker with tournament participation
+• Photography, Cycling, Trekking, Swimming
+• Cricket, Football, Badminton, Volleyball (School Sports Captain)
+• Gaming — online competitive gaming (strategic focus)
+• Open Source development and tech blogging
+
+LANGUAGES
+• English — Professional Proficiency
+• Hindi — Native / Bilingual
+• Odia — Native / Bilingual (home state)
+• Bengali — Intermediate
+
+SOCIAL PROFILES
+• GitHub:    https://github.com/HUNTER-X0s (14 repos, 3 ⭐ stars)
+• LinkedIn:  https://www.linkedin.com/in/anurag-swain-cse07/
+• Twitter/X: https://x.com/Anurag_hunter07
+• Instagram: https://www.instagram.com/_vi_ll_a_in_
