@@ -1,0 +1,20 @@
+{
+  "name": "anurag-portfolio-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "npm run install:portfolio && npm run install:server && npm run install:admin && npm run install:chatbot",
+    "install:portfolio": "cd portfolio && npm install",
+    "install:server": "cd server && npm install",
+    "install:admin": "cd admin && npm install",
+    "install:chatbot": "cd rag-chatbot && pip install -r requirements.txt",
+    "dev": "concurrently \"npm run dev:portfolio\" \"npm run dev:server\" \"npm run dev:admin\" \"npm run dev:chatbot\"",
+    "dev:portfolio": "cd portfolio && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "dev:admin": "cd admin && npm run dev",
+    "dev:chatbot": "cd rag-chatbot && python main.py"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
