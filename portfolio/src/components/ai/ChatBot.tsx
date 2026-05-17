@@ -219,7 +219,7 @@ export default function ChatBot() {
         timestamp: new Date(),
       })
     }
-  }, [isChatOpen])
+  }, [isChatOpen, chatMessages.length, addChatMessage])
 
   // ── Auto-focus input ──────────────────────────────────────
   useEffect(() => {
@@ -381,7 +381,7 @@ export default function ChatBot() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <p className="text-[10px] text-text-secondary">Anurag Swain's AI</p>
+                    <p className="text-[10px] text-text-secondary">Anurag Swain&apos;s AI</p>
                     <ConnectionBadge connected={connected} />
                   </div>
                 </div>

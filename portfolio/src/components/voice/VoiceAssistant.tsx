@@ -133,7 +133,7 @@ export default function VoiceAssistant() {
   // Mute: stop TTS but keep status
   useEffect(() => {
     if (muteVoice && isSpeakingUI) va.stopSpeaking()
-  }, [muteVoice])
+  }, [muteVoice, isSpeakingUI, va])
 
   const handleMicClick = () => {
     if (isListening) va.stopListening()

@@ -306,7 +306,7 @@ export default function Hero() {
             {/* Role pills */}
             <div className="w-full max-w-lg">
               <p className="text-xs font-mono text-text-secondary mb-3">
-                // Also skilled in
+                {/* change status based on selected role */}  
               </p>
               <div className="flex flex-wrap gap-2">
                 {roles.filter((r) => r.id !== activeRole).slice(0, 6).map((role, i) => (
