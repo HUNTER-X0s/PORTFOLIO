@@ -510,130 +510,77 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
 
 
 
-    _gpu_failed = False  # Class-level flag: skip GPU after first CUDA crash
-
     def _generate(self, system_prompt: str, user_prompt: str) -> str:
-        """Try Ollama (GPU → CPU fallback) → OpenAI fallback."""
-        model = os.getenv("OLLAMA_MODEL", "llama3")
-        temperature = float(os.getenv("OLLAMA_TEMPERATURE", "0.1"))
-        num_ctx = int(os.getenv("OLLAMA_NUM_CTX", "2048"))
-        # Increase prediction token limit for longer responses
-        num_predict = int(os.getenv("OLLAMA_NUM_PREDICT", "2048"))
+        """Use Groq API for generation."""
+        api_key = os.getenv("GROQ_API_KEY", "")
+        if not api_key:
+            return "Please provide a GROQ_API_KEY in the environment variables."
 
-        base_options = {
-            "temperature": temperature,
-            "top_k": int(os.getenv("OLLAMA_TOP_K", "40")),
-            "top_p": float(os.getenv("OLLAMA_TOP_P", "0.9")),
-            "num_ctx": num_ctx,
-            "num_predict": num_predict,
-        }
-
-        # ── Step 1: Try GPU (unless it has already crashed this session) ──
-        if not RAGPipeline._gpu_failed:
-            try:
-                client = ollama.Client(host=OLLAMA_URL)
-                response = client.chat(
-                    model=model,
-                    messages=[
+        try:
+            import httpx
+            resp = httpx.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                json={
+                    "model": os.getenv("GROQ_MODEL", "llama3-8b-8192"),
+                    "messages": [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt},
                     ],
-                    options=base_options,
-                    keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
-                )
-                return response["message"]["content"].strip()
-            except Exception as e:
-                logger.warning(f"⚠️  Ollama GPU failed ({e}). Switching to CPU-only for this session.")
-                RAGPipeline._gpu_failed = True
-
-        # ── Step 2: CPU-only generation ──────────────────────────────────
-        cpu_options = {
-            **base_options,
-            "num_gpu": 0,
-            "num_predict": min(num_predict, 350),  # Cap output length for CPU speed
-        }
-        try:
-            client = ollama.Client(host=OLLAMA_URL)
-            response = client.chat(
-                model=model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
-                options=cpu_options,
-                keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
+                    "temperature": float(os.getenv("OLLAMA_TEMPERATURE", "0.1")),
+                    "max_tokens": 1024,
+                },
+                timeout=30,
             )
-            return response["message"]["content"].strip()
-        except Exception as e2:
-            logger.error(f"⚠️  Both Ollama GPU and CPU generation failed ({e2}). No fallback available.")
-            return "I'm currently unable to generate a response — the AI service is unavailable. Please try again later or contact support."
+            resp.raise_for_status()
+            return resp.json()["choices"][0]["message"]["content"].strip()
+        except Exception as e:
+            logger.error(f"Groq generation failed: {e}")
+            return "I'm currently unable to generate a response — the AI service is unavailable."
 
     def _generate_stream(self, system_prompt: str, user_prompt: str):
-        """Streaming version of _generate."""
-        model = os.getenv("OLLAMA_MODEL", "llama3")
-        temperature = float(os.getenv("OLLAMA_TEMPERATURE", "0.1"))
-        num_ctx = int(os.getenv("OLLAMA_NUM_CTX", "2048"))
-        num_predict = int(os.getenv("OLLAMA_NUM_PREDICT", "512"))
-        # boost token limit for streaming to avoid truncation
-        stream_predict = max(num_predict, int(os.getenv("OLLAMA_STREAM_PREDICT", "2048")))
+        """Streaming version using Groq API."""
+        api_key = os.getenv("GROQ_API_KEY", "")
+        if not api_key:
+            yield "Please provide a GROQ_API_KEY in the environment variables."
+            return
 
-        base_options = {
-            "temperature": temperature,
-            "top_k": int(os.getenv("OLLAMA_TOP_K", "40")),
-            "top_p": float(os.getenv("OLLAMA_TOP_P", "0.9")),
-            "num_ctx": num_ctx,
-            "num_predict": stream_predict,
-        }
-
-        # ── Step 1: Try GPU ──
-        if not RAGPipeline._gpu_failed:
-            try:
-                client = ollama.Client(host=OLLAMA_URL)
-                response = client.chat(
-                    model=model,
-                    messages=[
+        try:
+            import httpx
+            import json
+            with httpx.stream(
+                "POST",
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                json={
+                    "model": os.getenv("GROQ_MODEL", "llama3-8b-8192"),
+                    "messages": [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt},
                     ],
-                    options=base_options,
-                    keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
-                    stream=True
-                )
-                for chunk in response:
-                    # Yield raw text; answer_stream will wrap it as SSE
-                    yield chunk['message']['content']
-                return
-            except Exception as e:
-                RAGPipeline._gpu_failed = True
-                logger.warning(f"⚠️  Ollama GPU failed ({e}). Switching to CPU-only for this session.")
-
-
-
-        # ── Step 2: CPU-only generation ──
-        cpu_options = {
-            **base_options,
-            "num_gpu": 0,
-            "num_predict": min(num_predict, 350),
-        }
-        try:
-            client = ollama.Client(host=OLLAMA_URL)
-            response = client.chat(
-                model=model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
-                options=cpu_options,
-                keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
-                stream=True
-            )
-            for chunk in response:
-                yield chunk["message"]["content"]
+                    "temperature": float(os.getenv("OLLAMA_TEMPERATURE", "0.1")),
+                    "max_tokens": 1024,
+                    "stream": True,
+                },
+                timeout=30,
+            ) as response:
+                response.raise_for_status()
+                for line in response.iter_lines():
+                    if line.startswith("data: "):
+                        data_str = line[6:]
+                        if data_str == "[DONE]":
+                            break
+                        try:
+                            data = json.loads(data_str)
+                            delta = data["choices"][0].get("delta", {}).get("content", "")
+                            if delta:
+                                yield delta
+                        except json.JSONDecodeError:
+                            continue
             return
-        except Exception as e2:
-            logger.warning(f"⚠️  Ollama CPU also failed ({e2}). Trying OpenAI fallback...")
-            yield self._openai_fallback(system_prompt, user_prompt)
-
+        except Exception as e:
+            logger.error(f"Groq streaming failed: {e}")
+            yield "I'm currently unable to generate a response — the AI service is unavailable."
 
     def _format_as_points(self, text: str) -> str:
         """Convert a plain text response into a bullet‑point list.
@@ -647,37 +594,6 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
         # Filter out empty parts and prefix with dash
         bullets = [f"- {s.strip()}" for s in sentences if s]
         return "\n".join(bullets)
-
-        """OpenAI fallback if Ollama is unavailable."""
-        api_key = os.getenv("OPENAI_API_KEY", "")
-        if not api_key:
-            return (
-                "I'm currently unable to process your request — the AI service is temporarily unavailable. "
-                "Please contact Anurag directly at anurag.swain35@gmail.com."
-            )
-        try:
-            import httpx
-            resp = httpx.post(
-                "https://api.openai.com/v1/chat/completions",
-                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-                json={
-                    "model": os.getenv("OPENAI_MODEL", "gpt-3.5-turbo"),
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt},
-                    ],
-                    "temperature": 0.1,
-                    "max_tokens": 2000,
-                },
-                timeout=30,
-            )
-            return resp.json()["choices"][0]["message"]["content"].strip()
-        except Exception as e2:
-            logger.error(f"OpenAI fallback also failed: {e2}")
-            return (
-                "I'm unable to generate a response right now. "
-                "Please contact Anurag at anurag.swain35@gmail.com."
-            )
 
     def reindex(self):
         """Force rebuild the entire vector index."""

@@ -15,7 +15,7 @@ import { roles } from '@/data/portfolio'
 
 // ── Config ────────────────────────────────────────────────────
 const API_URL = process.env.NEXT_PUBLIC_CHATBOT_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
-const API_TIMEOUT = 30_000
+const API_TIMEOUT = 120_000
 
 // ── Suggested prompts ─────────────────────────────────────────
 const SUGGESTED_PROMPTS = [
