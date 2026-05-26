@@ -20,7 +20,7 @@ export default function About() {
   const { ref, inView } = useInView(0.2)
 
   return (
-    <div className="py-32">
+    <div className="py-16 sm:py-24 md:py-32">
       <div className="section-container">
         <motion.div
           ref={ref as React.RefObject<HTMLDivElement>}
@@ -36,7 +36,7 @@ export default function About() {
             </h2>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-start">
             {/* Left — Bio */}
             <div className="space-y-6">
               <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8">
@@ -64,15 +64,15 @@ export default function About() {
                 </div>
               </motion.div>
 
-              <motion.p variants={itemVariants} className="text-text-secondary text-lg leading-relaxed">
+              <motion.p variants={itemVariants} className="text-text-secondary text-base sm:text-lg leading-relaxed">
                 I&apos;m{' '}
                 <span className="text-text-primary font-semibold">{personalInfo.name}</span>, a
                 final-year{' '}
                 <span className="text-cyan font-medium">B.Tech Computer Science</span> student at{' '}
                 <span className="text-text-primary font-medium">
-                  Government College of Engineering Kannur (GCEK)
+                  Government College of Engineering, Kalahandi (GCEK)
                 </span>
-                , Kerala.
+                , Odisha.
               </motion.p>
 
               <motion.p variants={itemVariants} className="text-text-secondary leading-relaxed">
@@ -85,7 +85,7 @@ export default function About() {
               </motion.p>
 
               <motion.p variants={itemVariants} className="text-text-secondary leading-relaxed">
-                I&apos;ve interned at two companies, shipped 4 production applications, and lead the
+                I&apos;ve completed AI, web, and data-focused internships, shipped production applications, and lead the
                 AI/ML division of my college tech club. I&apos;m currently seeking{' '}
                 <span className="text-cyan font-medium">SDE / AI / ML roles</span> where I can work
                 at the boundary of engineering and intelligence.
@@ -130,7 +130,7 @@ export default function About() {
                   {[
                     {
                       title: 'B.Tech Final Year',
-                      desc: 'Computer Science @ GCEK · CGPA 8.4/10',
+                      desc: 'Computer Science @ GCEK · CGPA 8.10/10',
                       badge: '2025',
                       color: '#00E5FF',
                     },
@@ -177,7 +177,7 @@ export default function About() {
               </motion.div>
 
               {/* Languages & Hobbies */}
-              <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
+              <motion.div variants={itemVariants} className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4">
                 <div className="glass-card p-4">
                   <p className="text-xs font-mono text-text-secondary mb-3 uppercase tracking-widest">
                     Languages

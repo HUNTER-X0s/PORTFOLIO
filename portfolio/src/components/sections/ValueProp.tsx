@@ -10,10 +10,10 @@ export default function ValueProp() {
   const { ref, inView } = useInView(0.2)
   const activeRole = usePortfolioStore((s) => s.activeRole)
   const content = roleContents[activeRole] || roleContents['fullstack']
-  const currentRole = roles.find((r) => r.id === activeRole)!
+  const currentRole = roles.find((r) => r.id === activeRole) || roles.find((r) => r.id === 'fullstack') || roles[0]
 
   return (
-    <div className="py-32">
+    <div className="py-16 sm:py-24 md:py-32">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           <motion.div
@@ -27,7 +27,7 @@ export default function ValueProp() {
             </h2>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-10 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 items-start">
             {/* Left — Dynamic value prop */}
             <motion.div
               key={activeRole}
@@ -83,7 +83,7 @@ export default function ValueProp() {
               <p className="text-xs font-mono text-text-secondary uppercase tracking-widest mb-4">
                 Strong across all these roles
               </p>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                 {roles.map((role, i) => (
                   <motion.div
                     key={role.id}

@@ -144,7 +144,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[150] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-[150] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
       onClick={onClose}
     >
       <motion.div
@@ -152,11 +152,11 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.94, y: 24 }}
         transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
-        className="w-full max-w-2xl glass-strong rounded-2xl border border-white/[0.1] overflow-hidden max-h-[90vh] flex flex-col"
+        className="w-full sm:max-w-2xl glass-strong rounded-t-2xl sm:rounded-2xl border border-white/[0.1] overflow-hidden max-h-[85vh] sm:max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal header */}
-        <div className="p-6 border-b border-white/[0.06] flex items-start justify-between gap-4">
+        <div className="p-4 sm:p-6 border-b border-white/[0.06] flex items-start justify-between gap-3 sm:gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span
@@ -168,7 +168,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
               <StatusBadge status={project.status} />
               <span className="text-xs text-text-secondary font-mono">{project.year}</span>
             </div>
-            <h2 className="font-display font-bold text-2xl text-text-primary">{project.title}</h2>
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-text-primary">{project.title}</h2>
             <p className="text-text-secondary mt-1 text-sm">{project.tagline}</p>
           </div>
           <button
@@ -180,9 +180,9 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
         </div>
 
         {/* Modal body */}
-        <div className="overflow-y-auto no-scrollbar p-6 space-y-6">
+        <div className="overflow-y-auto no-scrollbar p-4 sm:p-6 space-y-5 sm:space-y-6">
           {/* Links */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <a
               href={project.liveUrl}
               target="_blank"
@@ -281,7 +281,7 @@ export default function Projects() {
   })
 
   return (
-    <div className="py-32">
+    <div className="py-16 sm:py-24 md:py-32">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           {/* Header */}
@@ -325,7 +325,7 @@ export default function Projects() {
           {/* Grid */}
           <motion.div
             layout
-            className="grid md:grid-cols-2 gap-5"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5"
           >
             <AnimatePresence mode="popLayout">
               {filteredProjects.map((project, i) => (

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Menu, X, Command, Volume2, VolumeX } from 'lucide-react'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
@@ -9,22 +9,49 @@ import { useScrollProgress, useSound } from '@/hooks'
 import { cn } from '@/lib/utils'
 
 export default function Navbar() {
-  const { activeRole, setActiveRole, activeSection, isCommandPaletteOpen, setCommandPaletteOpen, soundEnabled, setSoundEnabled } =
-    usePortfolioStore()
+  const activeRole = usePortfolioStore((s) => s.activeRole)
+  const setActiveRole = usePortfolioStore((s) => s.setActiveRole)
+  const activeSection = usePortfolioStore((s) => s.activeSection)
+  const setCommandPaletteOpen = usePortfolioStore((s) => s.setCommandPaletteOpen)
+  const soundEnabled = usePortfolioStore((s) => s.soundEnabled)
+  const setSoundEnabled = usePortfolioStore((s) => s.setSoundEnabled)
+
   const scrollProgress = useScrollProgress()
   const { playClick } = useSound()
 
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const currentRole = roles.find((r) => r.id === activeRole) || roles[0]
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50)
+    let rafId = 0
+    const handleScroll = () => {
+      cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 50)
+      })
+    }
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      cancelAnimationFrame(rafId)
+    }
   }, [])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!isRoleDropdownOpen) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsRoleDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isRoleDropdownOpen])
 
   const handleNavClick = (href: string) => {
     playClick()
@@ -59,9 +86,10 @@ export default function Navbar() {
       >
         <div
           className={cn(
-            'mx-auto max-w-7xl px-6 transition-all duration-300',
-            isScrolled &&
-              'glass rounded-2xl border border-white/[0.07] shadow-glass mx-4 px-4'
+            'mx-auto max-w-[1280px] transition-all duration-300',
+            isScrolled 
+              ? 'glass rounded-2xl border border-white/[0.07] shadow-glass px-4 w-[calc(100%-2rem)]'
+              : 'px-6 w-full'
           )}
         >
           <div className="flex items-center justify-between h-14">
@@ -88,8 +116,8 @@ export default function Navbar() {
             </motion.a>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-1">
-              {navItems.slice(0, 6).map((item) => (
+            <nav className="hidden lg:flex items-center gap-0.5">
+              {navItems.map((item) => (
                 <a
                   key={item.id}
                   href={item.href}
@@ -99,7 +127,7 @@ export default function Navbar() {
                     playClick()
                   }}
                   className={cn(
-                    'px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200',
+                    'px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-200 whitespace-nowrap',
                     activeSection === item.id
                       ? 'text-cyan bg-cyan/10'
                       : 'text-text-secondary hover:text-text-primary hover:bg-white/[0.04]'
@@ -111,7 +139,7 @@ export default function Navbar() {
             </nav>
 
             {/* Right Controls */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               {/* Sound toggle */}
               <button
                 onClick={() => { setSoundEnabled(!soundEnabled); playClick() }}
@@ -124,18 +152,21 @@ export default function Navbar() {
               {/* Command palette shortcut */}
               <button
                 onClick={() => { setCommandPaletteOpen(true); playClick() }}
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono text-text-secondary hover:text-text-primary border border-white/[0.06] hover:border-cyan/20 bg-white/[0.02] hover:bg-white/[0.05] transition-all"
+                className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-mono text-text-secondary hover:text-text-primary border border-white/[0.06] hover:border-cyan/20 bg-white/[0.02] hover:bg-white/[0.05] transition-all"
               >
-                <Command size={12} />
+                <Command size={11} />
                 <span>⌘K</span>
               </button>
 
-              {/* Role Selector */}
-              <div className="relative">
-                <motion.button
-                  onClick={() => { setIsRoleDropdownOpen(!isRoleDropdownOpen); playClick() }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl glass border border-cyan/20 hover:border-cyan/40 transition-all text-sm"
-                  whileTap={{ scale: 0.97 }}
+              <div className="relative" ref={dropdownRef}>
+
+                <button
+                  onClick={() => {
+                    setIsRoleDropdownOpen((prev) => !prev);
+                    playClick();
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl glass border border-cyan/20 hover:border-cyan/40 active:scale-[0.97] transition-all text-sm"
+                  title="View as role"
                 >
                   <span>{currentRole.icon}</span>
                   <span className="text-text-primary font-medium hidden sm:block max-w-28 truncate">
@@ -148,7 +179,7 @@ export default function Navbar() {
                       isRoleDropdownOpen && 'rotate-180'
                     )}
                   />
-                </motion.button>
+                </button>
 
                 <AnimatePresence>
                   {isRoleDropdownOpen && (
@@ -166,7 +197,7 @@ export default function Navbar() {
                         </p>
                         <div className="space-y-0.5">
                           {roles.map((role) => (
-                            <motion.button
+                            <button
                               key={role.id}
                               onClick={() => {
                                 setActiveRole(role.id)
@@ -174,12 +205,11 @@ export default function Navbar() {
                                 playClick()
                               }}
                               className={cn(
-                                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all',
+                                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all hover:translate-x-0.5',
                                 activeRole === role.id
                                   ? 'bg-cyan/10 border border-cyan/20 text-text-primary'
                                   : 'text-text-secondary hover:text-text-primary hover:bg-white/[0.05]'
                               )}
-                              whileHover={{ x: 2 }}
                             >
                               <span className="text-base">{role.icon}</span>
                               <div className="text-left">
@@ -189,7 +219,7 @@ export default function Navbar() {
                               {activeRole === role.id && (
                                 <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan" />
                               )}
-                            </motion.button>
+                            </button>
                           ))}
                         </div>
                       </div>
@@ -241,19 +271,32 @@ export default function Navbar() {
                     {item.label}
                   </motion.a>
                 ))}
+
+                {/* Mobile controls */}
+                <div className="pt-3 mt-3 border-t border-white/[0.06] flex items-center justify-between px-4">
+                  <button
+                    onClick={() => { setSoundEnabled(!soundEnabled); playClick() }}
+                    className="flex items-center gap-2 text-xs font-medium text-text-secondary hover:text-text-primary transition-all py-2"
+                  >
+                    {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+                    <span>{soundEnabled ? 'Sound: On' : 'Sound: Off'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => { setCommandPaletteOpen(true); playClick(); setIsMobileMenuOpen(false) }}
+                    className="flex items-center gap-2 text-xs font-medium text-text-secondary hover:text-text-primary transition-all py-2"
+                  >
+                    <Command size={13} />
+                    <span>Search / Command</span>
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.header>
 
-      {/* Click outside to close dropdown */}
-      {isRoleDropdownOpen && (
-        <div
-          className="fixed inset-0 z-[150]"
-          onClick={() => setIsRoleDropdownOpen(false)}
-        />
-      )}
+
     </>
   )
 }

@@ -216,7 +216,7 @@ function CertCard({ cert, index }: { cert: Certification; index: number }) {
 function FeaturedStrip() {
   const featured = getFeaturedCerts().slice(0, 3)
   return (
-    <div className="flex flex-wrap gap-3 mb-8">
+    <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-8">
       {featured.map((cert) => (
         <motion.div
           key={cert.id}
@@ -256,7 +256,7 @@ export default function CertificationsSection() {
   const uniqueIssuers = Array.from(new Set(certifications.map((c) => c.issuerShortName))).length
 
   return (
-    <div className="py-32">
+    <div className="py-16 sm:py-24 md:py-32">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           {/* Header */}
@@ -280,7 +280,7 @@ export default function CertificationsSection() {
             initial={{ opacity: 0, y: 16 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.15 }}
-            className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-8"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8"
           >
             {[
               { label: 'Total Certs', value: totalCerts, color: '#00E5FF', icon: '🏆' },
@@ -307,7 +307,7 @@ export default function CertificationsSection() {
             initial={{ opacity: 0, y: 14 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.25 }}
-            className="flex flex-wrap items-center gap-2 mb-6"
+            className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar -mx-4 px-4 pb-2 sm:mx-0 sm:px-0 sm:pb-0 sm:flex-wrap"
           >
             <Filter size={13} className="text-text-secondary" />
 
@@ -330,7 +330,7 @@ export default function CertificationsSection() {
               </button>
             ))}
 
-            <div className="h-4 w-px bg-white/[0.08]" />
+            <div className="hidden sm:block h-4 w-px bg-white/[0.08]" />
 
             <button
               onClick={() => setShowRoleFilter(!showRoleFilter)}

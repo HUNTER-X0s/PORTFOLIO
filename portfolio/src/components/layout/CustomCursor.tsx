@@ -39,7 +39,7 @@ export default function CustomCursor() {
     const onMouseEnterInteractive = (e: Event) => {
       const target = e.target as Element
       if (target.matches('a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"]')) {
-        if (!isClickRef.current) {
+        if (!isClickRef.current && usePortfolioStore.getState().cursorVariant !== 'hover') {
           usePortfolioStore.getState().setCursorVariant('hover')
         }
       }
@@ -48,7 +48,7 @@ export default function CustomCursor() {
     const onMouseLeaveInteractive = (e: Event) => {
       const target = e.target as Element
       if (target.matches('a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"]')) {
-        if (!isClickRef.current) {
+        if (!isClickRef.current && usePortfolioStore.getState().cursorVariant !== 'default') {
           usePortfolioStore.getState().setCursorVariant('default')
         }
       }
@@ -89,8 +89,10 @@ export default function CustomCursor() {
       <motion.div
         id="custom-cursor-outer"
         style={{
-          left: outerX,
-          top: outerY,
+          x: outerX,
+          y: outerY,
+          translateX: '-50%',
+          translateY: '-50%',
           width: outerSize,
           height: outerSize,
           border: `1.5px solid ${outerBorderColor}`,
@@ -109,8 +111,10 @@ export default function CustomCursor() {
       <motion.div
         id="custom-cursor-inner"
         style={{
-          left: innerX,
-          top: innerY,
+          x: innerX,
+          y: innerY,
+          translateX: '-50%',
+          translateY: '-50%',
           width: innerSize,
           height: innerSize,
           background: innerColor,

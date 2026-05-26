@@ -53,19 +53,26 @@ export function useSound() {
 }
 
 // ============================================================
-// useScrollProgress — tracks page scroll 0–1
+// useScrollProgress — tracks page scroll 0–1 (rAF optimized)
 // ============================================================
 export function useScrollProgress() {
   const [progress, setProgress] = useState(0)
+  const rafRef = useRef(0)
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.scrollY
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight
-      setProgress(docHeight > 0 ? scrollTop / docHeight : 0)
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = requestAnimationFrame(() => {
+        const scrollTop = window.scrollY
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight
+        setProgress(docHeight > 0 ? scrollTop / docHeight : 0)
+      })
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      cancelAnimationFrame(rafRef.current)
+    }
   }, [])
 
   return progress
@@ -78,25 +85,23 @@ export function useActiveSection(sectionIds: string[]) {
   const setActiveSection = usePortfolioStore((s) => s.setActiveSection)
 
   useEffect(() => {
-    const observers: IntersectionObserver[] = []
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id)
+          }
+        })
+      },
+      { rootMargin: '-40% 0px -40% 0px' }
+    )
 
     sectionIds.forEach((id) => {
       const el = document.getElementById(id)
-      if (!el) return
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setActiveSection(id)
-          }
-        },
-        { threshold: 0.4 }
-      )
-      observer.observe(el)
-      observers.push(observer)
+      if (el) observer.observe(el)
     })
 
-    return () => observers.forEach((o) => o.disconnect())
+    return () => observer.disconnect()
   }, [sectionIds, setActiveSection])
 }
 
@@ -124,17 +129,24 @@ export function useCommandPalette() {
 }
 
 // ============================================================
-// useMousePosition — tracks mouse coordinates
+// useMousePosition — tracks mouse coordinates (rAF optimized)
 // ============================================================
 export function useMousePosition() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
+  const rafRef = useRef(0)
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY })
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = requestAnimationFrame(() => {
+        setPosition({ x: e.clientX, y: e.clientY })
+      })
     }
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      cancelAnimationFrame(rafRef.current)
+    }
   }, [])
 
   return position

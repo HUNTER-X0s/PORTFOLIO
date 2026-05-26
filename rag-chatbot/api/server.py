@@ -29,17 +29,21 @@ logging.basicConfig(
 )
 logger = logging.getLogger("chatbot-api")
 
+import threading
+
 # ── Lazy-load RAG pipeline (heavy initialization) ─────────────
 _rag_pipeline = None
+_rag_lock = threading.Lock()
 
 def get_rag():
     global _rag_pipeline
-    if _rag_pipeline is None:
-        from rag.pipeline import RAGPipeline
-        logger.info("⚙️  Initializing RAG pipeline...")
-        _rag_pipeline = RAGPipeline()
-        logger.info("✅ RAG pipeline ready")
-    return _rag_pipeline
+    with _rag_lock:
+        if _rag_pipeline is None:
+            from rag.pipeline import RAGPipeline
+            logger.info("⚙️  Initializing RAG pipeline...")
+            _rag_pipeline = RAGPipeline()
+            logger.info("✅ RAG pipeline ready")
+        return _rag_pipeline
 
 # ── In-memory session store ───────────────────────────────────
 Path(os.getenv("CACHE_DIR", "./cache")).mkdir(parents=True, exist_ok=True)
@@ -78,6 +82,7 @@ class ChatRequest(BaseModel):
     session_id: Optional[str] = Field(None, description="Conversation session ID")
     role_context: Optional[str] = Field("", description="Role the recruiter is hiring for")
     top_k: Optional[int] = Field(6, ge=1, le=12, description="Number of context chunks to retrieve")
+    stream: Optional[bool] = Field(False, description="Whether to stream the response")
 
 class ChatMessage(BaseModel):
     role: str
@@ -188,7 +193,57 @@ async def chat(request: Request, body: ChatRequest):
     try:
         rag = get_rag()
 
-        # Generate answer
+        if body.stream:
+            async def generate_stream():
+                full_reply = ""
+                # Get the synchronous generator from the thread pool (since answer_stream does I/O)
+                # To avoid blocking the event loop while yielding, we can run the chunks in a thread.
+                # Actually, RAGPipeline.answer_stream is a generator. We need to iterate it.
+                import json
+                gen = rag.answer_stream(
+                    query=message,
+                    history=history,
+                    role_context=body.role_context or "",
+                    top_k=body.top_k or 6,
+                    use_cache=len(history) == 0,
+                )
+                
+                # Iterate the generator in a thread-safe way, or just iterate it (it blocks during LLM generation).
+                # Since Ollama client.chat(stream=True) uses requests which blocks, yielding here blocks the event loop.
+                # In FastAPI, StreamingResponse runs in a thread pool if it's a sync generator!
+                pass
+
+            def sync_generate_stream():
+                full_reply = ""
+                gen = rag.answer_stream(
+                    query=message,
+                    history=history,
+                    role_context=body.role_context or "",
+                    top_k=body.top_k or 6,
+                    use_cache=len(history) == 0,
+                )
+                import json
+                for chunk in gen:
+                    # we must capture the full text to save history
+                    if chunk.startswith("data: "):
+                        try:
+                            data = json.loads(chunk[6:])
+                            if "text" in data:
+                                full_reply += data["text"]
+                        except:
+                            pass
+                    yield chunk
+                
+                # Update history after stream finishes
+                history.append({"role": "user", "content": message})
+                history.append({"role": "assistant", "content": full_reply})
+                if len(history) > 20:
+                    del history[:-20]
+                session_store.set(session_id, history, expire=3600)
+
+            return StreamingResponse(sync_generate_stream(), media_type="text/event-stream")
+
+        # Generate answer (non-streaming)
         result = await asyncio.to_thread(
             rag.answer,
             query=message,
@@ -220,6 +275,7 @@ async def chat(request: Request, body: ChatRequest):
     except Exception as e:
         logger.error(f"Chat error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
 
 
 @app.get("/api/chat/history/{session_id}", response_model=HistoryResponse)

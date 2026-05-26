@@ -15,6 +15,7 @@ interface PortfolioStore {
   setChatOpen: (open: boolean) => void
   chatMessages: ChatMessage[]
   addChatMessage: (message: ChatMessage) => void
+  updateChatMessage: (id: string, updates: Partial<ChatMessage>) => void
   clearChat: () => void
 
   // Music
@@ -67,6 +68,12 @@ export const usePortfolioStore = create<PortfolioStore>()(
         addChatMessage: (message) =>
           set((state) => ({
             chatMessages: [...state.chatMessages, message],
+          })),
+        updateChatMessage: (id, updates) =>
+          set((state) => ({
+            chatMessages: state.chatMessages.map((msg) =>
+              msg.id === id ? { ...msg, ...updates } : msg
+            ),
           })),
         clearChat: () => set({ chatMessages: [] }),
 

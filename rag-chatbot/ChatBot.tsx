@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
@@ -13,7 +14,7 @@ import { generateId } from '@/lib/utils'
 import { roles } from '@/data/portfolio'
 
 // ── Config ────────────────────────────────────────────────────
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
+const API_URL = process.env.NEXT_PUBLIC_CHATBOT_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
 const API_TIMEOUT = 30_000
 
 // ── Suggested prompts ─────────────────────────────────────────
@@ -94,16 +95,16 @@ function MessageBubble({
 
       <div className="max-w-[84%] space-y-1.5">
         <div
-          className="px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed"
+          className="px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words overflow-hidden"
           style={isUser ? {
             background: 'linear-gradient(135deg, rgba(0,229,255,0.14), rgba(124,58,237,0.14))',
             border: '1px solid rgba(0,229,255,0.2)',
-            color: '#F0F0FF',
+            color: '#FFFFFF',
             borderBottomRightRadius: '4px',
           } : {
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            color: '#8B8BA7',
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            color: '#FFFFFF',
             borderBottomLeftRadius: '4px',
           }}
         >
@@ -138,27 +139,32 @@ function MessageBubble({
 // ── Typing indicator ──────────────────────────────────────────
 function TypingIndicator() {
   return (
-    <div className="flex gap-2.5 justify-start">
+    <motion.div 
+      initial={{ opacity: 0, y: 10, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      className="flex gap-2.5 justify-start"
+    >
       <div className="w-6 h-6 rounded-lg bg-cyan/10 border border-cyan/20 flex items-center justify-center flex-shrink-0 mt-0.5">
         <Bot size={11} className="text-cyan" />
       </div>
       <div
-        className="px-4 py-3 rounded-2xl rounded-bl-sm"
+        className="px-4 py-2.5 rounded-2xl rounded-bl-sm flex items-center gap-2"
         style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
       >
-        <div className="flex gap-1.5 items-center h-4">
+        <span className="text-[11px] font-mono text-cyan/70 tracking-widest uppercase">Thinking</span>
+        <div className="flex gap-1 items-center h-4">
           {[0, 1, 2].map((i) => (
             <motion.div
               key={i}
               className="w-1.5 h-1.5 rounded-full"
-              style={{ background: '#00E5FF', opacity: 0.5 }}
-              animate={{ y: [0, -5, 0], opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 0.65, delay: i * 0.14, repeat: Infinity }}
+              style={{ background: '#00E5FF' }}
+              animate={{ y: [0, -4, 0], opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 0.8, delay: i * 0.15, repeat: Infinity, ease: "easeInOut" }}
             />
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -386,17 +392,24 @@ export default function ChatBot() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                {sessionId && (
+                <div className="flex items-center gap-1.5">
+                  {sessionId && (
+                      <button
+                        onClick={() => { clearChat(); setSessionId(null); playClick() }}
+                        className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/[0.05] transition-all"
+                        title="Clear history"
+                      >
+                        <RotateCcw size={12} />
+                      </button>
+                  )}
                   <button
-                    onClick={() => { clearChat(); setSessionId(null); playClick() }}
+                    onClick={() => { setChatOpen(false); playClick() }}
                     className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/[0.05] transition-all"
-                    title="Clear conversation"
+                    title="Close chat"
                   >
-                    <RotateCcw size={12} />
+                    <X size={12} />
                   </button>
-                )}
-              </div>
+                </div>
             </div>
 
             {/* Role context strip */}

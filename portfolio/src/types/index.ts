@@ -207,6 +207,8 @@ export interface ChatMessage {
   content: string
   timestamp: Date
   typing?: boolean
+  sources?: any[]
+  confidence?: number
 }
 
 export interface PersonalInfo {

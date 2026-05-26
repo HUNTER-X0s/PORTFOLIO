@@ -10,6 +10,9 @@ if (GITHUB_TOKEN) {
   headers.Authorization = `Bearer ${GITHUB_TOKEN}`
 }
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 3600 // Revalidate every hour instead of generating statically at build
+
 export async function GET() {
   try {
     const [userRes, reposRes] = await Promise.all([

@@ -8,6 +8,7 @@ import os
 import json
 import hashlib
 import logging
+import re
 from typing import Optional
 from pathlib import Path
 
@@ -39,13 +40,14 @@ class EmbeddingProvider:
         self._st_model: Optional[SentenceTransformer] = None
         self._ollama_ok: Optional[bool] = None
         self._cache = diskcache.Cache(Path(CACHE_DIR) / "embeddings")
+        self._active_backend: tuple[str, str] | None = None
 
     def _check_ollama(self) -> bool:
-        if self._ollama_ok is not None:
-            return self._ollama_ok
+        # Only cache successful connections; always retry on failure
+        if self._ollama_ok is True:
+            return True
         try:
             client = ollama.Client(host=OLLAMA_URL)
-            # Quick ping
             client.list()
             self._ollama_ok = True
             logger.info(f"✅ Ollama embed model ready: {OLLAMA_EMBED}")
@@ -68,14 +70,36 @@ class EmbeddingProvider:
             results.append(resp["embedding"])
         return results
 
+    def _select_backend(self) -> tuple[str, str]:
+        # Prefer sentence-transformers to avoid Ollama model swapping (VRAM thrashing)
+        # which causes massive latency on local machines with limited VRAM.
+        if os.getenv("USE_OLLAMA_EMBED", "false").lower() == "true":
+            if self._check_ollama():
+                return ("ollama", OLLAMA_EMBED)
+        return ("sentence-transformers", EMBED_MODEL)
+
+    def _cache_key(self, text: str, backend: str, model: str) -> str:
+        raw = f"{backend}:{model}:{text}"
+        return hashlib.md5(raw.encode()).hexdigest()
+
+    @property
+    def active_backend(self) -> str:
+        if self._active_backend is None:
+            return "unknown"
+        backend, model = self._active_backend
+        return f"{backend}:{model}"
+
     def embed(self, texts: list[str]) -> list[list[float]]:
         """Embed list of texts, using cache where available."""
+        backend, model = self._select_backend()
+        self._active_backend = (backend, model)
+
         results = [None] * len(texts)
         uncached_indices = []
         uncached_texts = []
 
         for i, text in enumerate(texts):
-            key = hashlib.md5(text.encode()).hexdigest()
+            key = self._cache_key(text, backend, model)
             cached = self._cache.get(key)
             if cached is not None:
                 results[i] = cached
@@ -85,18 +109,20 @@ class EmbeddingProvider:
 
         if uncached_texts:
             try:
-                if self._check_ollama():
+                if backend == "ollama":
                     embeddings = self._ollama_embed(uncached_texts)
                 else:
                     embeddings = self._st_embed(uncached_texts)
             except Exception as e:
                 logger.warning(f"Ollama embed failed ({e}), falling back to sentence-transformers")
                 self._ollama_ok = False
+                backend, model = ("sentence-transformers", EMBED_MODEL)
+                self._active_backend = (backend, model)
                 embeddings = self._st_embed(uncached_texts)
 
             for idx, emb in zip(uncached_indices, embeddings):
                 text = texts[idx]
-                key = hashlib.md5(text.encode()).hexdigest()
+                key = self._cache_key(text, backend, model)
                 self._cache.set(key, emb, expire=86400)  # 24h cache
                 results[idx] = emb
 
@@ -117,7 +143,14 @@ class VectorStore:
         self.embedder = embedder
         self.collection = self._get_or_create_collection()
 
-    def _get_or_create_collection(self):
+    def _collection_metadata(self, embedding_dimension: int | None = None) -> dict:
+        metadata = {"hnsw:space": "cosine"}
+        if embedding_dimension is not None:
+            metadata["embedding_dimension"] = embedding_dimension
+            metadata["embedding_backend"] = self.embedder.active_backend
+        return metadata
+
+    def _get_or_create_collection(self, embedding_dimension: int | None = None):
         try:
             col = self.client.get_collection(COLLECTION_NAME)
             logger.info(f"📚 Loaded existing ChromaDB collection: {COLLECTION_NAME} ({col.count()} docs)")
@@ -126,12 +159,64 @@ class VectorStore:
             logger.info(f"📚 Creating new ChromaDB collection: {COLLECTION_NAME}")
             return self.client.create_collection(
                 name=COLLECTION_NAME,
-                metadata={"hnsw:space": "cosine"},
+                metadata=self._collection_metadata(embedding_dimension),
             )
+
+    def _reset_collection(self, embedding_dimension: int):
+        try:
+            self.client.delete_collection(COLLECTION_NAME)
+        except Exception as e:
+            logger.warning(f"Could not delete existing ChromaDB collection: {e}")
+        self.collection = self.client.create_collection(
+            name=COLLECTION_NAME,
+            metadata=self._collection_metadata(embedding_dimension),
+        )
+
+    def _collection_matches_embedding(self, sample_embedding: list[float]) -> bool:
+        existing_count = self.collection.count()
+        if existing_count == 0:
+            return True
+
+        expected_dim = len(sample_embedding)
+        metadata = self.collection.metadata or {}
+        stored_dim = metadata.get("embedding_dimension")
+        if stored_dim is not None:
+            try:
+                if int(stored_dim) != expected_dim:
+                    logger.warning(
+                        "ChromaDB embedding dimension mismatch: collection=%s active=%s",
+                        stored_dim,
+                        expected_dim,
+                    )
+                    return False
+            except (TypeError, ValueError):
+                pass
+
+        try:
+            self.collection.query(
+                query_embeddings=[sample_embedding],
+                n_results=1,
+                include=["distances"],
+            )
+            return True
+        except Exception as e:
+            if "dimension" in str(e).lower():
+                logger.warning(f"ChromaDB collection uses a different embedding dimension: {e}")
+                return False
+            raise
 
     def index_knowledge_base(self, force: bool = False):
         """Index all knowledge chunks into ChromaDB."""
+        sample_text = KNOWLEDGE_CHUNKS[0]["content"].strip()
+        sample_embedding = self.embedder.embed_single(sample_text)
+        embedding_dimension = len(sample_embedding)
+
         existing_count = self.collection.count()
+        if force or not self._collection_matches_embedding(sample_embedding):
+            logger.info("🔄 Rebuilding ChromaDB collection for the active embedding model...")
+            self._reset_collection(embedding_dimension)
+            existing_count = 0
+
         if existing_count >= len(KNOWLEDGE_CHUNKS) and not force:
             logger.info(f"✅ Knowledge base already indexed ({existing_count} chunks). Skipping.")
             return
@@ -140,8 +225,7 @@ class VectorStore:
 
         # Clear existing if rebuilding
         if force and existing_count > 0:
-            self.client.delete_collection(COLLECTION_NAME)
-            self.collection = self._get_or_create_collection()
+            self._reset_collection(embedding_dimension)
 
         ids, documents, metadatas, embeddings_list = [], [], [], []
 
@@ -252,12 +336,12 @@ class RAGPipeline:
         return None  # no filter — search all
 
     def _build_system_prompt(self, role_context: str = "") -> str:
-        return f"""You are an AI assistant representing Anurag Swain's professional portfolio. 
+        return f"""You are an AI assistant representing Anurag Swain's professional portfolio.
 Your job is to help recruiters and potential employers understand Anurag's skills, experience, and suitability for roles.
 
 CRITICAL RULES:
-1. ONLY answer based on the provided context. Never invent or hallucinate information.
-2. If the context does not contain the answer, say: "I don't have that specific information in Anurag's portfolio data."
+1. You have access to Anurag's portfolio context. If the user asks about Anurag, his skills, projects, or experience, use the context to provide accurate answers.
+2. If the user asks a general programming, tech, or conversational question NOT related to Anurag, answer it normally using your vast general AI knowledge. You are a helpful AI assistant.
 3. Be professional, concise, and recruiter-friendly.
 4. Use bullet points for lists. Keep answers focused and scannable.
 5. When mentioning projects, always include the GitHub URL if available.
@@ -271,28 +355,30 @@ Current candidate: Anurag Swain | B.Tech CSE @ GCE Kalahandi | CGPA 8.10 | 5 Int
         # Format retrieved context
         context_text = "\n\n".join([
             f"[Source: {c['category']} / {c['topic']} | Relevance: {c['similarity']:.2f}]\n{c['content']}"
-            for c in context_chunks
+            for c in context_chunks[:3]
         ])
 
-        # Format conversation history (last 3 exchanges)
+        # Format conversation history (last 2 exchanges)
         history_text = ""
         if history:
-            recent = history[-6:]  # last 3 user+assistant pairs
+            recent = history[-4:]  # last 2 user+assistant pairs
             history_text = "\n".join([
                 f"{'User' if m['role'] == 'user' else 'Assistant'}: {m['content']}"
                 for m in recent
             ])
 
-        prompt = f"""CONTEXT FROM PORTFOLIO DATA:
+        prompt = f"""CONTEXT:
 {context_text}
 
-{'CONVERSATION HISTORY:' if history_text else ''}
+{'RECENT CHAT:' if history_text else ''}
 {history_text}
 
-USER QUESTION: {query}
+QUESTION: {query}
 
-Answer based ONLY on the context above. Be concise and recruiter-friendly:"""
+Provide a well-structured, highly readable response. Use Markdown, bold text for emphasis, and bullet points where appropriate. If the question is about Anurag, base your answer on the CONTEXT."""
         return prompt
+
+
 
     def answer(
         self,
@@ -329,16 +415,13 @@ Answer based ONLY on the context above. Be concise and recruiter-friendly:"""
 
         logger.info(f"📄 Retrieved {len(chunks)} relevant chunks (min score: {MIN_SCORE})")
 
-        # 3. Confidence check
-        if not chunks or chunks[0]["similarity"] < MIN_SCORE:
-            return {
-                "reply": "I don't have that specific information in Anurag's portfolio data. You can reach him directly at anurag.swain35@gmail.com or view his full profile at https://github.com/HUNTER-X0s.",
-                "sources": [],
-                "confidence": 0.0,
-                "cached": False,
-            }
-
-        avg_confidence = sum(c["similarity"] for c in chunks[:3]) / min(3, len(chunks))
+        # 3. Confidence calculation
+        avg_confidence = 0.0
+        if chunks and chunks[0]["similarity"] >= MIN_SCORE:
+            avg_confidence = sum(c["similarity"] for c in chunks[:3]) / min(3, len(chunks))
+        else:
+            # If no confident chunks, we pass empty context so the LLM can answer from general knowledge
+            chunks = []
 
         # 4. Build prompts
         system_prompt = self._build_system_prompt(role_context)
@@ -346,6 +429,8 @@ Answer based ONLY on the context above. Be concise and recruiter-friendly:"""
 
         # 5. Generate with Ollama (with API fallback)
         reply = self._generate(system_prompt, user_prompt)
+        # Format reply into bullet points for better readability
+        reply = self._format_as_points(reply)
 
         # 6. Cache & return
         result = {
@@ -355,17 +440,118 @@ Answer based ONLY on the context above. Be concise and recruiter-friendly:"""
             "cached": False,
         }
 
-        if use_cache and not history:
+        if use_cache and not history and reply.strip():
             self._query_cache.set(cache_key, result, expire=3600)  # 1h cache
 
         return result
 
+    import json
+    def answer_stream(
+        self,
+        query: str,
+        history: list[dict] = None,
+        role_context: str = "",
+        top_k: int = TOP_K,
+        use_cache: bool = True,
+    ):
+        """
+        Streaming version of RAG answer generation.
+        Yields SSE formatted strings: data: {"text": "..."}\n\n
+        At the end, yields: data: {"done": true, "sources": [...], "confidence": ...}\n\n
+        """
+        history = history or []
+
+        # Cache check
+        cache_key = hashlib.md5(f"{query}:{role_context}".encode()).hexdigest()
+        if use_cache and not history:
+            cached = self._query_cache.get(cache_key)
+            if cached:
+                logger.info(f"📦 Cache hit for query: {query[:50]}...")
+                # Yield it all at once to mimic stream completion
+                yield f"data: {json.dumps({'text': cached['reply']})}\n\n"
+                yield f"data: {json.dumps({'done': True, 'sources': cached['sources'], 'confidence': cached['confidence'], 'cached': True})}\n\n"
+                return
+
+        category_hint = self._classify_query(query)
+        chunks = self.vector_store.retrieve(query, top_k=top_k, category_filter=category_hint)
+
+        if len(chunks) < 2 and category_hint:
+            chunks = self.vector_store.retrieve(query, top_k=top_k)
+
+        avg_confidence = 0.0
+        if chunks and chunks[0]["similarity"] >= MIN_SCORE:
+            avg_confidence = sum(c["similarity"] for c in chunks[:3]) / min(3, len(chunks))
+        else:
+            chunks = []
+
+        system_prompt = self._build_system_prompt(role_context)
+        user_prompt = self._build_user_prompt(query, chunks, history)
+
+        sources = [{"category": c["category"], "topic": c["topic"], "score": c["similarity"]} for c in chunks[:3]]
+        
+        full_reply = ""
+        for chunk in self._generate_stream(system_prompt, user_prompt):
+            full_reply += chunk
+            yield f"data: {json.dumps({'text': chunk})}\n\n"
+        # Convert the full reply into bullet points before returning
+        full_reply = self._format_as_points(full_reply)
+
+        result = {
+            "reply": full_reply,
+            "sources": sources,
+            "confidence": round(avg_confidence, 3),
+            "cached": False,
+        }
+
+        if use_cache and not history and full_reply.strip():
+            self._query_cache.set(cache_key, result, expire=3600)
+            
+        yield f"data: {json.dumps({'done': True, 'sources': sources, 'confidence': round(avg_confidence, 3), 'cached': False})}\n\n"
+
+
+
+    _gpu_failed = False  # Class-level flag: skip GPU after first CUDA crash
+
     def _generate(self, system_prompt: str, user_prompt: str) -> str:
-        """Try Ollama; fall back to OpenAI if available."""
+        """Try Ollama (GPU → CPU fallback) → OpenAI fallback."""
         model = os.getenv("OLLAMA_MODEL", "llama3")
         temperature = float(os.getenv("OLLAMA_TEMPERATURE", "0.1"))
-        num_ctx = int(os.getenv("OLLAMA_NUM_CTX", "4096"))
+        num_ctx = int(os.getenv("OLLAMA_NUM_CTX", "2048"))
+        # Increase prediction token limit for longer responses
+        num_predict = int(os.getenv("OLLAMA_NUM_PREDICT", "2048"))
 
+        base_options = {
+            "temperature": temperature,
+            "top_k": int(os.getenv("OLLAMA_TOP_K", "40")),
+            "top_p": float(os.getenv("OLLAMA_TOP_P", "0.9")),
+            "num_ctx": num_ctx,
+            "num_predict": num_predict,
+        }
+
+        # ── Step 1: Try GPU (unless it has already crashed this session) ──
+        if not RAGPipeline._gpu_failed:
+            try:
+                client = ollama.Client(host=OLLAMA_URL)
+                response = client.chat(
+                    model=model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    options=base_options,
+                    keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
+                )
+                return response["message"]["content"].strip()
+            except Exception as e:
+                logger.warning(f"⚠️  Ollama GPU failed ({e}). Switching to CPU-only for this session.")
+                RAGPipeline._gpu_failed = True
+
+        # ── Step 2: CPU-only generation ──────────────────────────────────
+        cpu_options = {
+            **base_options,
+            "num_gpu": 0,
+            "num_predict": min(num_predict, 350),  # Cap output length for CPU speed
+        }
         try:
             client = ollama.Client(host=OLLAMA_URL)
             response = client.chat(
@@ -374,20 +560,94 @@ Answer based ONLY on the context above. Be concise and recruiter-friendly:"""
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
                 ],
-                options={
-                    "temperature": temperature,
-                    "top_k": int(os.getenv("OLLAMA_TOP_K", "40")),
-                    "top_p": float(os.getenv("OLLAMA_TOP_P", "0.9")),
-                    "num_ctx": num_ctx,
-                },
+                options=cpu_options,
+                keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
             )
             return response["message"]["content"].strip()
+        except Exception as e2:
+            logger.error(f"⚠️  Both Ollama GPU and CPU generation failed ({e2}). No fallback available.")
+            return "I'm currently unable to generate a response — the AI service is unavailable. Please try again later or contact support."
 
-        except Exception as e:
-            logger.warning(f"⚠️  Ollama generation failed ({e}). Trying fallback...")
-            return self._openai_fallback(system_prompt, user_prompt)
+    def _generate_stream(self, system_prompt: str, user_prompt: str):
+        """Streaming version of _generate."""
+        model = os.getenv("OLLAMA_MODEL", "llama3")
+        temperature = float(os.getenv("OLLAMA_TEMPERATURE", "0.1"))
+        num_ctx = int(os.getenv("OLLAMA_NUM_CTX", "2048"))
+        num_predict = int(os.getenv("OLLAMA_NUM_PREDICT", "512"))
+        # boost token limit for streaming to avoid truncation
+        stream_predict = max(num_predict, int(os.getenv("OLLAMA_STREAM_PREDICT", "2048")))
 
-    def _openai_fallback(self, system_prompt: str, user_prompt: str) -> str:
+        base_options = {
+            "temperature": temperature,
+            "top_k": int(os.getenv("OLLAMA_TOP_K", "40")),
+            "top_p": float(os.getenv("OLLAMA_TOP_P", "0.9")),
+            "num_ctx": num_ctx,
+            "num_predict": stream_predict,
+        }
+
+        # ── Step 1: Try GPU ──
+        if not RAGPipeline._gpu_failed:
+            try:
+                client = ollama.Client(host=OLLAMA_URL)
+                response = client.chat(
+                    model=model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    options=base_options,
+                    keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
+                    stream=True
+                )
+                for chunk in response:
+                    # Yield raw text; answer_stream will wrap it as SSE
+                    yield chunk['message']['content']
+                return
+            except Exception as e:
+                RAGPipeline._gpu_failed = True
+                logger.warning(f"⚠️  Ollama GPU failed ({e}). Switching to CPU-only for this session.")
+
+
+
+        # ── Step 2: CPU-only generation ──
+        cpu_options = {
+            **base_options,
+            "num_gpu": 0,
+            "num_predict": min(num_predict, 350),
+        }
+        try:
+            client = ollama.Client(host=OLLAMA_URL)
+            response = client.chat(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                options=cpu_options,
+                keep_alive=os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
+                stream=True
+            )
+            for chunk in response:
+                yield chunk["message"]["content"]
+            return
+        except Exception as e2:
+            logger.warning(f"⚠️  Ollama CPU also failed ({e2}). Trying OpenAI fallback...")
+            yield self._openai_fallback(system_prompt, user_prompt)
+
+
+    def _format_as_points(self, text: str) -> str:
+        """Convert a plain text response into a bullet‑point list.
+        Splits on typical sentence delimiters and prefixes each line with a dash.
+        """
+        import re
+        # Clean up whitespace
+        clean = text.strip()
+        # Split into sentences (preserves punctuation)
+        sentences = re.split(r'(?<=[.!?])\s+', clean)
+        # Filter out empty parts and prefix with dash
+        bullets = [f"- {s.strip()}" for s in sentences if s]
+        return "\n".join(bullets)
+
         """OpenAI fallback if Ollama is unavailable."""
         api_key = os.getenv("OPENAI_API_KEY", "")
         if not api_key:
@@ -407,7 +667,7 @@ Answer based ONLY on the context above. Be concise and recruiter-friendly:"""
                         {"role": "user", "content": user_prompt},
                     ],
                     "temperature": 0.1,
-                    "max_tokens": 800,
+                    "max_tokens": 2000,
                 },
                 timeout=30,
             )

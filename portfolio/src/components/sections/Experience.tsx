@@ -377,7 +377,7 @@ export default function ExperienceSection() {
   const { ref, inView } = useInView(0.05)
 
   return (
-    <div className="py-32">
+    <div className="py-16 sm:py-24 md:py-32">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           {/* Header */}
@@ -416,7 +416,7 @@ export default function ExperienceSection() {
             ))}
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 lg:gap-16">
             {/* Work experience column */}
             <div>
               <motion.div initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
@@ -447,7 +447,7 @@ export default function ExperienceSection() {
               <div className="relative">
                 <div className="absolute left-1.5 top-2 bottom-0 w-px bg-gradient-to-b from-violet/40 via-neon-pink/20 to-transparent" />
                 <StaggerReveal className="space-y-6" delay={0.1}>
-                  {education.map((edu, i) => <EducationCard key={edu.institution} edu={edu} index={i} />)}
+                  {education.map((edu, i) => <EducationCard key={`${edu.institution}-${edu.degree}`} edu={edu} index={i} />)}
                 </StaggerReveal>
               </div>
 

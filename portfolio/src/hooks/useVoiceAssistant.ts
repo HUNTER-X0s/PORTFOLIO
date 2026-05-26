@@ -12,7 +12,7 @@ import { parseVoiceCommand, scrollToSection, type VoiceCommandAction } from '@/l
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 import type { RoleId } from '@/types'
 
-const API_URL   = process.env.NEXT_PUBLIC_API_URL    || 'http://localhost:8001'
+const API_URL   = process.env.NEXT_PUBLIC_CHATBOT_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
 const RATE      = process.env.NEXT_PUBLIC_TTS_RATE   ? parseFloat(process.env.NEXT_PUBLIC_TTS_RATE)  : 1.0
 const PITCH     = process.env.NEXT_PUBLIC_TTS_PITCH  ? parseFloat(process.env.NEXT_PUBLIC_TTS_PITCH) : 1.0
 const LANG      = 'en-IN'
@@ -50,6 +50,7 @@ export interface UseVoiceAssistantReturn {
   clearHistory: () => void
   speak: (text: string) => void
   requestPermission: () => Promise<boolean>
+  executeAction: (action: any, rawText: string) => Promise<void>
 }
 
 // ── Browser support check ──────────────────────────────────────
@@ -107,12 +108,14 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
   const [sessionId,       setSessionId]       = useState<string | null>(null)
   const [error,           setError]           = useState<string | null>(null)
 
-  const recognitionRef = useRef<any>(null)
-  const synthRef       = useRef<SpeechSynthesisUtterance | null>(null)
-  const analyserRef    = useRef<AnalyserNode | null>(null)
-  const animFrameRef   = useRef<number>(0)
-  const streamRef      = useRef<MediaStream | null>(null)
-  const isSupported    = checkSupport()
+  const recognitionRef    = useRef<any>(null)
+  const synthRef          = useRef<SpeechSynthesisUtterance | null>(null)
+  const analyserRef       = useRef<AnalyserNode | null>(null)
+  const animFrameRef      = useRef<number>(0)
+  const streamRef         = useRef<MediaStream | null>(null)
+  const transcriptRef     = useRef('')
+  const finalTranscriptRef = useRef('')
+  const isSupported       = checkSupport()
 
   // Store actions
   const { setActiveRole, setChatOpen, setActiveProjectId } = usePortfolioStore()
@@ -253,7 +256,19 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
       case 'query':
       default: {
         setStatus('processing')
+        
+        // Add a placeholder message for the assistant
+        const assistantMsgId = crypto.randomUUID()
+        setMessages((prev) => [...prev, {
+          id: assistantMsgId,
+          role: 'assistant',
+          text: '',
+          timestamp: new Date(),
+          actionTaken: 'RAG query',
+        }])
+
         try {
+          const abortCtrl = new AbortController()
           const res = await fetch(`${API_URL}/api/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -261,38 +276,97 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
               message: action.text || rawText,
               session_id: sessionId,
               role_context: '',
-              top_k: 5,
+              top_k: 3,
+              stream: true,
             }),
-            signal: AbortSignal.timeout(15_000),
+            signal: abortCtrl.signal,
           })
 
-          if (res.ok) {
-            const data = await res.json()
-            if (!sessionId && data.session_id) setSessionId(data.session_id)
-            responseText = data.reply || "I couldn't find a response for that."
+          if (res.ok && res.body) {
+            const reader = res.body.getReader()
+            const decoder = new TextDecoder('utf-8')
+            let done = false
+            let buffer = ''
+            let fullText = ''
+            let sentenceBuffer = ''
+
+            while (!done) {
+              const { value, done: readerDone } = await reader.read()
+              done = readerDone
+              if (value) {
+                buffer += decoder.decode(value, { stream: true })
+                const lines = buffer.split('\n')
+                buffer = lines.pop() || ''
+
+                for (const line of lines) {
+                  if (line.startsWith('data: ')) {
+                    try {
+                      const data = JSON.parse(line.slice(6))
+                      if (data.text) {
+                        fullText += data.text
+                        sentenceBuffer += data.text
+                        
+                        // Update message in UI
+                        setMessages((prev) => prev.map(m => 
+                          m.id === assistantMsgId ? { ...m, text: fullText } : m
+                        ))
+
+                        // Speak completed sentences
+                        if (/[.!?]\s/.test(sentenceBuffer) || (data.done && sentenceBuffer.trim())) {
+                          const sentences = sentenceBuffer.split(/(?<=[.!?])\s+/)
+                          // If not done, keep the last incomplete chunk in the buffer
+                          if (!data.done && sentences.length > 1) {
+                            sentenceBuffer = sentences.pop() || ''
+                          } else {
+                            sentenceBuffer = ''
+                          }
+                          
+                          // Speak all complete sentences
+                          for (const sentence of sentences) {
+                            if (sentence.trim()) {
+                              speak(sentence.trim())
+                            }
+                          }
+                        }
+                      }
+                      if (data.done) {
+                        if (!sessionId && data.session_id) setSessionId(data.session_id)
+                        // If there's any remaining text, speak it
+                        if (sentenceBuffer.trim()) {
+                          speak(sentenceBuffer.trim())
+                          sentenceBuffer = ''
+                        }
+                      }
+                    } catch (e) {
+                      // ignore parse errors
+                    }
+                  }
+                }
+              }
+            }
+            return // We already updated state and spoke
           } else {
             responseText = getLocalFallback(rawText)
           }
         } catch {
           responseText = getLocalFallback(rawText)
         }
-        actionDesc = 'RAG query'
+        actionDesc = 'RAG query (Fallback)'
         break
       }
     }
 
-    // Add to message history
-    const assistantMsg: VoiceMessage = {
-      id: crypto.randomUUID(),
-      role: 'assistant',
-      text: responseText,
-      timestamp: new Date(),
-      actionTaken: actionDesc,
+    if (responseText) {
+      const assistantMsg: VoiceMessage = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        text: responseText,
+        timestamp: new Date(),
+        actionTaken: actionDesc,
+      }
+      setMessages((prev) => [...prev, assistantMsg])
+      speak(responseText)
     }
-    setMessages((prev) => [...prev, assistantMsg])
-
-    // Speak response
-    speak(responseText)
   }, [sessionId, speak, stopSpeaking, setActiveRole, setChatOpen, setActiveProjectId])
 
   // ── Local fallback responses ─────────────────────────────────
@@ -335,8 +409,13 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
         if (e.results[i].isFinal) final += t
         else interim += t
       }
-      setTranscript(interim || final)
-      if (final) setFinalTranscript(final)
+      const current = interim || final
+      setTranscript(current)
+      transcriptRef.current = current
+      if (final) {
+        setFinalTranscript(final)
+        finalTranscriptRef.current = final
+      }
     }
 
     rec.onerror = (e: any) => {
@@ -352,7 +431,8 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
 
     rec.onend = async () => {
       stopAnalyser()
-      const spoken = finalTranscript || transcript
+      // Use refs to always get the latest values (avoids stale closure)
+      const spoken = finalTranscriptRef.current || transcriptRef.current
       if (!spoken.trim()) {
         setStatus('idle')
         setTranscript('')
@@ -369,6 +449,8 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
       setMessages((prev) => [...prev, userMsg])
       setTranscript('')
       setFinalTranscript('')
+      transcriptRef.current = ''
+      finalTranscriptRef.current = ''
 
       // Parse and execute
       const action = parseVoiceCommand(spoken)
@@ -376,7 +458,7 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
     }
 
     return rec
-  }, [isSupported, transcript, finalTranscript, executeAction, stopAnalyser])
+  }, [isSupported, executeAction, stopAnalyser])
 
   // ── Start listening ───────────────────────────────────────────
   const startListening = useCallback(async () => {
@@ -456,6 +538,6 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
     isSupported, hasPermission, isSpeaking, audioLevel,
     sessionId, error,
     startListening, stopListening, stopSpeaking,
-    clearHistory, speak, requestPermission,
+    clearHistory, speak, requestPermission, executeAction,
   }
 }

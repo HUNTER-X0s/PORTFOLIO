@@ -15,6 +15,7 @@ import { useVoiceAssistant } from '@/hooks/useVoiceAssistant'
 import { VoiceWaveform, VoiceOrb } from './VoiceWaveform'
 import { VOICE_SUGGESTIONS } from '@/lib/voiceCommands'
 import { cn } from '@/lib/utils'
+import { useSound } from '@/hooks'
 
 // ── Status label ──────────────────────────────────────────────
 const STATUS_LABEL: Record<string, string> = {
@@ -26,7 +27,7 @@ const STATUS_LABEL: Record<string, string> = {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  idle:       'text-gray-500',
+  idle:       'text-white/60',
   listening:  'text-cyan-400',
   processing: 'text-yellow-400',
   speaking:   'text-violet-400',
@@ -83,7 +84,7 @@ function PermissionScreen({ onRequest }: { onRequest: () => void }) {
       </div>
       <div>
         <h3 className="text-sm font-semibold text-white mb-1">Microphone Access Required</h3>
-        <p className="text-xs text-gray-500 leading-relaxed max-w-[220px]">
+        <p className="text-xs text-white/80 leading-relaxed max-w-[220px]">
           Jarvis Mode needs microphone permission to hear your voice commands.
         </p>
       </div>
@@ -95,7 +96,7 @@ function PermissionScreen({ onRequest }: { onRequest: () => void }) {
       >
         Allow Microphone
       </motion.button>
-      <p className="text-[9px] text-gray-700 font-mono">Your voice is never stored or sent to third parties.</p>
+      <p className="text-[9px] text-white/50 font-mono">Your voice is never stored or sent to third parties.</p>
     </div>
   )
 }
@@ -107,7 +108,7 @@ function NotSupportedScreen() {
       <AlertCircle size={28} className="text-yellow-400" />
       <div>
         <h3 className="text-sm font-semibold text-white mb-1">Browser Not Supported</h3>
-        <p className="text-xs text-gray-500 leading-relaxed max-w-[220px]">
+        <p className="text-xs text-white/80 leading-relaxed max-w-[220px]">
           Voice recognition requires Chrome, Edge, or Safari. Please switch browsers to use Jarvis Mode.
         </p>
       </div>
@@ -122,6 +123,8 @@ export default function VoiceAssistant() {
   const [isOpen,    setIsOpen]    = useState(false)
   const [muteVoice, setMuteVoice] = useState(false)
   const [showTips,  setShowTips]  = useState(false)
+
+  const { playClick } = useSound()
 
   const va = useVoiceAssistant()
 
@@ -153,42 +156,39 @@ export default function VoiceAssistant() {
     <>
       {/* ── FAB ─────────────────────────────────────────────── */}
       <motion.button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => { setIsOpen(!isOpen); playClick() }}
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.93 }}
         title="Jarvis Voice Mode"
-        className="fixed bottom-24 left-6 z-[70] w-12 h-12 rounded-2xl flex items-center justify-center"
+        className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-[70] w-14 h-14 rounded-2xl flex items-center justify-center"
         style={{
-          background: isActive
-            ? 'linear-gradient(135deg, rgba(0,229,255,0.25), rgba(124,58,237,0.25))'
-            : 'rgba(10,10,24,0.9)',
-          border: `1.5px solid ${isActive ? 'rgba(0,229,255,0.5)' : 'rgba(255,255,255,0.1)'}`,
+          background: 'linear-gradient(135deg, rgba(0,229,255,0.18), rgba(124,58,237,0.18))',
+          border: '1px solid rgba(0,229,255,0.38)',
           backdropFilter: 'blur(16px)',
-          boxShadow: isActive ? '0 0 20px rgba(0,229,255,0.3)' : 'none',
+          boxShadow: isOpen
+            ? '0 8px 32px rgba(0,229,255,0.25)'
+            : '0 8px 32px rgba(0,229,255,0.15)',
         }}
       >
         <AnimatePresence mode="wait">
           {isOpen
             ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
-                <X size={17} className="text-white" />
+                <X size={20} className="text-cyan-400" />
               </motion.div>
             : <motion.div key="m" initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.7, opacity: 0 }}>
-                <Mic size={17} className={isActive ? 'text-cyan-400' : 'text-gray-400'} />
+                <Mic size={20} className={isActive ? 'text-violet-400' : 'text-cyan-400'} />
               </motion.div>
           }
         </AnimatePresence>
 
-        {/* Active ring */}
-        {isActive && (
-          <motion.div
-            className="absolute inset-[-3px] rounded-2xl border border-cyan-400/40"
-            animate={{ opacity: [0.4, 1, 0.4] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
+        {/* Pulse indicator matching ChatBot */}
+        {!isOpen && (
+          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-cyan-400 border-2 border-[#0A0A18] animate-pulse" />
         )}
+        
         {/* Label */}
         {!isOpen && (
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-gray-600 whitespace-nowrap">
+          <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-white/60 whitespace-nowrap tracking-wider">
             JARVIS
           </div>
         )}
@@ -202,12 +202,11 @@ export default function VoiceAssistant() {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -20, scale: 0.94 }}
             transition={{ duration: 0.28, ease: [0.19, 1, 0.22, 1] }}
-            className="fixed bottom-[4.5rem] left-6 z-[70] w-[320px] max-h-[560px] flex flex-col rounded-2xl overflow-hidden"
+            className="fixed bottom-20 left-4 right-4 md:left-6 md:bottom-24 md:right-auto z-[70] md:w-[320px] h-[calc(100vh-120px)] md:h-auto max-h-[calc(100vh-100px)] md:max-h-[560px] flex flex-col rounded-2xl overflow-hidden"
             style={{
-              background: 'rgba(7, 7, 18, 0.97)',
-              border: '1px solid rgba(0,229,255,0.15)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(0,229,255,0.06)',
-              backdropFilter: 'blur(24px)',
+              background: '#080814',
+              border: '1.5px solid rgba(0,229,255,0.25)',
+              boxShadow: '0 24px 64px rgba(0,0,0,0.95), 0 0 50px rgba(0,229,255,0.1), inset 0 1px 0 rgba(255,255,255,0.04)',
             }}
           >
             {/* Header */}
@@ -230,16 +229,20 @@ export default function VoiceAssistant() {
               </div>
               <div className="flex items-center gap-1">
                 <button onClick={() => setShowTips(!showTips)}
-                  className="p-1.5 rounded-lg text-gray-600 hover:text-gray-400 transition-colors">
+                  className="p-1.5 rounded-lg text-white/60 hover:text-white transition-colors">
                   <Info size={12} />
                 </button>
                 <button onClick={() => setMuteVoice(!muteVoice)} title={muteVoice ? 'Unmute voice' : 'Mute voice'}
-                  className="p-1.5 rounded-lg text-gray-600 hover:text-gray-400 transition-colors">
+                  className="p-1.5 rounded-lg text-white/60 hover:text-white transition-colors">
                   {muteVoice ? <VolumeX size={13} /> : <Volume2 size={13} />}
                 </button>
                 <button onClick={va.clearHistory} title="Clear history"
-                  className="p-1.5 rounded-lg text-gray-600 hover:text-gray-400 transition-colors">
+                  className="p-1.5 rounded-lg text-white/60 hover:text-white transition-colors">
                   <RotateCcw size={12} />
+                </button>
+                <button onClick={() => setIsOpen(false)} title="Close Jarvis"
+                  className="md:hidden p-1.5 rounded-lg text-white/60 hover:text-white transition-colors">
+                  <X size={13} />
                 </button>
               </div>
             </div>
@@ -249,18 +252,21 @@ export default function VoiceAssistant() {
               {showTips && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden bg-cyan-500/[0.04] border-b border-white/[0.04]"
+                  className="border-b border-white/[0.06]"
+                  style={{ background: 'rgba(0,229,255,0.04)' }}
                 >
-                  <div className="px-4 py-3 grid grid-cols-2 gap-1.5">
-                    {[
-                      '"Show projects"', '"Go to contact"',
-                      '"View as AI engineer"', '"What are his skills?"',
-                      '"Download resume"', '"Open GitHub"',
-                    ].map((tip) => (
-                      <p key={tip} className="text-[9px] font-mono text-gray-600">
-                        <span className="text-cyan-500/60">›</span> {tip}
-                      </p>
-                    ))}
+                  <div className="px-4 py-3 max-h-[100px] overflow-y-auto no-scrollbar">
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {[
+                        '"Show projects"', '"Go to contact"',
+                        '"View as AI engineer"', '"What are his skills?"',
+                        '"Download resume"', '"Open GitHub"',
+                      ].map((tip) => (
+                        <p key={tip} className="text-[9px] font-mono text-white/80">
+                          <span className="text-cyan-500/60">›</span> {tip}
+                        </p>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -291,7 +297,7 @@ export default function VoiceAssistant() {
                         &ldquo;{va.transcript}&rdquo;
                       </motion.p>
                     ) : (
-                      <p className="text-[10px] text-gray-700 font-mono">
+                      <p className="text-[10px] text-white/60 font-mono">
                         {isListening ? 'Speak now…' : 'Tap orb to activate'}
                       </p>
                     )}
@@ -346,7 +352,7 @@ export default function VoiceAssistant() {
 
                 {/* Messages */}
                 {va.messages.length > 0 && (
-                  <div className="flex-1 overflow-y-auto no-scrollbar px-4 pb-3 space-y-2 max-h-[200px] border-t border-white/[0.05] pt-3">
+                  <div className="flex-1 overflow-y-auto no-scrollbar px-4 pb-3 space-y-2 max-h-[200px] border-t border-white/[0.06] pt-3" style={{ background: 'rgba(8,8,20,1)' }}>
                     {va.messages.slice(-8).map((msg) => (
                       <VoiceMessageBubble key={msg.id} msg={msg} />
                     ))}
@@ -356,7 +362,7 @@ export default function VoiceAssistant() {
                 {/* Suggestions (show when no messages) */}
                 {va.messages.length === 0 && (
                   <div className="px-4 pb-4 border-t border-white/[0.04] pt-3">
-                    <p className="text-[9px] font-mono text-gray-700 uppercase tracking-wider mb-2">Try saying:</p>
+                    <p className="text-[9px] font-mono text-white/60 uppercase tracking-wider mb-2">Try saying:</p>
                     <div className="grid grid-cols-2 gap-1.5">
                       {VOICE_SUGGESTIONS.slice(0, 6).map((s) => (
                         <button
@@ -366,7 +372,7 @@ export default function VoiceAssistant() {
                           style={{ border: '1px solid rgba(255,255,255,0.05)' }}
                         >
                           <span className="text-sm">{s.icon}</span>
-                          <span className="text-[10px] text-gray-500 leading-tight line-clamp-2">{s.text}</span>
+                          <span className="text-[10px] text-white/90 leading-tight line-clamp-2">{s.text}</span>
                         </button>
                       ))}
                     </div>
@@ -376,8 +382,8 @@ export default function VoiceAssistant() {
             )}
 
             {/* Footer */}
-            <div className="px-4 py-2 border-t border-white/[0.04]">
-              <p className="text-[8px] font-mono text-gray-800 text-center">
+            <div className="px-4 py-2 border-t border-white/[0.06]" style={{ background: 'rgba(8,8,20,1)' }}>
+              <p className="text-[8px] font-mono text-white/50 text-center">
                 Voice · RAG AI · Web Speech API · No data stored
               </p>
             </div>

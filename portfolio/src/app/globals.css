@@ -80,6 +80,7 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  scroll-padding-top: 80px;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -182,8 +183,8 @@ img, svg {
 
 .glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   box-shadow: var(--shadow-glass);
@@ -504,30 +505,163 @@ img, svg {
 #custom-cursor-outer,
 #custom-cursor-inner {
   position: fixed;
+  left: 0;
+  top: 0;
   pointer-events: none;
   z-index: 9999;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
   will-change: transform;
 }
 
 /* ============================================================
    RESPONSIVE
    ============================================================ */
-@media (max-width: 768px) {
+
+/* ── Small phones (≤480px) ──────────────────────────────── */
+@media (max-width: 480px) {
+  :root {
+    --section-py: 56px;
+    --container-px: 1rem;
+  }
+
   body { cursor: auto; }
+
   #custom-cursor-outer,
   #custom-cursor-inner { display: none; }
-  :root {
-    --section-py: 80px;
+
+  .section-title {
+    font-size: clamp(1.5rem, 8vw, 2.25rem);
+  }
+
+  .section-header {
+    margin-bottom: 2rem;
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+  }
+
+  .terminal-body {
+    padding: 12px;
+    font-size: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .terminal-titlebar {
+    padding: 8px 12px;
+  }
+
+  .glass-card {
+    border-radius: 12px;
+  }
+
+  /* Bigger touch targets on phone */
+  button, a, [role="button"] {
+    min-height: 40px;
   }
 }
 
+/* ── Standard mobile (≤768px) ───────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --section-py: 64px;
+    --container-px: 1.25rem;
+  }
+
+  body { cursor: auto; }
+
+  #custom-cursor-outer,
+  #custom-cursor-inner { display: none; }
+
+  .section-title {
+    font-size: clamp(1.65rem, 7vw, 2.5rem);
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .terminal-window {
+    max-width: 100%;
+  }
+
+  .section-container {
+    padding: 0 var(--container-px);
+  }
+
+  .glass, .glass-md, .glass-strong, .glass-card {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  /* Make noise overlay less heavy on mobile for perf */
+  .noise-overlay::after {
+    display: none;
+  }
+}
+
+/* ── Tablet (481px – 1024px) ────────────────────────────── */
+@media (min-width: 481px) and (max-width: 1024px) {
+  :root {
+    --section-py: 80px;
+    --container-px: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .section-title {
+    font-size: clamp(1.85rem, 5vw, 3rem);
+  }
+}
+
+/* ── Large desktop (≥1440px) ────────────────────────────── */
+@media (min-width: 1440px) {
+  .section-container {
+    max-width: 1400px;
+  }
+}
+
+/* ── Safe areas for notched devices ─────────────────────── */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* ── Touch device optimizations ─────────────────────────── */
+@media (hover: none) and (pointer: coarse) {
+  body { cursor: auto; }
+
+  #custom-cursor-outer,
+  #custom-cursor-inner { display: none; }
+
+  .glass-card:hover {
+    transform: none;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+  }
+
+  /* Slightly larger touch targets */
+  .glass-card {
+    padding: 1rem;
+  }
+}
+
+/* ── Reduced motion preference ──────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Landscape phones (short height) ────────────────────── */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --section-py: 40px;
   }
 }
 

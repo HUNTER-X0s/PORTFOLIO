@@ -49,7 +49,7 @@ export default function Contact() {
   }
 
   return (
-    <div className="py-32">
+    <div className="py-16 sm:py-24 md:py-32">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           <motion.div
@@ -66,7 +66,7 @@ export default function Contact() {
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-14 items-start">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-start">
             {/* Left — Contact info */}
             <motion.div
               initial={{ opacity: 0, x: -24 }}
@@ -103,7 +103,7 @@ export default function Contact() {
                 <p className="text-xs font-mono text-text-secondary uppercase tracking-widest mb-4">
                   Find me on
                 </p>
-                <div className="flex gap-3">
+                <div className="grid grid-cols-3 sm:flex gap-3">
                   {personalInfo.social.map((s) => {
                     const Icon = socialIcons[s.icon] || Github
                     return (
@@ -149,7 +149,7 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="glass-card p-6 space-y-5">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-mono text-text-secondary uppercase tracking-wide mb-2 block">
+                    <label className="text-xs font-mono text-text-primary/90 uppercase tracking-wide mb-2 block">
                       Name *
                     </label>
                     <input
@@ -158,11 +158,11 @@ export default function Contact() {
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       placeholder="Your name"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-text-primary placeholder-text-tertiary text-sm focus:outline-none focus:border-cyan/30 focus:bg-cyan/[0.02] transition-all font-body"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-text-primary placeholder-white/30 text-sm focus:outline-none focus:border-cyan/30 focus:bg-cyan/[0.02] transition-all font-body"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-mono text-text-secondary uppercase tracking-wide mb-2 block">
+                    <label className="text-xs font-mono text-text-primary/90 uppercase tracking-wide mb-2 block">
                       Email *
                     </label>
                     <input
@@ -171,13 +171,13 @@ export default function Contact() {
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       placeholder="your@email.com"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-text-primary placeholder-text-tertiary text-sm focus:outline-none focus:border-cyan/30 focus:bg-cyan/[0.02] transition-all font-body"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-text-primary placeholder-white/30 text-sm focus:outline-none focus:border-cyan/30 focus:bg-cyan/[0.02] transition-all font-body"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-mono text-text-secondary uppercase tracking-wide mb-2 block">
+                  <label className="text-xs font-mono text-text-primary/90 uppercase tracking-wide mb-2 block">
                     Company / Role (optional)
                   </label>
                   <input
@@ -185,12 +185,12 @@ export default function Contact() {
                     value={form.company}
                     onChange={(e) => setForm({ ...form, company: e.target.value })}
                     placeholder="e.g., Google — Recruiter"
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-text-primary placeholder-text-tertiary text-sm focus:outline-none focus:border-cyan/30 focus:bg-cyan/[0.02] transition-all font-body"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-text-primary placeholder-white/30 text-sm focus:outline-none focus:border-cyan/30 focus:bg-cyan/[0.02] transition-all font-body"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-mono text-text-secondary uppercase tracking-wide mb-2 block">
+                  <label className="text-xs font-mono text-text-primary/90 uppercase tracking-wide mb-2 block">
                     Message *
                   </label>
                   <textarea
@@ -199,7 +199,7 @@ export default function Contact() {
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     placeholder="Tell me about the role, project, or collaboration..."
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-text-primary placeholder-text-tertiary text-sm focus:outline-none focus:border-cyan/30 focus:bg-cyan/[0.02] transition-all resize-none font-body"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-text-primary placeholder-white/30 text-sm focus:outline-none focus:border-cyan/30 focus:bg-cyan/[0.02] transition-all resize-none font-body"
                   />
                 </div>
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ArrowRight, Hash, ExternalLink, Github, Linkedin, Twitter, Code2 } from 'lucide-react'
+import { Search, ArrowRight, Hash, ExternalLink, Github, Linkedin, Twitter, Code2, X } from 'lucide-react'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { navItems, projects, personalInfo } from '@/data/portfolio'
 import { useCommandPalette, useSound } from '@/hooks'
@@ -203,7 +203,7 @@ export default function CommandPalette() {
           />
 
           {/* Panel */}
-          <div className="fixed inset-0 z-[201] flex items-start justify-center pt-[15vh] px-4">
+          <div className="fixed inset-0 z-[201] flex items-start justify-center pt-[5vh] sm:pt-[15vh] px-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.94, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -223,13 +223,17 @@ export default function CommandPalette() {
                   placeholder="Search anything..."
                   className="flex-1 bg-transparent text-text-primary placeholder-text-secondary outline-none text-sm font-body"
                 />
-                <kbd className="hidden sm:flex items-center gap-1 px-2 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-xs text-text-secondary font-mono">
-                  ESC
-                </kbd>
+                <button
+                  onClick={() => { setOpen(false); playClick() }}
+                  className="flex items-center justify-center p-1.5 rounded-lg border border-white/[0.08] hover:border-white/[0.18] bg-white/[0.05] hover:bg-white/[0.1] text-text-secondary hover:text-text-primary active:scale-[0.95] transition-all"
+                  title="Close (ESC)"
+                >
+                  <X size={15} />
+                </button>
               </div>
 
               {/* Results */}
-              <div className="max-h-[420px] overflow-y-auto no-scrollbar p-2">
+              <div className="max-h-[220px] sm:max-h-[420px] overflow-y-auto no-scrollbar p-2">
                 {filtered.length === 0 ? (
                   <div className="py-12 text-center text-text-secondary text-sm">
                     No results for &ldquo;{query}&rdquo;
@@ -246,7 +250,7 @@ export default function CommandPalette() {
 
               {/* Footer hint */}
               <div className="px-4 py-2.5 border-t border-white/[0.05] flex items-center justify-between">
-                <div className="flex items-center gap-4 text-xs text-text-secondary font-mono">
+                <div className="hidden sm:flex items-center gap-4 text-xs text-text-secondary font-mono">
                   <span className="flex items-center gap-1.5">
                     <kbd className="px-1.5 py-0.5 rounded bg-white/[0.05] border border-white/[0.08]">↑↓</kbd>
                     Navigate
@@ -256,7 +260,7 @@ export default function CommandPalette() {
                     Select
                   </span>
                 </div>
-                <span className="text-xs text-text-secondary font-mono">
+                <span className="text-xs text-text-secondary font-mono ml-auto sm:ml-0">
                   {filtered.length} results
                 </span>
               </div>

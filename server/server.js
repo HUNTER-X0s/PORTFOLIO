@@ -33,15 +33,15 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio
   .catch((err) => console.error('❌ MongoDB error:', err.message))
 
 // ── Routes ────────────────────────────────────────────────────
-app.use('/api/auth',           require('./routes/auth'))
-app.use('/api/projects',       require('./routes/projects'))
-app.use('/api/blogs',          require('./routes/blogs'))
-app.use('/api/contact',        require('./routes/contact'))
-app.use('/api/resume',         require('./routes/resume'))
-app.use('/api/certifications', require('./routes/certifications'))
-app.use('/api/experience',     require('./routes/experience'))
-app.use('/api/github',         require('./routes/github'))
-app.use('/api/admin',          require('./routes/admin'))
+// app.use('/api/auth',           require('./routes/auth'))
+// app.use('/api/projects',       require('./routes/projects'))
+// app.use('/api/blogs',          require('./routes/blogs'))
+// app.use('/api/contact',        require('./routes/contact'))
+// app.use('/api/resume',         require('./routes/resume'))
+// app.use('/api/certifications', require('./routes/certifications'))
+// app.use('/api/experience',     require('./routes/experience'))
+// app.use('/api/github',         require('./routes/github'))
+// app.use('/api/admin',          require('./routes/admin'))
 
 // ── Health ────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }))

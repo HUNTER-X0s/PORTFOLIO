@@ -75,7 +75,7 @@ export default function MusicModal() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 16, scale: 0.95 }}
           transition={{ duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
-          className="fixed bottom-24 left-6 z-[80] max-w-xs"
+          className="fixed bottom-20 left-4 right-4 md:right-auto md:left-6 md:bottom-24 z-[80] w-auto md:w-80 md:max-w-xs"
         >
           <div className="glass-strong rounded-2xl border border-cyan/20 p-5 shadow-glass-lg">
             {/* Header */}

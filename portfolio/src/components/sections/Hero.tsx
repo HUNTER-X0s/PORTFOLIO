@@ -59,7 +59,7 @@ function Terminal({ lines, active }: { lines: string[]; active: boolean }) {
         <div className="terminal-dot terminal-dot-yellow" />
         <div className="terminal-dot terminal-dot-green" />
         <span className="ml-3 text-xs text-text-secondary font-mono flex-1 text-center">
-          anurag@portfolio ~ zsh
+          Anurag@portfolio ~ zsh
         </span>
       </div>
 
@@ -107,16 +107,33 @@ function RoleBadge({ role, index }: { role: typeof roles[0]; index: number }) {
 }
 
 export default function Hero() {
-  const { activeRole, setActiveRole } = usePortfolioStore()
+  const activeRole = usePortfolioStore((s) => s.activeRole)
+  const setActiveRole = usePortfolioStore((s) => s.setActiveRole)
   const { playClick } = useSound()
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const { scrollYProgress } = useScroll({ target: containerRef })
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, -80])
+  const { scrollY } = useScroll()
+  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0])
+  const heroY = useTransform(scrollY, [0, 300], [0, -80])
 
   const content = roleContents[activeRole] || roleContents['fullstack']
-  const currentRole = roles.find((r) => r.id === activeRole)!
+  const currentRole = roles.find((r) => r.id === activeRole) || roles.find((r) => r.id === 'fullstack') || roles[0]
+
+  // Dynamically reduce font size for long headlines to prevent bad wrapping
+  const headlineLen = (content.hero.headline + content.hero.subheadline).length
+  const headlineSizeClass =
+    headlineLen > 50
+      ? 'text-4xl sm:text-5xl lg:text-[3.25rem]'
+      : headlineLen > 35
+      ? 'text-4xl sm:text-5xl lg:text-6xl'
+      : 'text-5xl sm:text-6xl lg:text-7xl'
+
+  const subheadlineSizeClass =
+    headlineLen > 50
+      ? 'text-2xl sm:text-3xl lg:text-[2.25rem]'
+      : headlineLen > 35
+      ? 'text-3xl sm:text-4xl lg:text-[2.75rem]'
+      : 'text-4xl sm:text-5xl lg:text-[3.5rem]'
 
   const handleScroll = (id: string) => {
     const el = document.getElementById(id)
@@ -128,7 +145,7 @@ export default function Hero() {
     <motion.div
       ref={containerRef}
       style={{ opacity: heroOpacity, y: heroY }}
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-24 pb-16"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-20 sm:pb-16 px-0"
     >
       {/* HUD scan line */}
       <div
@@ -142,7 +159,7 @@ export default function Hero() {
       </div>
 
       <div className="section-container w-full">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-8 items-center">
           {/* Left — Main Content */}
           <div className="space-y-8">
             {/* Status badge */}
@@ -166,7 +183,7 @@ export default function Hero() {
                 transition={{ duration: 0.7, delay: 0.35, ease: [0.19, 1, 0.22, 1] }}
               >
                 <p className="section-label" style={{ marginBottom: '0.5rem' }}>
-                  {personalInfo.firstName} {personalInfo.lastName} · B.Tech CS @ GCEK
+                  {personalInfo.firstName} {personalInfo.lastName} · B.Tech CSE @ GCEK
                 </p>
               </motion.div>
 
@@ -175,10 +192,10 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 32 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
-                className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight"
+                className="font-display font-bold leading-[1.1] tracking-tight"
               >
-                <span className="block text-text-primary">{content.hero.headline}</span>
-                <span className="block text-gradient mt-1">{content.hero.subheadline}</span>
+                <span className={cn("block text-text-primary", headlineSizeClass)}>{content.hero.headline}</span>
+                <span className={cn("block text-gradient mt-2", subheadlineSizeClass)}>{content.hero.subheadline}</span>
               </motion.h1>
             </div>
 
@@ -188,7 +205,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="text-text-secondary text-lg leading-relaxed max-w-xl"
+              className="text-text-secondary text-base sm:text-lg leading-relaxed max-w-xl"
             >
               {content.hero.description}
             </motion.p>
@@ -198,13 +215,13 @@ export default function Hero() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.55 }}
-              className="flex flex-wrap items-center gap-3"
+              className="flex flex-wrap items-center gap-2 sm:gap-3"
             >
               <motion.button
                 onClick={() => handleScroll('projects')}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="relative group flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm overflow-hidden btn-glow"
+                className="relative group flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm overflow-hidden btn-glow"
                 style={{
                   background: 'linear-gradient(135deg, rgba(0,229,255,0.15), rgba(124,58,237,0.15))',
                   border: '1px solid rgba(0,229,255,0.35)',
@@ -223,7 +240,7 @@ export default function Hero() {
                 onClick={() => playClick()}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-text-secondary border border-white/[0.09] glass hover:border-white/20 hover:text-text-primary transition-all"
+                className="flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm text-text-secondary border border-white/[0.09] glass hover:border-white/20 hover:text-text-primary transition-all"
               >
                 <Download size={15} />
                 Resume
@@ -251,7 +268,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.75 }}
-              className="flex items-center gap-8 pt-2"
+              className="flex items-center gap-4 sm:gap-6 md:gap-8 pt-2 overflow-x-auto no-scrollbar pb-1"
             >
               {[
                 { label: 'Projects', value: '6+', color: '#00E5FF' },
@@ -259,7 +276,7 @@ export default function Hero() {
                 { label: 'Stars', value: '3', color: '#FF6B2B' },
                 { label: 'Commits', value: '200+', color: '#00FF87' },
               ].map((stat) => (
-                <div key={stat.label} className="text-center">
+                <div key={stat.label} className="text-center flex-shrink-0">
                   <div
                     className="font-display font-bold text-xl"
                     style={{ color: stat.color }}
@@ -277,7 +294,7 @@ export default function Hero() {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
-            className="flex flex-col items-center lg:items-end gap-6"
+            className="flex flex-col items-center lg:items-end gap-4 sm:gap-6 w-full"
           >
             {/* Role selector hint */}
             <div className="w-full max-w-lg">
@@ -304,26 +321,46 @@ export default function Hero() {
             </div>
 
             {/* Role pills */}
-            <div className="w-full max-w-lg">
+            <div className="w-full max-w-lg relative z-20">
               <p className="text-xs font-mono text-text-secondary mb-3">
-                {/* change status based on selected role */}  
+                Switch perspective :
               </p>
               <div className="flex flex-wrap gap-2">
-                {roles.filter((r) => r.id !== activeRole).slice(0, 6).map((role, i) => (
-                  <motion.button
-                    key={role.id}
-                    onClick={() => { setActiveRole(role.id); playClick() }}
-                    whileHover={{ scale: 1.04, y: -1 }}
-                    whileTap={{ scale: 0.97 }}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 + i * 0.06 }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium glass border border-white/[0.07] text-text-secondary hover:border-cyan/20 hover:text-text-primary transition-all"
-                  >
-                    <span>{role.icon}</span>
-                    <span>{role.shortLabel}</span>
-                  </motion.button>
-                ))}
+                {roles.map((role, i) => {
+                  const isActive = role.id === activeRole
+                  
+                  return (
+                    <motion.button
+                      key={role.id}
+                      onClick={() => {
+                        if (activeRole !== role.id) {
+                          setActiveRole(role.id)
+                        }
+                        playClick()
+                      }}
+                      whileHover={{ scale: 1.04, y: -1 }}
+                      whileTap={{ scale: 0.97 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8 + i * 0.06 }}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                        isActive
+                          ? "" // Inline styles applied for active color
+                          : "glass border border-white/[0.07] text-text-secondary hover:border-cyan/20 hover:text-text-primary"
+                      )}
+                      style={isActive ? {
+                        background: `color-mix(in srgb, ${role.color} 15%, transparent)`,
+                        border: `1px solid color-mix(in srgb, ${role.color} 40%, transparent)`,
+                        color: role.color,
+                        boxShadow: `0 0 12px color-mix(in srgb, ${role.color} 20%, transparent)`,
+                      } : {}}
+                    >
+                      <span>{role.icon}</span>
+                      <span>{role.shortLabel}</span>
+                    </motion.button>
+                  )
+                })}
               </div>
             </div>
           </motion.div>
@@ -335,7 +372,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
+        className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
         onClick={() => handleScroll('about')}
       >
         <span className="text-xs font-mono text-text-secondary tracking-widest uppercase">Scroll</span>

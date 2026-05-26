@@ -134,15 +134,18 @@ function FloatingOrb({ position, color, size = 1.2, speed = 0.4 }: {
 }
 
 export default function ParticleField() {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+
   return (
     <Canvas
       camera={{ position: [0, 0, 10], fov: 65 }}
       gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
-      dpr={[1, 1.5]}
+      dpr={isMobile ? [1, 1] : [1, 1.5]}
+      frameloop="always"
       style={{ background: 'transparent' }}
     >
-      <Particles count={1600} />
-      <NeuralLines count={70} />
+      <Particles count={isMobile ? 600 : 1600} />
+      <NeuralLines count={isMobile ? 25 : 70} />
       <FloatingOrb position={[-6, 3, -4]} color="#00E5FF" size={2.5} speed={0.3} />
       <FloatingOrb position={[7, -2, -6]} color="#7C3AED" size={3} speed={0.2} />
       <FloatingOrb position={[2, 5, -8]} color="#FF6B2B" size={2} speed={0.35} />

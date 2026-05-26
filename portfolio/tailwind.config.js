@@ -52,10 +52,10 @@ module.exports = {
           hover: 'rgba(255, 255, 255, 0.12)',
         },
         text: {
-          primary: '#F0F0FF',
-          secondary: '#8B8BA7',
-          tertiary: '#4B4B6A',
-          muted: '#2E2E4A',
+          primary: '#FFFFFF',
+          secondary: '#E2E8F0',
+          tertiary: '#94A3B8',
+          muted: '#64748B',
         },
       },
       fontFamily: {

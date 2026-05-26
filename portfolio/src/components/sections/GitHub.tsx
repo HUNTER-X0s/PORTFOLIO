@@ -35,7 +35,7 @@ export default function GitHub() {
   const { ref, inView } = useInView(0.1)
 
   return (
-    <div className="py-32">
+    <div className="py-16 sm:py-24 md:py-32">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           <motion.div
@@ -57,7 +57,7 @@ export default function GitHub() {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.2 }}
-            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-10"
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mb-10"
           >
             <StatCard label="Public Repos" value={githubStats.publicRepos} icon={Github} color="#00E5FF" />
             <StatCard label="Total Stars" value={githubStats.totalStars} icon={Star} color="#FFE500" />
@@ -67,7 +67,7 @@ export default function GitHub() {
           </motion.div>
 
           {/* Languages + Streak */}
-          <div className="grid lg:grid-cols-2 gap-6 mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 mb-10">
             {/* Top Languages */}
             <motion.div
               initial={{ opacity: 0, x: -24 }}
@@ -174,7 +174,7 @@ export default function GitHub() {
             <h3 className="font-display font-semibold text-text-primary mb-5">
               Contribution Graph
             </h3>
-            <div className="overflow-x-auto no-scrollbar">
+            <div className="overflow-x-auto no-scrollbar -mx-2 px-2 pb-2">
               <GitHubCalendar
                 username={githubStats.username}
                 colorScheme="dark"

@@ -9,7 +9,7 @@ export default function Blog() {
   const { ref, inView } = useInView(0.1)
 
   return (
-    <div className="py-32">
+    <div className="py-16 sm:py-24 md:py-32">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           <motion.div

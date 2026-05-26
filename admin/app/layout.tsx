@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, FolderCode, FileText, MessageSquare,
-  FileUser, Award, LogOut, Menu, X, ChevronRight,
+  Award, LogOut, Menu, X, ChevronRight,
   Bell, Settings, User
 } from 'lucide-react'
 import { useAuthStore } from '@/lib/auth'
@@ -17,7 +17,7 @@ const NAV_ITEMS = [
   { href: '/projects',         label: 'Projects',        icon: FolderCode,      color: '#7C3AED' },
   { href: '/blogs',            label: 'Blog Posts',      icon: FileText,        color: '#00FF87' },
   { href: '/messages',         label: 'Messages',        icon: MessageSquare,   color: '#FFE500' },
-  { href: '/resumes',          label: 'Resumes',         icon: FileUser,        color: '#FF6B2B' },
+  { href: '/resumes',          label: 'Resumes',         icon: User,            color: '#FF6B2B' },
   { href: '/certifications',   label: 'Certifications',  icon: Award,           color: '#FF2D9C' },
 ]
 
@@ -110,47 +110,56 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [collapsed, setCollapsed] = useState(false)
   const pathname = usePathname()
 
-  if (pathname === '/login') return <>{children}<Toaster /></>
-
   const sidebarW = collapsed ? 64 : 240
 
   return (
-    <div className="min-h-screen" style={{ background: '#080814' }}>
-      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
+    <html lang="en">
+      <body style={{ margin: 0, background: '#080814', color: '#F0F0FF' }}>
+        {pathname === '/login' ? (
+          <>
+            {children}
+            <Toaster />
+          </>
+        ) : (
+          <div className="min-h-screen" style={{ background: '#080814' }}>
+            <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
 
-      {/* Main area */}
-      <motion.main
-        animate={{ marginLeft: sidebarW }}
-        transition={{ duration: 0.25, ease: [0.19, 1, 0.22, 1] }}
-        className="min-h-screen"
-      >
-        {/* Top bar */}
-        <header className="sticky top-0 z-30 flex items-center justify-between px-6 h-16 border-b border-white/[0.06]" style={{ background: 'rgba(8,8,20,0.95)', backdropFilter: 'blur(16px)' }}>
-          <div className="flex items-center gap-2 text-sm text-gray-500 font-mono">
-            <span className="text-cyan-400">~/admin</span>
-            {pathname.split('/').filter(Boolean).map((seg, i, arr) => (
-              <span key={seg} className="flex items-center gap-2">
-                <ChevronRight size={12} />
-                <span className={i === arr.length - 1 ? 'text-white' : ''}>{seg}</span>
-              </span>
-            ))}
+            {/* Main area */}
+            <motion.main
+              animate={{ marginLeft: sidebarW }}
+              transition={{ duration: 0.25, ease: [0.19, 1, 0.22, 1] }}
+              className="min-h-screen"
+            >
+              {/* Top bar */}
+              <header className="sticky top-0 z-30 flex items-center justify-between px-6 h-16 border-b border-white/[0.06]" style={{ background: 'rgba(8,8,20,0.95)', backdropFilter: 'blur(16px)' }}>
+                <div className="flex items-center gap-2 text-sm text-gray-500 font-mono">
+                  <span className="text-cyan-400">~/admin</span>
+                  {pathname.split('/').filter(Boolean).map((seg, i, arr) => (
+                    <span key={seg} className="flex items-center gap-2">
+                      <ChevronRight size={12} />
+                      <span className={i === arr.length - 1 ? 'text-white' : ''}>{seg}</span>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-white/[0.05] transition-all">
+                    <Bell size={16} />
+                  </button>
+                  <button className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-white/[0.05] transition-all">
+                    <Settings size={16} />
+                  </button>
+                </div>
+              </header>
+
+              <div className="p-6">{children}</div>
+            </motion.main>
+
+            <Toaster position="top-right" toastOptions={{
+              style: { background: '#0f0f22', border: '1px solid rgba(255,255,255,0.1)', color: '#F0F0FF', fontSize: '13px' },
+            }} />
           </div>
-          <div className="flex items-center gap-2">
-            <button className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-white/[0.05] transition-all">
-              <Bell size={16} />
-            </button>
-            <button className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-white/[0.05] transition-all">
-              <Settings size={16} />
-            </button>
-          </div>
-        </header>
-
-        <div className="p-6">{children}</div>
-      </motion.main>
-
-      <Toaster position="top-right" toastOptions={{
-        style: { background: '#0f0f22', border: '1px solid rgba(255,255,255,0.1)', color: '#F0F0FF', fontSize: '13px' },
-      }} />
-    </div>
+        )}
+      </body>
+    </html>
   )
 }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
@@ -13,7 +14,7 @@ import { generateId } from '@/lib/utils'
 import { roles } from '@/data/portfolio'
 
 // ── Config ────────────────────────────────────────────────────
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
+const API_URL = process.env.NEXT_PUBLIC_CHATBOT_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
 const API_TIMEOUT = 30_000
 
 // ── Suggested prompts ─────────────────────────────────────────
@@ -94,7 +95,7 @@ function MessageBubble({
 
       <div className="max-w-[84%] space-y-1.5">
         <div
-          className="px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed"
+          className="px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words overflow-hidden"
           style={isUser ? {
             background: 'linear-gradient(135deg, rgba(0,229,255,0.14), rgba(124,58,237,0.14))',
             border: '1px solid rgba(0,229,255,0.2)',
@@ -137,27 +138,81 @@ function MessageBubble({
 
 // ── Typing indicator ──────────────────────────────────────────
 function TypingIndicator() {
+  const thinkingTexts = ['Thinking', 'Analyzing', 'Searching knowledge']
+  const [textIdx, setTextIdx] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTextIdx((prev) => (prev + 1) % thinkingTexts.length)
+    }, 2400)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <div className="flex gap-2.5 justify-start">
-      <div className="w-6 h-6 rounded-lg bg-cyan/10 border border-cyan/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-        <Bot size={11} className="text-cyan" />
-      </div>
-      <div
-        className="px-4 py-3 rounded-2xl rounded-bl-sm"
-        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
-      >
-        <div className="flex gap-1.5 items-center h-4">
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className="w-1.5 h-1.5 rounded-full"
-              style={{ background: '#00E5FF', opacity: 0.5 }}
-              animate={{ y: [0, -5, 0], opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 0.65, delay: i * 0.14, repeat: Infinity }}
-            />
-          ))}
+      {/* Bot avatar with pulse ring */}
+      <div className="relative flex-shrink-0 mt-0.5">
+        <motion.div
+          className="absolute inset-0 rounded-lg"
+          style={{ background: 'rgba(0,229,255,0.15)' }}
+          animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <div className="w-6 h-6 rounded-lg bg-cyan/10 border border-cyan/20 flex items-center justify-center relative z-10">
+          <Bot size={11} className="text-cyan" />
         </div>
       </div>
+
+      {/* Thinking bubble */}
+      <motion.div
+        className="px-4 py-3 rounded-2xl rounded-bl-sm"
+        style={{
+          background: 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(0,229,255,0.15)',
+          boxShadow: '0 0 20px rgba(0,229,255,0.05)',
+        }}
+        animate={{ borderColor: ['rgba(0,229,255,0.15)', 'rgba(0,229,255,0.3)', 'rgba(0,229,255,0.15)'] }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <div className="flex items-center gap-2.5">
+          {/* Waving dots */}
+          <div className="flex gap-1 items-center h-4">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                className="w-[5px] h-[5px] rounded-full"
+                style={{ background: '#00E5FF' }}
+                animate={{
+                  y: [0, -6, 0],
+                  scale: [1, 1.3, 1],
+                  opacity: [0.4, 1, 0.4],
+                }}
+                transition={{
+                  duration: 0.8,
+                  delay: i * 0.15,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Animated text label */}
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={textIdx}
+              className="text-[10px] font-mono tracking-wide"
+              style={{ color: 'rgba(0,229,255,0.7)' }}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.3 }}
+            >
+              {thinkingTexts[textIdx]}…
+            </motion.span>
+          </AnimatePresence>
+        </div>
+      </motion.div>
     </div>
   )
 }
@@ -346,6 +401,11 @@ export default function ChatBot() {
         {!isChatOpen && (
           <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-cyan border-2 border-surface-1 animate-pulse" />
         )}
+        {!isChatOpen && (
+          <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-white/60 whitespace-nowrap tracking-wider">
+            NEXUS
+          </div>
+        )}
       </motion.button>
 
       {/* Chat Window */}
@@ -356,7 +416,7 @@ export default function ChatBot() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.88, y: 20 }}
             transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
-            className="fixed bottom-24 right-6 z-[70] w-[380px] max-h-[580px] flex flex-col rounded-2xl overflow-hidden"
+            className="fixed bottom-24 right-6 z-[70] w-[380px] h-[580px] max-h-[80vh] flex flex-col rounded-2xl overflow-hidden"
             style={{
               background: 'rgba(8, 8, 20, 0.97)',
               border: '1px solid rgba(0,229,255,0.2)',
@@ -381,33 +441,30 @@ export default function ChatBot() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <p className="text-[10px] text-text-secondary">Anurag Swain&apos;s AI</p>
+                    <p className="text-[10px] text-text-secondary">Anurag Portfolio AI</p>
                     <ConnectionBadge connected={connected} />
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                {sessionId && (
+                <div className="flex items-center gap-1.5">
+                  {chatMessages.length > 1 && (
+                      <button
+                        onClick={() => { clearChat(); setSessionId(null); playClick() }}
+                        className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/[0.05] transition-all"
+                        title="Clear history"
+                      >
+                        <RotateCcw size={12} />
+                      </button>
+                  )}
                   <button
-                    onClick={() => { clearChat(); setSessionId(null); playClick() }}
+                    onClick={() => { setChatOpen(false); playClick() }}
                     className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/[0.05] transition-all"
-                    title="Clear conversation"
+                    title="Close chat"
                   >
-                    <RotateCcw size={12} />
+                    <X size={12} />
                   </button>
-                )}
-              </div>
+                </div>
             </div>
-
-            {/* Role context strip */}
-            {currentRole && (
-              <div className="flex items-center gap-2 px-4 py-2 border-b border-white/[0.04] bg-white/[0.015]">
-                <span className="text-xs">{currentRole.icon}</span>
-                <span className="text-[10px] font-mono text-text-tertiary">
-                  Context: {currentRole.label} candidate
-                </span>
-              </div>
-            )}
 
             {/* Messages */}
             <div

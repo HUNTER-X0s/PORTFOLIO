@@ -18,7 +18,7 @@ export default function Analytics() {
   }
 
   return (
-    <div className="py-32">
+    <div className="py-16 sm:py-24 md:py-32">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           <motion.div
@@ -32,7 +32,7 @@ export default function Analytics() {
             </h2>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-10">
             {/* Certifications */}
             <div>
               <h3 className="font-display font-semibold text-text-primary mb-6 flex items-center gap-2">
@@ -131,7 +131,7 @@ export default function Analytics() {
                   {githubStats.topLanguages.map((lang, i) => (
                     <div key={lang.name} className="flex items-center gap-3">
                       <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: lang.color }} />
-                      <span className="text-sm text-text-primary w-28 flex-shrink-0">{lang.name}</span>
+                      <span className="text-sm text-text-primary w-20 sm:w-28 flex-shrink-0">{lang.name}</span>
                       <div className="flex-1 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
                         <motion.div
                           initial={{ scaleX: 0 }}

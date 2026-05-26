@@ -9,6 +9,11 @@ import uvicorn
 from dotenv import load_dotenv
 from pathlib import Path
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8')
+
 load_dotenv()
 
 logging.basicConfig(
@@ -16,7 +21,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler("chatbot.log"),
+        logging.FileHandler("chatbot.log", encoding="utf-8"),
     ],
 )
 
@@ -87,6 +92,7 @@ if __name__ == "__main__":
         host=host,
         port=port,
         reload=(env == "development"),
+        reload_dirs=["api", "rag"],
         log_level="info",
         access_log=True,
     )

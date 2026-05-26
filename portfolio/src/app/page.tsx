@@ -1,34 +1,39 @@
 'use client'
 
 import { useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { personalInfo } from '@/data/portfolio'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { useActiveSection } from '@/hooks'
 
-// Layout
-import CustomCursor from '@/components/layout/CustomCursor'
+// Layout (Static)
 import Navbar from '@/components/layout/Navbar'
-import CommandPalette from '@/components/layout/CommandPalette'
-import MusicModal from '@/components/layout/MusicModal'
 import ScrollProgress from '@/components/layout/ScrollProgress'
+import Footer from '@/components/layout/Footer'
 
-// Background
-import ParticleField from '@/components/three/ParticleField'
+// Dynamic Component Imports (SSR-disabled for performance & code-splitting)
+const CustomCursor = dynamic(() => import('@/components/layout/CustomCursor'), { ssr: false })
+const CommandPalette = dynamic(() => import('@/components/layout/CommandPalette'), { ssr: false })
+const MusicModal = dynamic(() => import('@/components/layout/MusicModal'), { ssr: false })
+const ParticleField = dynamic(() => import('@/components/three/ParticleField'), { ssr: false })
 
-// Sections
+// Hero is above the fold — keep statically imported for FCP
 import Hero from '@/components/sections/Hero'
-import About from '@/components/sections/About'
-import Skills from '@/components/sections/Skills'
-import Projects from '@/components/sections/Projects'
-import Experience from '@/components/sections/Experience'
-import GitHub from '@/components/sections/GitHub'
-import ValueProp from '@/components/sections/ValueProp'
-import Analytics from '@/components/sections/Analytics'
-import Blog from '@/components/sections/Blog'
-import Contact from '@/components/sections/Contact'
 
-// AI Chatbot
-import ChatBot from '@/components/ai/ChatBot'
+// Below-fold sections stay code-split, but still server-render for crawlable HTML.
+const About = dynamic(() => import('@/components/sections/About'))
+const Skills = dynamic(() => import('@/components/sections/Skills'))
+const Projects = dynamic(() => import('@/components/sections/Projects'))
+const Experience = dynamic(() => import('@/components/sections/Experience'))
+const GitHub = dynamic(() => import('@/components/sections/GitHub'))
+const ValueProp = dynamic(() => import('@/components/sections/ValueProp'))
+const Analytics = dynamic(() => import('@/components/sections/Analytics'))
+const Blog = dynamic(() => import('@/components/sections/Blog'))
+const Contact = dynamic(() => import('@/components/sections/Contact'))
+
+// AI Chatbot & Voice Assistant (Dynamically Loaded)
+const ChatBot = dynamic(() => import('@/components/ai/ChatBot'), { ssr: false })
+const VoiceAssistant = dynamic(() => import('@/components/voice/VoiceAssistant'), { ssr: false })
 
 const SECTION_IDS = [
   'hero',
@@ -106,71 +111,53 @@ export default function HomePage() {
           </div>
 
           {/* Page Sections */}
-          <section id="hero">
+          <section id="hero" style={{ scrollMarginTop: '72px' }}>
             <Hero />
           </section>
 
-          <section id="about">
+          <section id="about" style={{ scrollMarginTop: '72px' }}>
             <About />
           </section>
 
-          <section id="skills">
+          <section id="skills" style={{ scrollMarginTop: '72px' }}>
             <Skills />
           </section>
 
-          <section id="projects">
+          <section id="projects" style={{ scrollMarginTop: '72px' }}>
             <Projects />
           </section>
 
-          <section id="experience">
+          <section id="experience" style={{ scrollMarginTop: '72px' }}>
             <Experience />
           </section>
 
-          <section id="github">
+          <section id="github" style={{ scrollMarginTop: '72px' }}>
             <GitHub />
           </section>
 
-          <section id="value">
+          <section id="value" style={{ scrollMarginTop: '72px' }}>
             <ValueProp />
           </section>
 
-          <section id="analytics">
+          <section id="analytics" style={{ scrollMarginTop: '72px' }}>
             <Analytics />
           </section>
 
-          <section id="blog">
+          <section id="blog" style={{ scrollMarginTop: '72px' }}>
             <Blog />
           </section>
 
-          <section id="contact">
+          <section id="contact" style={{ scrollMarginTop: '72px' }}>
             <Contact />
           </section>
         </main>
 
-        {/* Footer */}
-        <footer className="relative z-10 border-t border-white/[0.05] py-8">
-          <div className="section-container flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="font-mono text-sm text-text-secondary">
-              <span className="text-cyan">{'>'}</span>{' '}
-              <span className="text-text-primary font-semibold">{personalInfo.name}</span> — Crafted with
-              Next.js, Three.js & ♥
-            </p>
-            <div className="flex items-center gap-6 text-sm text-text-secondary">
-              <span className="font-mono">v1.0.0</span>
-              <span>·</span>
-              <a
-                href={`mailto:${personalInfo.email}`}
-                className="hover:text-cyan transition-colors duration-200"
-              >
-                {personalInfo.email}
-              </a>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
 
-      {/* Floating AI Chatbot */}
+      {/* Floating AI Chatbot & Voice Assistant */}
       <ChatBot />
+      <VoiceAssistant />
     </>
   )
 }

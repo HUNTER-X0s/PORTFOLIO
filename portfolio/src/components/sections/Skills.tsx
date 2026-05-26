@@ -89,7 +89,7 @@ export default function Skills() {
   }))
 
   return (
-    <div className="py-32">
+    <div className="py-16 sm:py-24 md:py-32">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           {/* Header */}
@@ -151,7 +151,7 @@ export default function Skills() {
               initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: 0.3 }}
-              className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 lg:w-48"
+              className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 lg:w-48 no-scrollbar snap-x snap-mandatory"
             >
               {skillGroups.map((group) => (
                 <CategoryTab
