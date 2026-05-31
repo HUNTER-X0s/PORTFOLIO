@@ -37,6 +37,25 @@ const STATUS_COLOR: Record<string, string> = {
 // ── Message bubble ────────────────────────────────────────────
 function VoiceMessageBubble({ msg }: { msg: { role: string; text: string; timestamp: Date; actionTaken?: string } }) {
   const isUser = msg.role === 'user'
+  
+  // Render **bold** and bullet formatting
+  const formatContent = (text: string) => {
+    const lines = text.split('\n')
+    return lines.map((line, lineIdx) => {
+      const parts = line.split(/(\*\*[^*]+\*\*)/g)
+      const formatted = parts.map((part, i) =>
+        part.startsWith('**') && part.endsWith('**')
+          ? <strong key={i} className="text-cyan-400 font-semibold">{part.slice(2, -2)}</strong>
+          : <span key={i}>{part}</span>
+      )
+      return (
+        <span key={lineIdx} className="block mb-1 last:mb-0">
+          {formatted}
+        </span>
+      )
+    })
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -50,7 +69,7 @@ function VoiceMessageBubble({ msg }: { msg: { role: string; text: string; timest
       )}
       <div className="max-w-[88%] space-y-1">
         <div
-          className="px-3 py-2 rounded-xl text-xs leading-relaxed"
+          className="px-3 py-2 rounded-xl text-xs leading-relaxed whitespace-pre-wrap break-words"
           style={isUser ? {
             background: 'linear-gradient(135deg, rgba(0,229,255,0.12), rgba(124,58,237,0.12))',
             border: '1px solid rgba(0,229,255,0.18)',
@@ -63,7 +82,7 @@ function VoiceMessageBubble({ msg }: { msg: { role: string; text: string; timest
             borderBottomLeftRadius: '4px',
           }}
         >
-          {msg.text}
+          {isUser ? msg.text : formatContent(msg.text)}
         </div>
         {!isUser && msg.actionTaken && msg.actionTaken !== 'RAG query' && (
           <p className="text-[9px] font-mono px-1" style={{ color: 'rgba(0,229,255,0.5)' }}>
