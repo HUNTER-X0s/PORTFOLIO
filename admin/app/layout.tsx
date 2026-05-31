@@ -1,7 +1,9 @@
 'use client'
+import './globals.css'
 
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, FolderCode, FileText, MessageSquare,
@@ -44,7 +46,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
             </motion.div>
           )}
         </AnimatePresence>
-        <button onClick={onToggle} className="p-1.5 rounded-lg text-gray-500 hover:text-white hover:bg-white/[0.05] transition-all ml-auto">
+        <button onClick={onToggle} className="p-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/[0.05] transition-all ml-auto">
           {collapsed ? <Menu size={16} /> : <X size={16} />}
         </button>
       </div>
@@ -55,27 +57,45 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           const Icon = item.icon
           const active = pathname.startsWith(item.href)
           return (
-            <motion.a
-              key={item.href}
-              href={item.href}
-              whileHover={{ x: 2 }}
-              className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative',
-                active ? 'text-white' : 'text-gray-500 hover:text-gray-300 hover:bg-white/[0.04]'
-              )}
-              style={active ? { background: `${item.color}12`, border: `1px solid ${item.color}20` } : {}}
-              title={collapsed ? item.label : undefined}
-            >
-              <Icon size={16} style={{ color: active ? item.color : undefined, flexShrink: 0 }} />
-              <AnimatePresence>
-                {!collapsed && (
-                  <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-sm font-medium whitespace-nowrap">
-                    {item.label}
-                  </motion.span>
+            <Link key={item.href} href={item.href} passHref legacyBehavior>
+              <motion.a
+                whileHover={{ x: 2 }}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl group relative"
+                style={active
+                  ? { background: `${item.color}12`, border: `1px solid ${item.color}20` }
+                  : { border: '1px solid transparent' }
+                }
+                title={collapsed ? item.label : undefined}
+              >
+                {/* hover bg — only this transitions */}
+                {!active && (
+                  <span className="absolute inset-0 rounded-xl bg-white/0 group-hover:bg-white/[0.04] transition-colors duration-150 pointer-events-none" />
                 )}
-              </AnimatePresence>
-              {active && <motion.div layoutId="active-pill" className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full" style={{ background: item.color }} />}
-            </motion.a>
+                <Icon size={16} style={{ color: active ? item.color : undefined, flexShrink: 0 }}
+                  className={active ? '' : 'text-gray-300 group-hover:text-gray-200 transition-colors duration-150'}
+                />
+                <AnimatePresence>
+                  {!collapsed && (
+                    <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                      className={cn('text-sm font-medium whitespace-nowrap', active ? 'text-white' : 'text-gray-300 group-hover:text-gray-200')}>
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+                {active && (
+                  <div className="absolute left-0 top-0 bottom-0 flex items-center">
+                    <motion.div
+                      key={item.href}
+                      initial={{ opacity: 0, scaleY: 0.4 }}
+                      animate={{ opacity: 1, scaleY: 1 }}
+                      transition={{ duration: 0.15 }}
+                      className="w-0.5 h-5 rounded-full"
+                      style={{ background: item.color }}
+                    />
+                  </div>
+                )}
+              </motion.a>
+            </Link>
           )
         })}
       </nav>
@@ -89,13 +109,13 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
             </div>
             <div className="min-w-0">
               <p className="text-xs font-semibold text-white truncate">{admin.name}</p>
-              <p className="text-[10px] text-gray-600 truncate">{admin.email}</p>
+              <p className="text-[10px] text-gray-400 truncate">{admin.email}</p>
             </div>
           </div>
         )}
         <button
           onClick={() => { logout(); toast.success('Logged out') }}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-500/[0.08] transition-all"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300 hover:text-red-400 hover:bg-red-500/[0.08] transition-all"
           title={collapsed ? 'Logout' : undefined}
         >
           <LogOut size={15} className="flex-shrink-0" />
@@ -114,6 +134,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <html lang="en">
+      <head>
+        <title>Admin CMS Portal | Anurag Swain</title>
+      </head>
       <body style={{ margin: 0, background: '#080814', color: '#F0F0FF' }}>
         {pathname === '/login' ? (
           <>
@@ -132,7 +155,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               {/* Top bar */}
               <header className="sticky top-0 z-30 flex items-center justify-between px-6 h-16 border-b border-white/[0.06]" style={{ background: 'rgba(8,8,20,0.95)', backdropFilter: 'blur(16px)' }}>
-                <div className="flex items-center gap-2 text-sm text-gray-500 font-mono">
+                <div className="flex items-center gap-2 text-sm text-gray-300 font-mono">
                   <span className="text-cyan-400">~/admin</span>
                   {pathname.split('/').filter(Boolean).map((seg, i, arr) => (
                     <span key={seg} className="flex items-center gap-2">
@@ -142,12 +165,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   ))}
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-white/[0.05] transition-all">
+                  <Link href="/messages" className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/[0.05] transition-all" title="Messages">
                     <Bell size={16} />
-                  </button>
-                  <button className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-white/[0.05] transition-all">
+                  </Link>
+                  <Link href="/settings" className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/[0.05] transition-all" title="Settings">
                     <Settings size={16} />
-                  </button>
+                  </Link>
                 </div>
               </header>
 

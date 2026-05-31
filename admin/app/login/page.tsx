@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Lock, Mail, Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react'
 import { useAuthStore } from '@/lib/auth'
 import toast from 'react-hot-toast'
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { login, isLoading } = useAuthStore()
@@ -70,7 +70,7 @@ export default function LoginPage() {
                 <ShieldCheck size={26} className="text-cyan-400" />
               </div>
               <h1 className="text-2xl font-bold text-white font-mono">Admin Portal</h1>
-              <p className="text-sm text-gray-500 mt-1">Anurag Swain · Portfolio CMS</p>
+              <p className="text-sm text-gray-300 mt-1">Anurag Swain · Portfolio CMS</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -78,11 +78,11 @@ export default function LoginPage() {
               <div>
                 <label className="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-2">Email</label>
                 <div className="relative">
-                  <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
                   <input
                     type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                     placeholder="admin@yourdomain.com"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-white placeholder-gray-600 outline-none transition-all"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-white placeholder-gray-400 outline-none transition-all"
                     style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
                     onFocus={(e) => e.target.style.borderColor = 'rgba(0,229,255,0.35)'}
                     onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
@@ -94,16 +94,16 @@ export default function LoginPage() {
               <div>
                 <label className="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-2">Password</label>
                 <div className="relative">
-                  <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
                   <input
                     type={showPass ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full pl-10 pr-12 py-3 rounded-xl text-sm text-white placeholder-gray-600 outline-none transition-all"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    className="w-full pl-10 pr-12 py-3 rounded-xl text-sm text-white placeholder-gray-400 outline-none transition-all"
                     style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
                     onFocus={(e) => e.target.style.borderColor = 'rgba(0,229,255,0.35)'}
                     onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
                   />
-                  <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                  <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-300">
                     {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
@@ -130,12 +130,24 @@ export default function LoginPage() {
               </motion.button>
             </form>
 
-            <p className="text-center text-xs text-gray-600 mt-6 font-mono">
+            <p className="text-center text-xs text-gray-400 mt-6 font-mono">
               Protected · JWT · Admin Only
             </p>
           </div>
         </div>
       </motion.div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#0a0a14] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   )
 }

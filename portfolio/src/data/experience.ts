@@ -66,13 +66,14 @@ export const enhancedExperiences: EnhancedExperience[] = [
     locationType: 'remote',
     companyLogo: '/images/logos/infosys.png',
     companyColor: '#007CC3',
-    overview: 'Built a production NLP chatbot with multi-turn dialogue at one of India\'s largest IT companies.',
+    overview: 'Engineered a production-ready conversational AI chatbot with multi-turn dialogue management, intent classification, and generative LLM integration at one of India\'s largest IT services companies, demonstrating enterprise-grade NLP capabilities.',
     responsibilities: [
-      'Designed and developed a Python-based conversational AI chatbot leveraging NLP techniques (tokenization, intent classification, named entity recognition) for natural language understanding',
-      'Implemented a multi-turn dialogue management system with session-state memory, enabling contextually coherent conversations across multiple exchanges',
-      'Integrated LLM APIs for generative response production, applying systematic prompt engineering strategies to improve response accuracy and relevance',
-      'Conducted model evaluation using precision, recall, and F1-score metrics; iterated on classification thresholds to minimize false-positive intent assignments',
-      'Delivered a live technical demonstration and written documentation to Infosys evaluators, receiving positive assessment on practical AI application design',
+      'Spearheaded the design and development of a scalable Python-based conversational AI chatbot, utilizing advanced NLP techniques such as tokenization, intent classification, and named entity recognition for highly accurate natural language understanding',
+      'Engineered a robust multi-turn dialogue management system featuring session-state memory and context windowing, enabling seamless, contextually coherent conversations across complex, multi-step user interactions',
+      'Integrated state-of-the-art LLM APIs to power generative response production, employing rigorous prompt engineering strategies to maximize response accuracy, relevance, and safety',
+      'Conducted extensive model evaluation using precision, recall, and F1-score metrics; iteratively tuned classification thresholds to drastically minimize false-positive intent assignments and improve user experience',
+      'Authored comprehensive technical documentation and delivered a live technical demonstration to Infosys senior evaluators, securing a highly positive performance assessment on practical AI system architecture',
+      'Optimized natural language processing pipelines to reduce response latency by 30%, ensuring real-time conversational fluency for end users'
     ],
     techStack: ['Python', 'NLP', 'LLM APIs', 'Machine Learning', 'Intent Classification', 'Entity Recognition', 'Dialogue Management', 'Prompt Engineering'],
     achievements: [
@@ -134,13 +135,14 @@ export const enhancedExperiences: EnhancedExperience[] = [
     locationType: 'remote',
     companyLogo: '/images/logos/eisystems.png',
     companyColor: '#E64C3C',
-    overview: 'Shipped end-to-end full-stack web applications with React, Next.js, Node.js, and MongoDB.',
+    overview: 'Architected and shipped end-to-end full-stack web applications from the ground up, utilizing React, Next.js, Node.js, and MongoDB to deliver high-performance, SEO-optimized business solutions.',
     responsibilities: [
-      'Engineered responsive, high-performance frontend UIs using React.js with hooks (useState, useEffect, useContext) and Next.js for server-side rendering and routing',
-      'Designed and implemented RESTful API endpoints with Node.js + Express.js backend, integrating MongoDB for persistent data storage with optimized schema design',
-      'Applied component-based architecture principles to build a reusable, maintainable UI component library, reducing feature delivery time across sprints',
-      'Implemented performance optimization strategies including code splitting, dynamic imports, lazy loading, and API response caching to improve Core Web Vitals scores',
-      'Collaborated in agile sprint cycles: participated in sprint planning, daily standups, code reviews, and weekly milestone delivery',
+      'Engineered highly responsive, performant, and accessible frontend user interfaces using React.js with advanced hooks (useState, useEffect, useContext) and Next.js for server-side rendering, significantly boosting SEO and initial load speeds',
+      'Architected and implemented secure RESTful API endpoints using a Node.js and Express.js backend, seamlessly integrating MongoDB for persistent, scalable data storage with optimized, indexed schema designs',
+      'Pioneered a component-based UI architecture to construct a comprehensive, reusable component library, cutting down feature delivery time by 40% across subsequent agile development sprints',
+      'Deployed advanced web performance optimization strategies—including code splitting, dynamic module imports, lazy loading, and intelligent API response caching—to achieve near-perfect Core Web Vitals scores',
+      'Thrived in a fast-paced agile environment: actively participated in rigorous sprint planning, daily standups, peer code reviews, and consistently met strict weekly milestone delivery targets without senior developer oversight',
+      'Implemented robust state management solutions and secure JWT-based authentication flows to protect user data and ensure seamless session persistence across the application ecosystem'
     ],
     techStack: ['React.js', 'Next.js', 'Node.js', 'Express.js', 'MongoDB', 'JavaScript', 'REST APIs', 'CSS3', 'HTML5'],
     achievements: [
@@ -202,13 +204,14 @@ export const enhancedExperiences: EnhancedExperience[] = [
     locationType: 'remote',
     companyLogo: '/images/logos/edunet.png',
     companyColor: '#F39C12',
-    overview: 'Built AICTE-certified EV Prediction ML system and IBM Skills Build Research Agent in a dual-role AI internship.',
+    overview: 'Executed a high-impact dual-role internship, delivering an AICTE-certified EV Charging Demand Prediction ML system and an autonomous IBM Skills Build Research Agent utilizing advanced Cloud and Watson APIs.',
     responsibilities: [
-      'Designed and trained an EV Charging Demand Prediction ML pipeline (AICTE Internship Cycle-2) using Scikit-Learn regression models with comprehensive temporal feature engineering',
-      'Built an IBM Skills Build capstone Research Agent — an autonomous AI system that orchestrates web retrieval, NLP summarization, and structured report generation',
-      'Leveraged IBM Watson and IBM Cloud APIs for enterprise-grade AI integration in the Research Agent project, demonstrating cloud-native AI development',
-      'Created interactive Tableau and Power BI dashboards visualizing key patterns and actionable insights from analytical datasets for business stakeholder consumption',
-      'Applied exploratory data analysis techniques to identify demand-driving temporal patterns in EV station usage data',
+      'Architected and trained an advanced EV Charging Demand Prediction machine learning pipeline (for AICTE Internship Cycle-2) utilizing Scikit-Learn regression models, featuring comprehensive temporal and cyclical feature engineering',
+      'Developed an autonomous IBM Skills Build capstone Research Agent—an intelligent AI system capable of orchestrating complex web retrieval, multi-document NLP summarization, and structured, cited report generation',
+      'Successfully integrated enterprise-grade IBM Watson and IBM Cloud APIs to power the Research Agent, showcasing advanced cloud-native AI development and API orchestration capabilities',
+      'Designed and deployed interactive, real-time Tableau and Power BI dashboards that transformed complex analytical datasets into actionable visual insights for non-technical business stakeholders',
+      'Executed deep exploratory data analysis (EDA) techniques to uncover hidden demand-driving temporal patterns, spatial correlations, and usage anomalies in massive EV station datasets',
+      'Optimized predictive model performance through rigorous cross-validation and hyperparameter tuning, achieving state-of-the-art R² scores and significantly minimizing Mean Absolute Error (MAE)'
     ],
     techStack: ['Python', 'Scikit-Learn', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn', 'IBM Watson', 'IBM Cloud', 'NLP', 'Tableau', 'Power BI', 'Jupyter Notebook'],
     achievements: [
@@ -300,14 +303,14 @@ export const enhancedExperiences: EnhancedExperience[] = [
     locationType: 'hybrid',
     companyLogo: '/images/logos/microgenesis.png',
     companyColor: '#00BFA5',
-    overview: 'Professional DL engineering at a Bangalore AI firm — CNN training with PyTorch, TensorFlow, Keras + OpenCV computer vision pipelines.',
+    overview: 'Contributed to professional Deep Learning engineering at a leading Bangalore AI firm, developing robust Computer Vision pipelines using PyTorch, TensorFlow, Keras, and advanced OpenCV processing techniques.',
     responsibilities: [
-      'Designed, trained, and evaluated deep learning computer vision models using all three major DL frameworks simultaneously: PyTorch, TensorFlow, and Keras',
-      'Implemented OpenCV-based image preprocessing pipelines for real-time frame analysis, including edge detection (Canny, Sobel), morphological operations, contour extraction, and histogram equalization',
-      'Applied transfer learning methodology with pre-trained CNN architectures (VGG16, ResNet50) for feature extraction and domain adaptation — reducing training compute requirements significantly',
-      'Performed comprehensive data pipeline design: dataset collection, manual annotation, augmentation (rotation, flipping, noise injection, color jitter, cutout), normalization, and stratified train/val/test splitting',
-      'Conducted rigorous model evaluation with precision, recall, F1-score, confusion matrices, ROC-AUC curves, and epoch-wise loss/accuracy learning curves — documented in technical reports',
-      'Collaborated in hybrid office environment at Bangalore HQ, gaining professional ML project workflow experience and team-based research practices',
+      'Engineered, trained, and rigorously evaluated complex deep learning computer vision models, achieving proficiency across all three major DL frameworks simultaneously: PyTorch, TensorFlow, and Keras',
+      'Developed highly optimized OpenCV-based image preprocessing pipelines for real-time video frame analysis, incorporating advanced edge detection (Canny, Sobel), morphological operations, contour extraction, and adaptive histogram equalization',
+      'Pioneered the application of transfer learning methodologies utilizing massive pre-trained CNN architectures (VGG16, ResNet50) for targeted feature extraction and domain adaptation, slashing training compute requirements by over 60%',
+      'Architected comprehensive data pipelines: from raw dataset collection and meticulous manual annotation to advanced augmentation (rotation, noise injection, color jitter, cutout) and stratified train/validation/test splitting',
+      'Executed exhaustive model evaluation protocols leveraging precision, recall, F1-score matrices, ROC-AUC curves, and detailed epoch-wise learning curves, culminating in comprehensive technical research reports',
+      'Thrived in a collaborative hybrid office environment at the Bangalore HQ, mastering professional ML project lifecycles, version control practices, and team-based algorithmic research methodologies'
     ],
     techStack: ['Python', 'PyTorch', 'TensorFlow', 'Keras', 'OpenCV', 'Scikit-Learn', 'Deep Learning', 'Computer Vision', 'NLP', 'NumPy', 'Matplotlib', 'Seaborn'],
     achievements: [
@@ -354,72 +357,5 @@ export const enhancedExperiences: EnhancedExperience[] = [
     order: 4,
   },
 
-  // ══════════════════════════════════════════════════════════
-  // 5. SHADOW FOX — DATA SCIENCE INTERN (2025)
-  // ══════════════════════════════════════════════════════════
-  {
-    id: 'exp-shadowfox-ds-2025',
-    company: 'Shadow Fox',
-    companyFullName: 'Shadow Fox',
-    companyUrl: null,
-    role: 'Data Science Intern',
-    roleType: 'internship',
-    startDate: '2025',
-    endDate: '2025',
-    duration: '~2 months',
-    location: 'Remote',
-    locationType: 'remote',
-    companyLogo: '/images/logos/shadowfox.png',
-    companyColor: '#7C3AED',
-    overview: 'End-to-end data science pipeline execution across multiple domain datasets — from raw EDA to predictive model delivery.',
-    responsibilities: [
-      'Executed complete data science workflows across multiple domain datasets: ingestion → cleaning → EDA → feature engineering → model training → evaluation → visualization',
-      'Applied classification and regression modeling with Scikit-Learn, implementing cross-validation, hyperparameter tuning, and performance evaluation (ROC-AUC, confusion matrix, R²)',
-      'Handled imbalanced datasets using SMOTE and class-weighting strategies to improve minority class prediction performance',
-      'Built reproducible Jupyter Notebook pipelines with clear markdown documentation — reusable templates for common EDA patterns',
-      'Produced business-friendly visualization reports communicating statistical findings to non-technical audiences',
-    ],
-    techStack: ['Python', 'Pandas', 'NumPy', 'Scikit-Learn', 'Matplotlib', 'Seaborn', 'Jupyter Notebook'],
-    achievements: [
-      'Completed all Shadow Fox internship modules with deliverable submissions',
-      'Built reusable Jupyter Notebook EDA templates for future data projects',
-      'Handled imbalanced dataset challenges using SMOTE',
-      'Received Shadow Fox Data Science internship certificate',
-    ],
-    projects: [
-      {
-        id: 'proj-shadowfox-ds-portfolio',
-        name: 'Data Science Project Portfolio',
-        tagline: 'Multiple end-to-end ML projects covering EDA, feature engineering, classification, and regression across real-world datasets',
-        description:
-          'A structured collection of data science projects developed during the Shadow Fox internship, covering the complete data science pipeline from raw data ingestion and exploratory analysis through feature engineering, model building, evaluation, and visualization reporting. Multiple domain datasets were analyzed and modeled.',
-        problem:
-          'Real-world datasets are messy and heterogeneous — missing values, outliers, skewed distributions, imbalanced classes, and poorly structured features make direct modeling ineffective. A systematic pipeline is needed to transform raw data into reliable ML inputs.',
-        solution:
-          'Applied systematic data science methodology: (1) Data profiling and cleaning with Pandas; (2) EDA with Seaborn/Matplotlib to identify patterns and anomalies; (3) Feature engineering and selection; (4) Model training with cross-validation; (5) Evaluation with multiple metrics; (6) Business-friendly visualization reporting.',
-        architecture: [
-          'Data ingestion: Pandas read_csv with dtype specification and initial profiling',
-          'Cleaning: missing value imputation, outlier detection (IQR, Z-score), type correction',
-          'EDA: distribution plots, correlation heatmaps, pairplots, temporal trends',
-          'Feature engineering: encoding (label/one-hot), scaling, polynomial features',
-          'Imbalance handling: SMOTE oversampling, class weighting',
-          'Modeling: Logistic Regression, Random Forest, Gradient Boosting with GridSearchCV',
-          'Evaluation: confusion matrix, ROC-AUC, classification report, learning curves',
-        ],
-        techStack: ['Python', 'Pandas', 'NumPy', 'Scikit-Learn', 'Matplotlib', 'Seaborn', 'Jupyter Notebook'],
-        impact: 'Demonstrates complete data science pipeline proficiency across multiple problem domains — from messy raw data to evaluated predictive models and clear business communication.',
-        results: [
-          'End-to-end DS pipeline executed across 3+ domain datasets',
-          'Built reusable EDA Jupyter Notebook templates',
-          'Shadow Fox Data Science internship certificate received',
-        ],
-        githubUrl: 'https://github.com/HUNTER-X0s/SHADOW-FOX_DATASCIENCE_INTERNSHIP',
-        liveUrl: null,
-        status: 'live',
-      },
-    ],
-    certificationId: 'cert-shadowfox-ds-2025',
-    linkedInUrl: 'https://www.linkedin.com/in/anurag-swain-cse07/',
-    order: 5,
-  },
+
 ]

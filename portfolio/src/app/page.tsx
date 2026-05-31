@@ -25,9 +25,9 @@ const About = dynamic(() => import('@/components/sections/About'))
 const Skills = dynamic(() => import('@/components/sections/Skills'))
 const Projects = dynamic(() => import('@/components/sections/Projects'))
 const Experience = dynamic(() => import('@/components/sections/Experience'))
-const GitHub = dynamic(() => import('@/components/sections/GitHub'))
+const Education = dynamic(() => import('@/components/sections/Education'))
 const ValueProp = dynamic(() => import('@/components/sections/ValueProp'))
-const Analytics = dynamic(() => import('@/components/sections/Analytics'))
+const Certifications = dynamic(() => import('@/components/sections/Certifications'))
 const Blog = dynamic(() => import('@/components/sections/Blog'))
 const Contact = dynamic(() => import('@/components/sections/Contact'))
 
@@ -41,9 +41,9 @@ const SECTION_IDS = [
   'skills',
   'projects',
   'experience',
-  'github',
+  'education',
   'value',
-  'analytics',
+  'certifications',
   'blog',
   'contact',
 ]
@@ -131,16 +131,16 @@ export default function HomePage() {
             <Experience />
           </section>
 
-          <section id="github" style={{ scrollMarginTop: '72px' }}>
-            <GitHub />
+          <section id="education" style={{ scrollMarginTop: '72px' }}>
+            <Education />
           </section>
 
           <section id="value" style={{ scrollMarginTop: '72px' }}>
             <ValueProp />
           </section>
 
-          <section id="analytics" style={{ scrollMarginTop: '72px' }}>
-            <Analytics />
+          <section id="certifications" style={{ scrollMarginTop: '72px' }}>
+            <Certifications />
           </section>
 
           <section id="blog" style={{ scrollMarginTop: '72px' }}>

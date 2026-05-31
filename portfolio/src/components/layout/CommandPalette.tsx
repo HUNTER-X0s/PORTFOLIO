@@ -159,15 +159,15 @@ export default function CommandPalette() {
               onClick={cmd.action}
               onMouseEnter={() => setActiveIndex(idx)}
               className={cn(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all',
+                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left',
                 activeIndex === idx
                   ? 'bg-cyan/10 border border-cyan/20 text-text-primary'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-white/[0.04]'
+                  : 'border border-transparent text-text-secondary hover:text-text-primary hover:bg-white/[0.04]'
               )}
               whileTap={{ scale: 0.99 }}
             >
               <div className={cn(
-                'flex-shrink-0 p-1.5 rounded-lg transition-colors',
+                'flex-shrink-0 p-1.5 rounded-lg',
                 activeIndex === idx ? 'bg-cyan/15 text-cyan' : 'bg-white/[0.04] text-text-secondary'
               )}>
                 {getIcon(cmd.icon || 'hash')}

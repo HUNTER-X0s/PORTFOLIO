@@ -49,8 +49,8 @@ function CertCard({ cert, index }: { cert: Certification; index: number }) {
 
   return (
     <motion.div
-      variants={staggerItem}
-      layout
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0, transition: { duration: 0.3, delay: index * 0.05, ease: [0.19, 1, 0.22, 1] } }}
       className="glass-card overflow-hidden group relative"
     >
       {/* Top accent bar */}
@@ -256,7 +256,7 @@ export default function CertificationsSection() {
   const uniqueIssuers = Array.from(new Set(certifications.map((c) => c.issuerShortName))).length
 
   return (
-    <div className="py-16 sm:py-24 md:py-32">
+    <div className="py-10 sm:py-14 md:py-20">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           {/* Header */}
@@ -346,13 +346,20 @@ export default function CertificationsSection() {
           </motion.div>
 
           {/* Cert grid */}
-          <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <AnimatePresence mode="popLayout">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={categoryFilter + String(showRoleFilter)}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            >
               {displayCerts.map((cert, i) => (
                 <CertCard key={cert.id} cert={cert} index={i} />
               ))}
-            </AnimatePresence>
-          </StaggerReveal>
+            </motion.div>
+          </AnimatePresence>
 
           {displayCerts.length === 0 && (
             <div className="text-center py-16 text-text-secondary">
@@ -386,3 +393,4 @@ export default function CertificationsSection() {
     </div>
   )
 }
+

@@ -330,13 +330,13 @@ async def get_stats():
     """Get pipeline statistics."""
     try:
         rag = get_rag()
+        collection_name = os.getenv("CHROMA_COLLECTION", "anurag_portfolio")
+        from data.knowledge_base import KNOWLEDGE_CHUNKS
         return {
-            "collection": COLLECTION_NAME if True else "",
+            "collection": collection_name,
             "indexed_chunks": rag.vector_store.collection.count(),
-            "total_knowledge_chunks": len(
-                __import__("data.knowledge_base", fromlist=["KNOWLEDGE_CHUNKS"]).KNOWLEDGE_CHUNKS
-            ),
-            "model": os.getenv("OLLAMA_MODEL", "llama3"),
+            "total_knowledge_chunks": len(KNOWLEDGE_CHUNKS),
+            "model": os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
             "embed_model": os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text"),
             "top_k": int(os.getenv("RETRIEVAL_TOP_K", "6")),
         }

@@ -528,7 +528,7 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
                         {"role": "user", "content": user_prompt},
                     ],
                     "temperature": float(os.getenv("OLLAMA_TEMPERATURE", "0.1")),
-                    "max_tokens": 1024,
+                    "max_tokens": 2048,
                 },
                 timeout=30,
             )
@@ -559,10 +559,10 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
                         {"role": "user", "content": user_prompt},
                     ],
                     "temperature": float(os.getenv("OLLAMA_TEMPERATURE", "0.1")),
-                    "max_tokens": 1024,
+                    "max_tokens": 2048,
                     "stream": True,
                 },
-                timeout=30,
+                timeout=60,
             ) as response:
                 response.raise_for_status()
                 for line in response.iter_lines():

@@ -14,6 +14,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>
   logout: () => void
   setLoading: (v: boolean) => void
+  updateAdmin: (admin: any) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -45,6 +46,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       setLoading: (v) => set({ isLoading: v }),
+      updateAdmin: (admin) => set({ admin }),
     }),
     { name: 'admin-auth', partialize: (s) => ({ token: s.token, admin: s.admin }) }
   )
@@ -102,4 +104,9 @@ export const adminApi = {
 
   // Stats
   getStats:           () => apiClient.get('/api/admin/stats'),
+
+  // Auth & Settings
+  updateProfile:      (d: any) => apiClient.put('/api/auth/profile', d),
+  updateEmail:        (d: any) => apiClient.put('/api/auth/update-email', d),
+  updatePassword:     (d: any) => apiClient.put('/api/auth/update-password', d),
 }

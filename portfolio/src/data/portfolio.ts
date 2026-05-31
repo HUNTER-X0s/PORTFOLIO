@@ -60,9 +60,9 @@ export const navItems: NavItem[] = [
   { id: 'skills',    label: 'Skills',      href: '#skills'    },
   { id: 'projects',  label: 'Projects',    href: '#projects'  },
   { id: 'experience',label: 'Experience',  href: '#experience'},
-  { id: 'github',    label: 'GitHub',      href: '#github'    },
+  { id: 'education', label: 'Education',   href: '#education' },
   { id: 'value',     label: 'Why Me',      href: '#value'     },
-  { id: 'analytics', label: 'Analytics',   href: '#analytics' },
+  { id: 'certifications', label: 'Certifications', href: '#certifications' },
   { id: 'blog',      label: 'Blog',        href: '#blog'      },
   { id: 'contact',   label: 'Contact',     href: '#contact'   },
 ]

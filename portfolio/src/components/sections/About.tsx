@@ -20,7 +20,7 @@ export default function About() {
   const { ref, inView } = useInView(0.2)
 
   return (
-    <div className="py-16 sm:py-24 md:py-32">
+    <div className="py-10 sm:py-14 md:py-20">
       <div className="section-container">
         <motion.div
           ref={ref as React.RefObject<HTMLDivElement>}
@@ -228,3 +228,4 @@ export default function About() {
     </div>
   )
 }
+

@@ -6,7 +6,7 @@ import { Plus, Edit2, Trash2, ExternalLink, Search, X, Upload, Loader2, CheckCir
 import { adminApi } from '@/lib/auth'
 import toast from 'react-hot-toast'
 
-// ── Project Form Modal ────────────────────────────────────────
+// â”€â”€ Project Form Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ProjectModal({ project, onClose, onSave }: { project?: any; onClose: () => void; onSave: () => void }) {
   const [form, setForm] = useState({
     title: project?.title || '',
@@ -50,7 +50,7 @@ function ProjectModal({ project, onClose, onSave }: { project?: any; onClose: ()
     }
   }
 
-  const inputCls = "w-full px-3.5 py-2.5 rounded-xl text-sm text-white placeholder-gray-600 outline-none transition-all bg-white/[0.04] border border-white/[0.08] focus:border-cyan-500/40"
+  const inputCls = "w-full px-3.5 py-2.5 rounded-xl text-sm text-white placeholder-gray-400 outline-none transition-all bg-white/[0.04] border border-white/[0.08] focus:border-cyan-500/40"
   const label = (t: string) => <label className="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-1.5">{t}</label>
 
   return (
@@ -58,7 +58,7 @@ function ProjectModal({ project, onClose, onSave }: { project?: any; onClose: ()
       <div className="w-full max-w-2xl my-4 rounded-2xl overflow-hidden" style={{ background: '#0a0a18', border: '1px solid rgba(0,229,255,0.2)' }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.07]">
           <h2 className="text-base font-semibold text-white">{project ? 'Edit Project' : 'New Project'}</h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-500 hover:text-white hover:bg-white/[0.05]"><X size={16} /></button>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/[0.05]"><X size={16} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
@@ -87,7 +87,9 @@ function ProjectModal({ project, onClose, onSave }: { project?: any; onClose: ()
             <div>{label('Year')}<input type="number" className={inputCls} value={form.year} onChange={(e) => setForm({ ...form, year: +e.target.value })} /></div>
             <div>{label('Status')}
               <select className={inputCls} value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                <option value="live">Live</option><option value="in-progress">In Progress</option><option value="archived">Archived</option>
+                <option value="live" className="bg-gray-900 text-white">Live</option>
+                <option value="in-progress" className="bg-gray-900 text-white">In Progress</option>
+                <option value="archived" className="bg-gray-900 text-white">Archived</option>
               </select>
             </div>
             <div className="flex items-end pb-1">
@@ -102,8 +104,8 @@ function ProjectModal({ project, onClose, onSave }: { project?: any; onClose: ()
           <div>
             {label('Project Image')}
             <label className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all bg-white/[0.03] border border-dashed border-white/[0.1] hover:border-cyan-500/30">
-              <Upload size={16} className="text-gray-500" />
-              <span className="text-sm text-gray-500">{image ? image.name : 'Click to upload image'}</span>
+              <Upload size={16} className="text-gray-300" />
+              <span className="text-sm text-gray-300">{image ? image.name : 'Click to upload image'}</span>
               <input type="file" accept="image/*" className="hidden" onChange={(e) => setImage(e.target.files?.[0] || null)} />
             </label>
           </div>
@@ -122,7 +124,7 @@ function ProjectModal({ project, onClose, onSave }: { project?: any; onClose: ()
   )
 }
 
-// ── Main Page ─────────────────────────────────────────────────
+// â”€â”€ Main Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<any[]>([])
   const [loading, setLoading]   = useState(true)
@@ -151,7 +153,7 @@ export default function ProjectsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-white">Projects</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{projects.length} total</p>
+          <p className="text-sm text-gray-300 mt-0.5">{projects.length} total</p>
         </div>
         <button onClick={() => { setEditing(null); setModal(true) }}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
@@ -162,9 +164,9 @@ export default function ProjectsPage() {
 
       {/* Search */}
       <div className="relative">
-        <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+        <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search projects..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-white placeholder-gray-600 outline-none bg-white/[0.04] border border-white/[0.07] focus:border-cyan-500/30 transition-all" />
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-white placeholder-gray-400 outline-none bg-white/[0.04] border border-white/[0.07] focus:border-cyan-500/30 transition-all" />
       </div>
 
       {/* Table */}
@@ -173,28 +175,28 @@ export default function ProjectsPage() {
           <thead>
             <tr style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
               {['Title', 'Category', 'Status', 'Year', 'Live URL', 'Actions'].map((h) => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-mono text-gray-500 uppercase tracking-wider">{h}</th>
+                <th key={h} className="px-4 py-3 text-left text-xs font-mono text-gray-300 uppercase tracking-wider">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-white/[0.04]">
             {loading ? (
-              <tr><td colSpan={6} className="px-4 py-12 text-center text-gray-600 text-sm">Loading…</td></tr>
+              <tr><td colSpan={6} className="px-4 py-12 text-center text-gray-400 text-sm">Loading…</td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={6} className="px-4 py-12 text-center text-gray-600 text-sm">No projects found</td></tr>
+              <tr><td colSpan={6} className="px-4 py-12 text-center text-gray-400 text-sm">No projects found</td></tr>
             ) : filtered.map((p) => (
               <motion.tr key={p._id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="hover:bg-white/[0.02] transition-colors">
                 <td className="px-4 py-3.5">
                   <div className="font-medium text-sm text-white">{p.title}</div>
-                  <div className="text-xs text-gray-600 truncate max-w-xs">{p.tagline}</div>
+                  <div className="text-xs text-gray-400 truncate max-w-xs">{p.tagline}</div>
                 </td>
                 <td className="px-4 py-3.5"><span className="text-xs font-mono text-gray-400 px-2 py-1 rounded-lg bg-white/[0.04]">{p.category}</span></td>
                 <td className="px-4 py-3.5">
-                  <span className={`text-xs font-mono px-2 py-1 rounded-full ${p.status === 'live' ? 'text-green-400 bg-green-400/10' : p.status === 'in-progress' ? 'text-yellow-400 bg-yellow-400/10' : 'text-gray-500 bg-gray-500/10'}`}>
+                  <span className={`text-xs font-mono px-2 py-1 rounded-full ${p.status === 'live' ? 'text-green-400 bg-green-400/10' : p.status === 'in-progress' ? 'text-yellow-400 bg-yellow-400/10' : 'text-gray-300 bg-gray-500/10'}`}>
                     {p.status}
                   </span>
                 </td>
-                <td className="px-4 py-3.5 text-sm text-gray-500 font-mono">{p.year}</td>
+                <td className="px-4 py-3.5 text-sm text-gray-300 font-mono">{p.year}</td>
                 <td className="px-4 py-3.5">
                   <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-cyan-400 hover:underline">
                     <ExternalLink size={11} /> Live
@@ -202,8 +204,8 @@ export default function ProjectsPage() {
                 </td>
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-2">
-                    <button onClick={() => { setEditing(p); setModal(true) }} className="p-1.5 rounded-lg text-gray-500 hover:text-cyan-400 hover:bg-cyan-400/10 transition-all"><Edit2 size={13} /></button>
-                    <button onClick={() => handleDelete(p._id)} className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-all"><Trash2 size={13} /></button>
+                    <button onClick={() => { setEditing(p); setModal(true) }} className="p-1.5 rounded-lg text-gray-400 hover:text-cyan-400 hover:bg-cyan-400/10 transition-all"><Edit2 size={15} /></button>
+                    <button onClick={() => handleDelete(p._id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition-all"><Trash2 size={15} /></button>
                   </div>
                 </td>
               </motion.tr>

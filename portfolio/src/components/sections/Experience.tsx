@@ -9,7 +9,6 @@ import {
 } from 'lucide-react'
 import { useInView } from '@/hooks'
 import { enhancedExperiences, type EnhancedExperience, type InternshipProject } from '@/data/experience'
-import { education } from '@/data/portfolio'
 import { certifications } from '@/data/certifications'
 import { cn } from '@/lib/utils'
 import { StaggerReveal, staggerItemLeft } from '@/components/animations/ScrollReveal'
@@ -335,49 +334,13 @@ function ExperienceCard({ exp, isLast }: { exp: EnhancedExperience; isLast: bool
   )
 }
 
-// ── Education card ─────────────────────────────────────────
-function EducationCard({ edu, index }: { edu: typeof education[0]; index: number }) {
-  const color = index === 0 ? '#7C3AED' : index === 1 ? '#FF2D9C' : '#00E5FF'
-  return (
-    <motion.div variants={staggerItemLeft} className="relative pl-10">
-      <div className="absolute left-0 top-2">
-        <div
-          className="w-3 h-3 rounded-full border-2 border-surface-1"
-          style={{ background: color, boxShadow: `0 0 10px ${color}60` }}
-        />
-      </div>
-      <div className="glass-card p-5">
-        <div className="absolute top-0 left-0 right-0 h-[2px] opacity-50"
-          style={{ background: `linear-gradient(90deg, ${color}, transparent 50%)` }} />
-        <h4 className="font-display font-semibold text-text-primary">{edu.degree}</h4>
-        <p className="text-sm font-medium mt-0.5" style={{ color }}>{edu.institution}</p>
-        <p className="text-sm text-text-secondary mt-0.5">{edu.field}</p>
-        <div className="flex flex-wrap items-center gap-4 mt-2 text-xs">
-          <span className="flex items-center gap-1.5 text-text-secondary">
-            <Calendar size={10} />{edu.duration}
-          </span>
-          {edu.grade && <span className="text-neon-green font-mono font-medium">{edu.grade}</span>}
-        </div>
-        {edu.activities.length > 0 && (
-          <div className="mt-3 space-y-1.5 pt-3 border-t border-white/[0.05]">
-            {edu.activities.map((a) => (
-              <div key={a} className="flex items-start gap-2 text-xs text-text-secondary">
-                <span className="flex-shrink-0 mt-1.5 w-1 h-1 rounded-full" style={{ background: color }} />{a}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </motion.div>
-  )
-}
 
 // ── Main component ─────────────────────────────────────────
 export default function ExperienceSection() {
   const { ref, inView } = useInView(0.05)
 
   return (
-    <div className="py-16 sm:py-24 md:py-32">
+    <div className="py-10 sm:py-14 md:py-20">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           {/* Header */}
@@ -391,7 +354,7 @@ export default function ExperienceSection() {
               Professional <span className="text-gradient">Journey</span>
             </h2>
             <p className="text-text-secondary mt-3 max-w-xl">
-              5 internships · 5 companies · ~12 months of hands-on industry experience in 2025.
+              4 internships · 4 companies · ~10 months of hands-on industry experience in 2025.
               Every internship linked to real projects with measurable impact.
             </p>
           </motion.div>
@@ -404,9 +367,9 @@ export default function ExperienceSection() {
             className="flex flex-wrap gap-3 mb-12"
           >
             {[
-              { label: 'Internships', value: '5', color: '#00E5FF' },
+              { label: 'Internships', value: '4', color: '#00E5FF' },
               { label: 'Projects Built', value: '6+', color: '#7C3AED' },
-              { label: 'Months Experience', value: '~12', color: '#00FF87' },
+              { label: 'Months Experience', value: '~10', color: '#00FF87' },
               { label: 'Certs Earned', value: '7', color: '#FFE500' },
             ].map((s) => (
               <div key={s.label} className="flex items-center gap-2 glass border border-white/[0.07] px-4 py-2.5 rounded-xl">
@@ -416,67 +379,17 @@ export default function ExperienceSection() {
             ))}
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 lg:gap-16">
-            {/* Work experience column */}
-            <div>
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
-                className="flex items-center gap-2 mb-8">
-                <Briefcase size={16} className="text-cyan" />
-                <h3 className="font-display font-semibold text-text-primary">Work Experience</h3>
-                <span className="text-xs font-mono text-text-secondary ml-1">({enhancedExperiences.length} roles)</span>
-              </motion.div>
-
-              <div className="relative">
-                <div className="absolute left-1.5 top-2 bottom-0 w-px bg-gradient-to-b from-cyan/40 via-violet/20 to-transparent" />
-                <StaggerReveal className="space-y-6">
-                  {enhancedExperiences.map((exp, i) => (
-                    <ExperienceCard key={exp.id} exp={exp} isLast={i === enhancedExperiences.length - 1} />
-                  ))}
-                </StaggerReveal>
-              </div>
-            </div>
-
-            {/* Education column */}
-            <div>
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.25 }}
-                className="flex items-center gap-2 mb-8">
-                <GraduationCap size={16} className="text-violet" />
-                <h3 className="font-display font-semibold text-text-primary">Education</h3>
-              </motion.div>
-
-              <div className="relative">
-                <div className="absolute left-1.5 top-2 bottom-0 w-px bg-gradient-to-b from-violet/40 via-neon-pink/20 to-transparent" />
-                <StaggerReveal className="space-y-6" delay={0.1}>
-                  {education.map((edu, i) => <EducationCard key={`${edu.institution}-${edu.degree}`} edu={edu} index={i} />)}
-                </StaggerReveal>
-              </div>
-
-              {/* Awards */}
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }} className="mt-8">
-                <h4 className="font-display font-semibold text-text-primary mb-4 flex items-center gap-2">
-                  <Award size={14} className="text-neon-orange" />
-                  Clubs & Activities
-                </h4>
-                <div className="space-y-2.5">
-                  {[
-                    { title: 'KiloBots Robotics Club', desc: 'Member · GCE Kalahandi — automation & embedded systems', color: '#00E5FF' },
-                    { title: 'Ashoka House Sports Captain', desc: 'Kendriya Vidyalaya — led house in athletics & inter-house events', color: '#00FF87' },
-                    { title: 'Tech-Fest Volunteer', desc: 'GCE Kalahandi — event organization and coordination', color: '#7C3AED' },
-                  ].map((item) => (
-                    <div key={item.title} className="flex items-start gap-3 p-3.5 rounded-xl glass border border-white/[0.06]">
-                      <div className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style={{ background: item.color, boxShadow: `0 0 6px ${item.color}` }} />
-                      <div>
-                        <p className="text-sm font-medium text-text-primary">{item.title}</p>
-                        <p className="text-xs text-text-secondary mt-0.5">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            </div>
+          <div className="relative">
+            <div className="absolute left-1.5 top-2 bottom-0 w-px bg-gradient-to-b from-cyan/40 via-violet/20 to-transparent" />
+            <StaggerReveal className="space-y-8">
+              {enhancedExperiences.map((exp, i) => (
+                <ExperienceCard key={exp.id} exp={exp} isLast={i === enhancedExperiences.length - 1} />
+              ))}
+            </StaggerReveal>
           </div>
         </div>
       </div>
     </div>
   )
 }
+

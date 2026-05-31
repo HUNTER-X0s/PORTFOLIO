@@ -35,7 +35,7 @@ export default function GitHub() {
   const { ref, inView } = useInView(0.1)
 
   return (
-    <div className="py-16 sm:py-24 md:py-32">
+    <div className="py-10 sm:py-14 md:py-20">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           <motion.div
@@ -57,7 +57,7 @@ export default function GitHub() {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.2 }}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mb-10"
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-10 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-1 lg:[&>*:last-child]:col-span-1"
           >
             <StatCard label="Public Repos" value={githubStats.publicRepos} icon={Github} color="#00E5FF" />
             <StatCard label="Total Stars" value={githubStats.totalStars} icon={Star} color="#FFE500" />
@@ -91,16 +91,16 @@ export default function GitHub() {
 
               <div className="space-y-3">
                 {githubStats.topLanguages.map((lang, i) => (
-                  <div key={lang.name} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
+                  <div key={lang.name} className="flex items-center gap-4">
+                    <div className="flex items-center gap-2.5 w-32 sm:w-40 flex-shrink-0">
                       <div
                         className="w-3 h-3 rounded-full"
                         style={{ background: lang.color }}
                       />
-                      <span className="text-sm text-text-primary">{lang.name}</span>
+                      <span className="text-sm text-text-primary truncate">{lang.name}</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-24 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="flex-1 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
                         <motion.div
                           initial={{ scaleX: 0 }}
                           animate={inView ? { scaleX: lang.percentage / 100 } : {}}
@@ -109,7 +109,7 @@ export default function GitHub() {
                           style={{ background: lang.color }}
                         />
                       </div>
-                      <span className="text-xs font-mono text-text-secondary w-8 text-right">
+                      <span className="text-xs font-mono text-text-secondary w-9 text-right flex-shrink-0">
                         {lang.percentage}%
                       </span>
                     </div>
@@ -174,17 +174,19 @@ export default function GitHub() {
             <h3 className="font-display font-semibold text-text-primary mb-5">
               Contribution Graph
             </h3>
-            <div className="overflow-x-auto no-scrollbar -mx-2 px-2 pb-2">
-              <GitHubCalendar
-                username={githubStats.username}
-                colorScheme="dark"
-                fontSize={12}
-                blockSize={12}
-                blockMargin={4}
-                theme={{
-                  dark: ['#0F0F22', '#002B33', '#005566', '#008099', '#00E5FF'],
-                }}
-              />
+            <div className="w-full flex justify-center items-center py-2 overflow-x-auto no-scrollbar">
+              <div className="inline-flex justify-center min-w-max mx-auto">
+                <GitHubCalendar
+                  username={githubStats.username}
+                  colorScheme="dark"
+                  fontSize={12}
+                  blockSize={12}
+                  blockMargin={4}
+                  theme={{
+                    dark: ['#0F0F22', '#002B33', '#005566', '#008099', '#00E5FF'],
+                  }}
+                />
+              </div>
             </div>
           </motion.div>
         </div>
@@ -192,3 +194,4 @@ export default function GitHub() {
     </div>
   )
 }
+

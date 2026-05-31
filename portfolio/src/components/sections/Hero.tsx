@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { ArrowDown, Download, Github, ExternalLink, Sparkles } from 'lucide-react'
+import { ArrowDown, Download, Github, ExternalLink, Sparkles, Linkedin } from 'lucide-react'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { personalInfo, roleContents, roles } from '@/data/portfolio'
 import { useSound } from '@/hooks'
@@ -258,7 +258,7 @@ export default function Hero() {
                   className="p-3 rounded-xl glass border border-white/[0.07] text-text-secondary hover:text-text-primary hover:border-cyan/20 transition-all"
                   title={s.platform}
                 >
-                  {s.platform === 'GitHub' ? <Github size={17} /> : <ExternalLink size={17} />}
+                  {s.platform === 'GitHub' ? <Github size={17} /> : s.platform === 'LinkedIn' ? <Linkedin size={17} /> : <ExternalLink size={17} />}
                 </motion.a>
               ))}
             </motion.div>
@@ -387,3 +387,4 @@ export default function Hero() {
     </motion.div>
   )
 }
+

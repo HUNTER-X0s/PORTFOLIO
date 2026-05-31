@@ -21,7 +21,7 @@ const app = express()
 
 // ── Middleware ────────────────────────────────────────────────
 app.use(helmet())
-app.use(cors({ origin: process.env.CLIENT_URL || '*', credentials: true }))
+app.use(cors({ origin: [process.env.CLIENT_URL || 'http://localhost:3000', 'http://localhost:3001'], credentials: true }))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
@@ -33,15 +33,13 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio
   .catch((err) => console.error('❌ MongoDB error:', err.message))
 
 // ── Routes ────────────────────────────────────────────────────
-// app.use('/api/auth',           require('./routes/auth'))
-// app.use('/api/projects',       require('./routes/projects'))
-// app.use('/api/blogs',          require('./routes/blogs'))
-// app.use('/api/contact',        require('./routes/contact'))
-// app.use('/api/resume',         require('./routes/resume'))
-// app.use('/api/certifications', require('./routes/certifications'))
-// app.use('/api/experience',     require('./routes/experience'))
-// app.use('/api/github',         require('./routes/github'))
-// app.use('/api/admin',          require('./routes/admin'))
+app.use('/api/auth',           require('./routes/auth'))
+app.use('/api/projects',       require('./routes/projects'))
+app.use('/api/blogs',          require('./routes/blogs'))
+app.use('/api/contact',        require('./routes/contact'))
+app.use('/api/resume',         require('./routes/resume'))
+app.use('/api/certifications', require('./routes/certifications'))
+app.use('/api/admin',          require('./routes/admin'))
 
 // ── Health ────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }))

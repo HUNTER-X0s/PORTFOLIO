@@ -18,7 +18,7 @@ export default function Analytics() {
   }
 
   return (
-    <div className="py-16 sm:py-24 md:py-32">
+    <div className="py-10 sm:py-14 md:py-20">
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           <motion.div
@@ -155,3 +155,4 @@ export default function Analytics() {
     </div>
   )
 }
+
