@@ -58,23 +58,18 @@ export default function Navbar() {
     const id = href.replace('#', '')
 
     // On mobile, close the menu first and wait for its animation to finish
-    // before attempting to scroll — prevents layout shifts from interrupting scroll
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false)
       setTimeout(() => {
         const el = document.getElementById(id)
         if (el) {
-          const yOffset = -80 // account for sticky navbar height
-          const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset
-          window.scrollTo({ top: y, behavior: 'smooth' })
+          el.scrollIntoView({ behavior: 'smooth' })
         }
-      }, 320) // wait for mobile menu close animation (~250ms) to finish
+      }, 320)
     } else {
       const el = document.getElementById(id)
       if (el) {
-        const yOffset = -80
-        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset
-        window.scrollTo({ top: y, behavior: 'smooth' })
+        el.scrollIntoView({ behavior: 'smooth' })
       }
     }
   }

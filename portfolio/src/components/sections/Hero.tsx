@@ -145,7 +145,7 @@ export default function Hero() {
     <motion.div
       ref={containerRef}
       style={{ opacity: heroOpacity, y: heroY }}
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-32 sm:pb-16 px-0"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-20 sm:pb-16 px-0"
     >
       {/* HUD scan line */}
       <div
@@ -296,9 +296,9 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
             className="flex flex-col items-center lg:items-end gap-4 sm:gap-6 w-full"
           >
-            {/* Role selector hint & Terminal */}
+            {/* Role selector hint */}
             <div className="w-full max-w-lg">
-              <div className="flex items-center gap-2 mb-3 flex-wrap">
+              <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-mono text-text-secondary">
                   Viewing as:
                 </span>
@@ -312,15 +312,12 @@ export default function Hero() {
                 >
                   {currentRole.icon} {currentRole.label}
                 </div>
-                <span className="text-xs font-mono text-text-tertiary hidden md:inline">
+                <span className="text-xs font-mono text-text-tertiary">
                   — change in navbar ↑
                 </span>
               </div>
 
-              {/* Terminal - hidden on very small phones to save space */}
-              <div className="hidden sm:block">
-                <Terminal lines={content.terminalLines} active={true} />
-              </div>
+              <Terminal lines={content.terminalLines} active={true} />
             </div>
 
             {/* Role pills */}
