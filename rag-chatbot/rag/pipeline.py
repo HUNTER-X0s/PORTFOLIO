@@ -375,7 +375,7 @@ Current candidate: Anurag Swain | B.Tech CSE @ GCE Kalahandi | CGPA 8.10 | 4 Int
 
 QUESTION: {query}
 
-Provide a well-structured, highly readable response. Use Markdown, bold text for emphasis, and bullet points where appropriate. If the question is about Anurag, base your answer on the CONTEXT."""
+Provide a well-structured, highly readable response. Use Markdown, bold text for emphasis, and bullet points where appropriate to make the answer easy to scan and read. If the question is about Anurag, base your answer on the CONTEXT."""
         return prompt
 
 
@@ -429,8 +429,6 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
 
         # 5. Generate with Ollama (with API fallback)
         reply = self._generate(system_prompt, user_prompt)
-        # Format reply into bullet points for better readability
-        reply = self._format_as_points(reply)
 
         # 6. Cache & return
         result = {
@@ -493,8 +491,6 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
         for chunk in self._generate_stream(system_prompt, user_prompt):
             full_reply += chunk
             yield f"data: {json.dumps({'text': chunk})}\n\n"
-        # Convert the full reply into bullet points before returning
-        full_reply = self._format_as_points(full_reply)
 
         result = {
             "reply": full_reply,
@@ -582,18 +578,7 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
             logger.error(f"Groq streaming failed: {e}")
             yield "I'm currently unable to generate a response — the AI service is unavailable."
 
-    def _format_as_points(self, text: str) -> str:
-        """Convert a plain text response into a bullet‑point list.
-        Splits on typical sentence delimiters and prefixes each line with a dash.
-        """
-        import re
-        # Clean up whitespace
-        clean = text.strip()
-        # Split into sentences (preserves punctuation)
-        sentences = re.split(r'(?<=[.!?])\s+', clean)
-        # Filter out empty parts and prefix with dash
-        bullets = [f"- {s.strip()}" for s in sentences if s]
-        return "\n".join(bullets)
+
 
     def reindex(self):
         """Force rebuild the entire vector index."""
