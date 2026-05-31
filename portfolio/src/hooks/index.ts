@@ -170,11 +170,12 @@ export function useInView(threshold = 0.2) {
           observer.disconnect()
         }
       },
-      { threshold }
+      // Use a very small threshold and rootMargin so tall elements on mobile always trigger
+      { threshold: 0, rootMargin: '0px 0px -10% 0px' }
     )
     observer.observe(el)
     return () => observer.disconnect()
-  }, [threshold])
+  }, [])
 
   return { ref, inView }
 }
