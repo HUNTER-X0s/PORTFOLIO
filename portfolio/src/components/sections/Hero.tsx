@@ -145,7 +145,7 @@ export default function Hero() {
     <motion.div
       ref={containerRef}
       style={{ opacity: heroOpacity, y: heroY }}
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-20 sm:pb-16 px-0"
+      className="relative min-h-[auto] lg:min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-24 sm:pb-16 px-0"
     >
       {/* HUD scan line */}
       <div
@@ -159,9 +159,9 @@ export default function Hero() {
       </div>
 
       <div className="section-container w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-8 items-center">
           {/* Left — Main Content */}
-          <div className="space-y-8">
+          <div className="space-y-5 sm:space-y-8">
             {/* Status badge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -289,7 +289,7 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Right — Terminal */}
+          {/* Right — Terminal + Role Pills */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -297,8 +297,9 @@ export default function Hero() {
             className="flex flex-col items-center lg:items-end gap-4 sm:gap-6 w-full"
           >
             {/* Role selector hint */}
-            <div className="w-full max-w-lg">
-              <div className="flex items-center gap-2 mb-3">
+            {/* Terminal — hidden on small phones to save space, visible on sm+ */}
+            <div className="w-full max-w-lg hidden sm:block">
+              <div className="flex items-center gap-2 mb-3 flex-wrap">
                 <span className="text-xs font-mono text-text-secondary">
                   Viewing as:
                 </span>
@@ -312,7 +313,7 @@ export default function Hero() {
                 >
                   {currentRole.icon} {currentRole.label}
                 </div>
-                <span className="text-xs font-mono text-text-tertiary">
+                <span className="text-xs font-mono text-text-tertiary hidden md:inline">
                   — change in navbar ↑
                 </span>
               </div>
@@ -372,7 +373,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4 }}
-        className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
+        className="hidden sm:flex absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex-col items-center gap-2 cursor-pointer"
         onClick={() => handleScroll('about')}
       >
         <span className="text-xs font-mono text-text-secondary tracking-widest uppercase">Scroll</span>
