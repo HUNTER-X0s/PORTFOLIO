@@ -58,18 +58,23 @@ export default function Navbar() {
     const id = href.replace('#', '')
 
     // On mobile, close the menu first and wait for its animation to finish
+    // before attempting to scroll — prevents layout shifts from interrupting scroll
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false)
       setTimeout(() => {
         const el = document.getElementById(id)
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' })
+          const yOffset = -80 // account for sticky navbar height
+          const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset
+          window.scrollTo({ top: y, behavior: 'smooth' })
         }
-      }, 320)
+      }, 320) // wait for mobile menu close animation (~250ms) to finish
     } else {
       const el = document.getElementById(id)
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth' })
+        const yOffset = -80
+        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset
+        window.scrollTo({ top: y, behavior: 'smooth' })
       }
     }
   }
@@ -89,19 +94,25 @@ export default function Navbar() {
       <motion.header
         className={cn(
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-          isScrolled ? 'py-3' : 'py-5'
+          isScrolled ? 'py-3' : 'py-4 sm:py-5'
         )}
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+        transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
       >
         <div
           className={cn(
             'mx-auto max-w-[1280px] transition-all duration-300',
             isScrolled 
               ? 'glass rounded-2xl border border-white/[0.07] shadow-glass px-4 w-[calc(100%-2rem)]'
-              : 'px-6 w-full'
+              // On mobile: always show a background. On desktop: only show when scrolled.
+              : 'px-4 sm:px-6 w-full sm:bg-transparent'
           )}
+          style={!isScrolled ? {
+            // Mobile: always dark background so navbar is readable at top of page
+            background: 'rgba(8,8,20,0.85)',
+            backdropFilter: 'blur(12px)',
+          } : {}}
         >
           <div className="flex items-center justify-between h-14">
             {/* Logo */}

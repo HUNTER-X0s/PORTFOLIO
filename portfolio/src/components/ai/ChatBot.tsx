@@ -382,7 +382,7 @@ export default function ChatBot() {
         onClick={() => { setChatOpen(!isChatOpen); playClick() }}
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.93 }}
-        className="fixed bottom-6 right-4 sm:right-6 z-[70] w-14 h-14 rounded-2xl flex items-center justify-center"
+        className="fixed bottom-24 sm:bottom-6 right-6 z-[70] w-14 h-14 rounded-2xl flex items-center justify-center"
         style={{
           background: 'linear-gradient(135deg, rgba(0,229,255,0.18), rgba(124,58,237,0.18))',
           border: '1px solid rgba(0,229,255,0.38)',
@@ -416,7 +416,7 @@ export default function ChatBot() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.88, y: 20 }}
             transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
-            className="fixed bottom-24 right-4 sm:right-6 z-[70] w-[calc(100vw-32px)] sm:w-[380px] h-[580px] max-h-[80vh] flex flex-col rounded-2xl overflow-hidden"
+            className="fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 z-[70] sm:w-[380px] sm:h-[580px] sm:max-h-[80vh] flex flex-col sm:rounded-2xl overflow-hidden"
             style={{
               background: 'rgba(8, 8, 20, 0.97)',
               border: '1px solid rgba(0,229,255,0.2)',
