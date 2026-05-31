@@ -377,7 +377,7 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
     if (q.includes('project'))
       return "Anurag's key projects include an EV Charging Demand Prediction system built with Scikit-Learn for AICTE, a Research Agent using IBM Watson as an IBM Skills Build capstone, and an AI Chatbot built during his Infosys AI internship — all with GitHub stars."
     if (q.includes('internship') || q.includes('experience') || q.includes('work'))
-      return "Anurag has completed 5 internships in 2025: AI Engineer at Infosys for 3 months, Web Developer at EISystems Technologies for 3 months, AI and Cloud at Edunet Foundation with IBM for 2 months, Deep Learning at MicroGenesis TechSoft in Bangalore for 2 months, and Data Science at Shadow Fox."
+      return "Anurag has completed 4 internships in 2025: AI Engineer at Infosys for 3 months, Web Developer at EISystems Technologies for 3 months, AI and Cloud at Edunet Foundation with IBM for 2 months, and Deep Learning at MicroGenesis TechSoft in Bangalore for 2 months."
     if (q.includes('hire') || q.includes('available') || q.includes('job'))
       return "Yes, Anurag is actively available for opportunities. He's open to SDE, AI Engineer, and ML Engineer roles. You can reach him at anurag.swain35@gmail.com. He responds within 24 hours."
     if (q.includes('education') || q.includes('college'))

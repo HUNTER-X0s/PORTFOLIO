@@ -28,9 +28,9 @@ const SECTION_MAP: Record<string, string> = {
   skills: 'skills', 'tech stack': 'skills', technologies: 'skills', expertise: 'skills',
   projects: 'projects', portfolio: 'projects', work: 'projects', 'what you built': 'projects',
   experience: 'experience', internship: 'experience', 'work history': 'experience',
-  github: 'github', 'open source': 'github', code: 'github', repos: 'github',
+  education: 'education', college: 'education', university: 'education', degree: 'education',
   'why hire': 'value', hire: 'value', value: 'value', 'why you': 'value',
-  certifications: 'analytics', certs: 'analytics', achievements: 'analytics', analytics: 'analytics',
+  certifications: 'certifications', certs: 'certifications', achievements: 'certifications', certificates: 'certifications',
   blog: 'blog', articles: 'blog', writing: 'blog', posts: 'blog',
   contact: 'contact', 'get in touch': 'contact', reach: 'contact', email: 'contact',
 }

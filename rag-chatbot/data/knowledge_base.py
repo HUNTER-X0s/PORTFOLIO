@@ -271,32 +271,7 @@ Skills used: Python, PyTorch, TensorFlow, Keras, OpenCV, Computer Vision, Deep L
         "keywords": ["MicroGenesis", "deep learning intern", "Bangalore internship", "PyTorch", "TensorFlow", "OpenCV", "computer vision", "CNN"],
     },
 
-    # ══════════════════════════════════════════════════════════
-    # INTERNSHIP 5: SHADOW FOX
-    # ══════════════════════════════════════════════════════════
-    {
-        "id": "experience-shadowfox-001",
-        "category": "experience",
-        "topic": "shadow_fox_internship",
-        "content": """
-Anurag Swain worked as a Data Science Intern at Shadow Fox in 2025, approximately 2 months duration, remote.
-Key responsibilities:
-- Executed complete data science workflows: data ingestion, cleaning, EDA, feature engineering, model training, evaluation, visualization
-- Applied classification and regression modeling with Scikit-Learn with cross-validation and hyperparameter tuning
-- Handled imbalanced datasets using SMOTE and class-weighting
-- Built reproducible Jupyter Notebook pipelines with clear documentation
-- Produced business-friendly visualization reports using Seaborn and Matplotlib
 
-Key achievements:
-- Completed all Shadow Fox internship modules with project deliverables
-- Built reusable Jupyter Notebook EDA templates for future data projects
-- Received Shadow Fox Data Science internship certificate
-
-Project: SHADOW-FOX_DATASCIENCE_INTERNSHIP — https://github.com/HUNTER-X0s/SHADOW-FOX_DATASCIENCE_INTERNSHIP
-Skills: Python, Pandas, NumPy, Scikit-Learn, Matplotlib, Seaborn, Jupyter Notebook
-""",
-        "keywords": ["Shadow Fox", "data science intern", "EDA", "Pandas", "Scikit-Learn", "internship"],
-    },
 
     # ══════════════════════════════════════════════════════════
     # PERSONAL PROJECTS
@@ -527,7 +502,7 @@ He began using Linux/Ubuntu from school level (self-taught).
         "category": "certifications",
         "topic": "all_certifications",
         "content": """
-Anurag Swain has earned 7 professional internship and project certifications in 2025:
+Anurag Swain has earned 6 professional internship and project certifications in 2025:
 
 1. Artificial Intelligence Virtual Internship 2.0 Certificate
    Issued by: Infosys (Infosys Springboard)
@@ -559,11 +534,6 @@ Anurag Swain has earned 7 professional internship and project certifications in 
    Date: July 2025
    Skills: Deep Learning, TensorFlow, PyTorch, Keras, OpenCV, Computer Vision
 
-7. Data Science Internship Certificate
-   Issued by: Shadow Fox
-   Date: 2025
-   Skills: Data Science, Python, Pandas, Scikit-Learn, EDA, Visualization
-
 All certificates are stored at: https://github.com/HUNTER-X0s/CERTIFICATIONS
 """,
         "keywords": ["certifications", "certificates", "credentials", "Infosys cert", "IBM cert", "AICTE cert", "MicroGenesis cert"],
@@ -588,8 +558,7 @@ Key repositories:
 2. AI_CHAT_BOT — Python — ⭐1 — Infosys AI Internship project
 3. Currency_Converter — JavaScript — ⭐1 — Real-time currency web app
 4. RESEARCH_AGENT — Jupyter Notebook — IBM Skills Build Capstone
-5. SHADOW-FOX_DATASCIENCE_INTERNSHIP — Jupyter Notebook — Shadow Fox internship
-6. anurag-portfolio — JavaScript — Personal portfolio website
+5. anurag-portfolio — JavaScript — Personal portfolio website
 7. CERTIFICATIONS — Repository storing all internship certificates
 8. SQL_mysql — SQL learning and projects
 9. JAVA_PROGRAMMING — Java code and projects
@@ -661,7 +630,7 @@ GOOD FIT: Deep Learning Engineer
 - Received 12+ LinkedIn endorsements from MicroGenesis TechSoft professionals
 
 WHY HIRE ANURAG:
-1. 5 professional internships in 2025 — exceptional volume for a 3rd-year student
+1. 4 professional internships in 2025 — exceptional volume for a 3rd-year student
 2. CGPA 8.10 — strong academic foundation validates learning ability
 3. GitHub projects with community recognition (3 starred repos)
 4. Adaptable across AI/ML, full-stack, and data science domains

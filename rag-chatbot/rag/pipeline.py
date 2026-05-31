@@ -349,7 +349,7 @@ CRITICAL RULES:
 7. Highlight measurable achievements (stars, CGPA, duration, certifications) when relevant.
 {f'8. The recruiter is viewing Anurag as a {role_context} candidate — tailor your answer accordingly.' if role_context else ''}
 
-Current candidate: Anurag Swain | B.Tech CSE @ GCE Kalahandi | CGPA 8.10 | 5 Internships (2025)"""
+Current candidate: Anurag Swain | B.Tech CSE @ GCE Kalahandi | CGPA 8.10 | 4 Internships (2025)"""
 
     def _build_user_prompt(self, query: str, context_chunks: list[dict], history: list[dict]) -> str:
         # Format retrieved context
