@@ -311,9 +311,9 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
                           m.id === assistantMsgId ? { ...m, text: fullText } : m
                         ))
 
-                        // Speak completed sentences
-                        if (/[.!?]\s/.test(sentenceBuffer) || (data.done && sentenceBuffer.trim())) {
-                          const sentences = sentenceBuffer.split(/(?<=[.!?])\s+/)
+                        // Speak completed sentences or lines (markdown bullets)
+                        if (/[.!?]\s|\n/.test(sentenceBuffer) || (data.done && sentenceBuffer.trim())) {
+                          const sentences = sentenceBuffer.split(/(?<=[.!?])\s+|\n+/)
                           // If not done, keep the last incomplete chunk in the buffer
                           if (!data.done && sentences.length > 1) {
                             sentenceBuffer = sentences.pop() || ''
