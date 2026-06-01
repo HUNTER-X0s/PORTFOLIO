@@ -531,8 +531,21 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
             resp.raise_for_status()
             return resp.json()["choices"][0]["message"]["content"].strip()
         except Exception as e:
-            logger.error(f"Groq generation failed: {e}")
-            return "I'm currently unable to generate a response — the AI service is unavailable."
+            logger.warning(f"Groq generation failed: {e}. Falling back to Ollama local model.")
+            try:
+                client = ollama.Client(host=OLLAMA_URL)
+                ollama_model = os.getenv("OLLAMA_MODEL", "llama3")
+                resp = client.chat(
+                    model=ollama_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ]
+                )
+                return resp["message"]["content"].strip()
+            except Exception as e2:
+                logger.error(f"Ollama fallback also failed: {e2}")
+                return "I'm currently unable to generate a response — both Groq and Ollama are unavailable."
 
     def _generate_stream(self, system_prompt: str, user_prompt: str):
         """Streaming version using Groq API."""
@@ -575,8 +588,26 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
                             continue
             return
         except Exception as e:
-            logger.error(f"Groq streaming failed: {e}")
-            yield "I'm currently unable to generate a response — the AI service is unavailable."
+            logger.warning(f"Groq streaming failed: {e}. Falling back to Ollama local stream.")
+            try:
+                client = ollama.Client(host=OLLAMA_URL)
+                ollama_model = os.getenv("OLLAMA_MODEL", "llama3")
+                stream = client.chat(
+                    model=ollama_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    stream=True
+                )
+                for chunk in stream:
+                    content = chunk.get("message", {}).get("content", "")
+                    if content:
+                        yield content
+                return
+            except Exception as e2:
+                logger.error(f"Ollama stream fallback also failed: {e2}")
+                yield "I'm currently unable to generate a response — both Groq and Ollama are unavailable."
 
 
 
