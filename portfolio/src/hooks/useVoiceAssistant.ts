@@ -62,12 +62,13 @@ function checkSupport() {
 // ── Strip markdown for clean TTS ──────────────────────────────
 function stripMarkdown(text: string): string {
   return text
+    .replace(/[-=_*#~]{3,}/g, '')         // Remove horizontal rules and repeated punctuation like === or ---
     .replace(/\*\*([^*]+)\*\*/g, '$1')   // **bold**
     .replace(/\*([^*]+)\*/g, '$1')        // *italic*
     .replace(/#{1,6}\s+/g, '')            // headings
     .replace(/`([^`]+)`/g, '$1')          // inline code
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links → label
-    .replace(/^[-•·]\s+/gm, '')           // bullets
+    .replace(/^[-•·*]\s+/gm, '')          // bullets (added asterisk)
     .replace(/\n{2,}/g, '. ')            // paragraph breaks
     .replace(/\n/g, ' ')                  // line breaks
     .trim()
@@ -157,6 +158,11 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
     if (!window.speechSynthesis) return
 
     const clean = stripMarkdown(text)
+    if (!clean) {
+      onEnd?.()
+      return
+    }
+
     // Limit TTS length to avoid very long monologue
     const truncated = clean.length > 600
       ? clean.slice(0, 597) + '…'
