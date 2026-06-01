@@ -382,7 +382,7 @@ export default function ChatBot() {
         onClick={() => { setChatOpen(!isChatOpen); playClick() }}
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.93 }}
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[70] w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[70] w-14 h-14 rounded-2xl flex items-center justify-center"
         style={{
           background: 'linear-gradient(135deg, rgba(0,229,255,0.18), rgba(124,58,237,0.18))',
           border: '1px solid rgba(0,229,255,0.38)',
