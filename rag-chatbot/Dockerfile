@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --default-timeout=180 --no-cache-dir -r requirements.txt
 
-# Pre-download the lightweight sentence-transformers model (~90MB, not 2GB)
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
+# Pre-download the ultra-lightweight ONNX model for embeddings (no PyTorch required!)
+RUN python -c "from chromadb.utils.embedding_functions import DefaultEmbeddingFunction; DefaultEmbeddingFunction()"
 
 # Copy application
 COPY . .

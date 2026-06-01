@@ -14,7 +14,7 @@ from pathlib import Path
 
 import chromadb
 from chromadb.config import Settings
-from sentence_transformers import SentenceTransformer
+from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 import ollama
 import diskcache
 
@@ -37,7 +37,7 @@ class EmbeddingProvider:
     """Tries Ollama nomic-embed-text first; falls back to sentence-transformers."""
 
     def __init__(self):
-        self._st_model: Optional[SentenceTransformer] = None
+        self._default_ef = None
         self._ollama_ok: Optional[bool] = None
         self._cache = diskcache.Cache(Path(CACHE_DIR) / "embeddings")
         self._active_backend: tuple[str, str] | None = None
@@ -57,10 +57,10 @@ class EmbeddingProvider:
         return self._ollama_ok
 
     def _st_embed(self, texts: list[str]) -> list[list[float]]:
-        if self._st_model is None:
-            logger.info(f"Loading SentenceTransformer: {EMBED_MODEL}")
-            self._st_model = SentenceTransformer(EMBED_MODEL)
-        return self._st_model.encode(texts, show_progress_bar=False).tolist()
+        if self._default_ef is None:
+            logger.info(f"Loading Chroma DefaultEmbeddingFunction (ONNX)")
+            self._default_ef = DefaultEmbeddingFunction()
+        return self._default_ef(texts)
 
     def _ollama_embed(self, texts: list[str]) -> list[list[float]]:
         client = ollama.Client(host=OLLAMA_URL)
