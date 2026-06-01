@@ -115,6 +115,7 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
   const streamRef         = useRef<MediaStream | null>(null)
   const transcriptRef     = useRef('')
   const finalTranscriptRef = useRef('')
+  const utterancesRef     = useRef<SpeechSynthesisUtterance[]>([]) // Fix Chrome TTS GC bug
   const isSupported       = checkSupport()
 
   // Store actions
@@ -172,10 +173,27 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
       const voice = pickVoice()
       if (voice) utter.voice = voice
       synthRef.current = utter
+      utterancesRef.current.push(utter)
 
       utter.onstart = () => { setIsSpeaking(true); setStatus('speaking') }
-      utter.onend   = () => { setIsSpeaking(false); setStatus('idle'); onEnd?.() }
-      utter.onerror = () => { setIsSpeaking(false); setStatus('idle') }
+      utter.onend   = () => { 
+        // Remove from reference array to prevent memory leak
+        const idx = utterancesRef.current.indexOf(utter)
+        if (idx > -1) utterancesRef.current.splice(idx, 1)
+        
+        // Only set idle if nothing else is playing or queued
+        if (!window.speechSynthesis.speaking && window.speechSynthesis.pending === false) {
+          setIsSpeaking(false); setStatus('idle')
+        }
+        onEnd?.() 
+      }
+      utter.onerror = () => { 
+        const idx = utterancesRef.current.indexOf(utter)
+        if (idx > -1) utterancesRef.current.splice(idx, 1)
+        if (!window.speechSynthesis.speaking && window.speechSynthesis.pending === false) {
+          setIsSpeaking(false); setStatus('idle')
+        }
+      }
 
       window.speechSynthesis.speak(utter)
     }
@@ -189,6 +207,7 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
 
   const stopSpeaking = useCallback(() => {
     window.speechSynthesis?.cancel()
+    utterancesRef.current = []
     setIsSpeaking(false)
     setStatus('idle')
   }, [])
@@ -322,7 +341,7 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
                           
                           // Speak all complete sentences
                           for (const sentence of sentences) {
-                            if (sentence.trim()) {
+                            if (sentence.trim().length > 1) { // avoid speaking empty bullets or single chars
                               speak(sentence.trim())
                             }
                           }
