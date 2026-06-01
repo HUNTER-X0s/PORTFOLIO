@@ -23,12 +23,8 @@ const SUGGESTED_PROMPTS = [
   { icon: '🚀', text: "Explain his best project" },
   { icon: '🎯', text: "What role is he best suited for?" },
   { icon: '💼', text: "Summarize his internship experience" },
-  { icon: '🤖', text: "What AI/ML projects has he built?" },
-  { icon: '✅', text: "Is he available for hire?" },
-  { icon: '🧠', text: "What is his experience with Deep Learning and NLP?" },
   { icon: '🎓', text: "What is his educational background and CGPA?" },
-  { icon: '🏆', text: "Tell me about his certifications." },
-  { icon: '♟️', text: "What are his hobbies outside of coding?" },
+  { icon: '✅', text: "Is he available for hire?" },
 ]
 
 // ── RAG source badge ──────────────────────────────────────────
@@ -509,7 +505,7 @@ export default function ChatBot() {
                   Ask me anything:
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  {SUGGESTED_PROMPTS.slice(0, 8).map((q) => (
+                  {SUGGESTED_PROMPTS.slice(0, 6).map((q) => (
                     <button
                       key={q.text}
                       onClick={() => sendMessage(q.text)}
