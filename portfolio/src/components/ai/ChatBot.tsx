@@ -22,9 +22,9 @@ const SUGGESTED_PROMPTS = [
   { icon: '⚡', text: "What are his strongest skills?" },
   { icon: '🚀', text: "Explain his best project" },
   { icon: '🎯', text: "What role is he best suited for?" },
+  { icon: '✅', text: "Is he available for hire?" },
   { icon: '💼', text: "Summarize his internship experience" },
   { icon: '🎓', text: "What is his educational background and CGPA?" },
-  { icon: '✅', text: "Is he available for hire?" },
 ]
 
 // ── RAG source badge ──────────────────────────────────────────
