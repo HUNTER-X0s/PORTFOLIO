@@ -116,8 +116,14 @@ export default function Hero() {
   const { width } = useWindowSize()
   const isMobile = width > 0 && width < 768
 
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0])
-  const heroY = useTransform(scrollY, [0, 300], [0, -80])
+  // Always use MotionValues — switching between MotionValue and static number
+  // breaks framer-motion's scroll binding on production builds (Vercel).
+  const desktopOpacity = useTransform(scrollY, [0, 300], [1, 0])
+  const desktopY = useTransform(scrollY, [0, 300], [0, -80])
+
+  // On mobile: freeze at fully visible / no offset
+  const heroOpacity = useTransform(desktopOpacity, (v) => (isMobile ? 1 : v))
+  const heroY = useTransform(desktopY, (v) => (isMobile ? 0 : v))
 
   const content = roleContents[activeRole] || roleContents['fullstack']
   const currentRole = roles.find((r) => r.id === activeRole) || roles.find((r) => r.id === 'fullstack') || roles[0]
@@ -147,10 +153,7 @@ export default function Hero() {
   return (
     <motion.div
       ref={containerRef}
-      style={{
-        opacity: isMobile ? 1 : heroOpacity,
-        y: isMobile ? 0 : heroY,
-      }}
+      style={{ opacity: heroOpacity, y: heroY }}
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-20 sm:pb-16 px-0"
     >
       {/* HUD scan line */}
