@@ -160,6 +160,12 @@ export function useInView(threshold = 0.2) {
   const [inView, setInView] = useState(false)
 
   useEffect(() => {
+    // On mobile screens, disable scroll animations by forcing them to be visible immediately
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setInView(true)
+      return
+    }
+
     const el = ref.current
     if (!el) return
 
