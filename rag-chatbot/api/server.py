@@ -153,9 +153,18 @@ async def root():
 async def health_check():
     """Health check endpoint — verifies Ollama, ChromaDB connectivity."""
     try:
-        rag = get_rag()
-        chunk_count = rag.vector_store.collection.count()
-        ollama_status = "connected" if rag.embedder._check_ollama() else "fallback (sentence-transformers)"
+        global _rag_pipeline
+        if _rag_pipeline is None:
+            return HealthResponse(
+                status="initializing",
+                ollama="checking",
+                chromadb="checking",
+                indexed_chunks=0,
+                model=os.getenv("OLLAMA_MODEL", "llama3"),
+            )
+            
+        chunk_count = _rag_pipeline.vector_store.collection.count()
+        ollama_status = "connected" if _rag_pipeline.embedder._check_ollama() else "fallback (sentence-transformers)"
         return HealthResponse(
             status="healthy",
             ollama=ollama_status,
