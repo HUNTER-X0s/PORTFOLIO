@@ -61,8 +61,8 @@ export default function MessagesPage() {
       <div className="grid md:grid-cols-[1fr_400px] gap-4">
         {/* Message list */}
         <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
-          {loading ? <div className="p-12 text-center text-gray-400 text-sm">Loading…</div> :
-            filtered.length === 0 ? <div className="p-12 text-center text-gray-400 text-sm">No messages</div> :
+          {loading ? <div className="py-12 px-4 text-center text-gray-400 text-sm">Loading…</div> :
+            filtered.length === 0 ? <div className="py-12 px-4 text-center text-gray-400 text-sm">No messages</div> :
             <div className="divide-y divide-white/[0.04] max-h-[600px] overflow-y-auto">
               {filtered.map((msg) => (
                 <motion.div key={msg._id} onClick={() => { setSelected(msg); if (!msg.isRead) handleRead(msg._id) }}

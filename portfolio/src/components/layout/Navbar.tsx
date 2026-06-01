@@ -94,25 +94,18 @@ export default function Navbar() {
       <motion.header
         className={cn(
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-          isScrolled ? 'py-3' : 'py-4 sm:py-5'
+          isScrolled ? 'py-2 sm:py-3' : 'py-3 sm:py-5'
         )}
-        initial={{ y: -100, opacity: 0 }}
+        initial={{ y: 0, opacity: 1 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
       >
         <div
           className={cn(
             'mx-auto max-w-[1280px] transition-all duration-300',
             isScrolled 
               ? 'glass rounded-2xl border border-white/[0.07] shadow-glass px-4 w-[calc(100%-2rem)]'
-              // On mobile: always show a background. On desktop: only show when scrolled.
-              : 'px-4 sm:px-6 w-full sm:bg-transparent'
+              : 'px-6 w-full'
           )}
-          style={!isScrolled ? {
-            // Mobile: always dark background so navbar is readable at top of page
-            background: 'rgba(8,8,20,0.85)',
-            backdropFilter: 'blur(12px)',
-          } : {}}
         >
           <div className="flex items-center justify-between h-14">
             {/* Logo */}

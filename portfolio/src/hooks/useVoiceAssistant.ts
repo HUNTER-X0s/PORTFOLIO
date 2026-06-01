@@ -154,7 +154,6 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
   // ── Text-to-Speech ───────────────────────────────────────────
   const speak = useCallback((text: string, onEnd?: () => void) => {
     if (!window.speechSynthesis) return
-    window.speechSynthesis.cancel()
 
     const clean = stripMarkdown(text)
     // Limit TTS length to avoid very long monologue
