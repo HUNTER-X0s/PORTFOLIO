@@ -221,8 +221,9 @@ export default function VoiceAssistant() {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -20, scale: 0.94 }}
             transition={{ duration: 0.28, ease: [0.19, 1, 0.22, 1] }}
-            className="fixed bottom-20 left-4 right-4 md:left-6 md:bottom-24 md:right-auto z-[70] md:w-[320px] h-[calc(100vh-120px)] md:h-auto max-h-[calc(100vh-100px)] md:max-h-[560px] flex flex-col rounded-2xl overflow-hidden"
+            className="fixed bottom-20 left-4 right-4 md:left-6 md:bottom-24 md:right-auto z-[70] md:w-[320px] flex flex-col rounded-2xl overflow-hidden"
             style={{
+              maxHeight: 'min(560px, calc(100dvh - 90px))',
               background: '#080814',
               border: '1.5px solid rgba(0,229,255,0.25)',
               boxShadow: '0 24px 64px rgba(0,0,0,0.95), 0 0 50px rgba(0,229,255,0.1), inset 0 1px 0 rgba(255,255,255,0.04)',
@@ -295,6 +296,8 @@ export default function VoiceAssistant() {
             {!va.isSupported ? <NotSupportedScreen /> :
               va.hasPermission === false ? <PermissionScreen onRequest={va.requestPermission} /> : (
               <>
+                {/* Scrollable body: orb + messages + suggestions */}
+                <div className="flex-1 overflow-y-auto no-scrollbar">
                 {/* Orb + waveform */}
                 <div className="flex flex-col items-center gap-3 pt-5 pb-3 px-4">
                   <VoiceOrb
@@ -397,6 +400,7 @@ export default function VoiceAssistant() {
                     </div>
                   </div>
                 )}
+              </div>
               </>
             )}
 
