@@ -67,10 +67,14 @@ app = FastAPI(
 )
 
 # CORS
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+allowed_origins_raw = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,https://anurag07.vercel.app"
+)
+allowed_origins = [o.strip() for o in allowed_origins_raw.split(",")]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Set to allowed_origins in production
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

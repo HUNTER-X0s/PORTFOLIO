@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: anurag-portfolio-chatbot
+    runtime: docker
+    dockerfilePath: ./rag-chatbot/Dockerfile
+    dockerContext: ./rag-chatbot
+    plan: free
+    region: singapore   # closest free region to India
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000          # Render assigns port 10000 by default
+      - key: ENV
+        value: production
+      - key: GROQ_API_KEY
+        sync: false           # You will paste this in Render dashboard
+      - key: GROQ_MODEL
+        value: llama-3.1-8b-instant
+      - key: USE_OLLAMA_EMBED
+        value: "false"        # No Ollama on cloud — use sentence-transformers
+      - key: EMBED_MODEL
+        value: sentence-transformers/all-MiniLM-L6-v2
+      - key: CHROMA_PERSIST_DIR
+        value: ./chroma_db
+      - key: CHROMA_COLLECTION
+        value: anurag_portfolio
+      - key: CACHE_DIR
+        value: ./cache
+      - key: RETRIEVAL_TOP_K
+        value: "3"
+      - key: RETRIEVAL_MIN_SCORE
+        value: "0.25"
+      - key: RAG_FAST_MODE
+        value: "true"
+      - key: ALLOWED_ORIGINS
+        value: https://anurag07.vercel.app,http://localhost:3000
+      - key: CANDIDATE_NAME
+        value: Anurag Swain
+      - key: CANDIDATE_GITHUB
+        value: HUNTER-X0s
+      - key: CANDIDATE_EMAIL
+        value: anurag.swain35@gmail.com

@@ -10,23 +10,23 @@ RUN apt-get update && apt-get install -y \
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip install --default-timeout=100 --no-cache-dir -r requirements.txt
+RUN pip install --default-timeout=120 --no-cache-dir -r requirements.txt
 
-# Pre-download sentence-transformers model (fallback)
+# Pre-download sentence-transformers model so it's baked into the image
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
 
 # Copy application
 COPY . .
 
-# Create directories
+# Create required directories
 RUN mkdir -p chroma_db cache uploads logs
 
-# Expose port
-EXPOSE 8001
+# Expose Render's default port
+EXPOSE 10000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:8001/api/health || exit 1
+HEALTHCHECK --interval=30s --timeout=15s --start-period=120s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-10000}/api/health || exit 1
 
-# Run
-CMD ["python", "main.py"]
+# Run — use PORT env var so Render can override it
+CMD ["sh", "-c", "python main.py"]
