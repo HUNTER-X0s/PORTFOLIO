@@ -68,7 +68,7 @@ function stripMarkdown(text: string): string {
     .replace(/#{1,6}\s+/g, '')            // headings
     .replace(/`([^`]+)`/g, '$1')          // inline code
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links → label
-    .replace(/^[-•·*]\s+/gm, '')          // bullets (added asterisk)
+    .replace(/^[-•·*+]\s?/gm, '')         // bullets (added asterisk and plus, optional space)
     .replace(/\n{2,}/g, '. ')            // paragraph breaks
     .replace(/\n/g, ' ')                  // line breaks
     .trim()
