@@ -438,7 +438,7 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
             "cached": False,
         }
 
-        if use_cache and not history and reply.strip():
+        if use_cache and not history and reply.strip() and not reply.startswith("I'm currently unable to generate a response"):
             self._query_cache.set(cache_key, result, expire=3600)  # 1h cache
 
         return result
@@ -499,7 +499,7 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
             "cached": False,
         }
 
-        if use_cache and not history and full_reply.strip():
+        if use_cache and not history and full_reply.strip() and not full_reply.startswith("I'm currently unable to generate a response"):
             self._query_cache.set(cache_key, result, expire=3600)
             
         yield f"data: {json.dumps({'done': True, 'sources': sources, 'confidence': round(avg_confidence, 3), 'cached': False})}\n\n"
