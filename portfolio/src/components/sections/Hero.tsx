@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowDown, Download, Github, ExternalLink, Sparkles, Linkedin } from 'lucide-react'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { personalInfo, roleContents, roles } from '@/data/portfolio'
-import { useSound } from '@/hooks'
+import { useSound, useWindowSize } from '@/hooks'
 import { cn } from '@/lib/utils'
 
 // Animated terminal lines
@@ -113,6 +113,9 @@ export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
 
   const { scrollY } = useScroll()
+  const { width } = useWindowSize()
+  const isMobile = width > 0 && width < 768
+
   const heroOpacity = useTransform(scrollY, [0, 300], [1, 0])
   const heroY = useTransform(scrollY, [0, 300], [0, -80])
 
@@ -144,7 +147,10 @@ export default function Hero() {
   return (
     <motion.div
       ref={containerRef}
-      style={{ opacity: heroOpacity, y: heroY }}
+      style={{
+        opacity: isMobile ? 1 : heroOpacity,
+        y: isMobile ? 0 : heroY,
+      }}
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-20 sm:pb-16 px-0"
     >
       {/* HUD scan line */}
