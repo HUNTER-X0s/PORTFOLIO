@@ -545,7 +545,7 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
                 return resp["message"]["content"].strip()
             except Exception as e2:
                 logger.error(f"Ollama fallback also failed: {e2}")
-                return "I'm currently unable to generate a response — both Groq and Ollama are unavailable."
+                return f"Groq Error: {str(e)}"
 
     def _generate_stream(self, system_prompt: str, user_prompt: str):
         """Streaming version using Groq API."""
@@ -606,10 +606,8 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
                         yield content
                 return
             except Exception as e2:
-                logger.error(f"Ollama stream fallback also failed: {e2}")
-                yield "I'm currently unable to generate a response — both Groq and Ollama are unavailable."
-
-
+                logger.error(f"Ollama fallback also failed: {e2}")
+                yield f"Groq Error: {str(e)}"
 
     def reindex(self):
         """Force rebuild the entire vector index."""
