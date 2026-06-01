@@ -518,7 +518,7 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
                 "https://api.groq.com/openai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
                 json={
-                    "model": os.getenv("GROQ_MODEL", "llama3-8b-8192"),
+                    "model": os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
                     "messages": [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt},
@@ -565,7 +565,7 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
                 "https://api.groq.com/openai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
                 json={
-                    "model": os.getenv("GROQ_MODEL", "llama3-8b-8192"),
+                    "model": os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
                     "messages": [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt},
