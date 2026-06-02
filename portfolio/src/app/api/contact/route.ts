@@ -10,45 +10,65 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Configure nodemailer transporter
+    // Validate env vars are present
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.CONTACT_EMAIL) {
+      console.error('[Contact API] Missing SMTP environment variables')
+      return NextResponse.json({ error: 'Email service is not configured' }, { status: 500 })
+    }
+
+    // Configure nodemailer transporter for Gmail
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false, // true for 465, false for other ports
+      service: 'gmail',  // use 'gmail' service shortcut — handles TLS automatically
       auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        pass: process.env.SMTP_PASS, // Gmail App Password
       },
-    });
+    })
 
     // Setup email data
     const mailOptions = {
-      from: `"${name}" <${process.env.SMTP_USER}>`, // sender address
-      to: process.env.CONTACT_EMAIL, // list of receivers
+      from: `"Portfolio Contact" <${process.env.SMTP_USER}>`,
+      to: process.env.CONTACT_EMAIL,
+      replyTo: email, // So you can reply directly to the sender
       subject: `New Portfolio Contact from ${name}${company ? ` at ${company}` : ''}`,
       text: `Name: ${name}\nEmail: ${email}\nCompany: ${company || 'N/A'}\n\nMessage:\n${message}`,
       html: `
-        <h3>New Contact Request</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Company:</strong> ${company || 'N/A'}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, '<br/>')}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+          <h2 style="color: #1a1a2e; border-bottom: 2px solid #00E5FF; padding-bottom: 10px;">📬 New Portfolio Contact</h2>
+          <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold; color: #555; width: 100px;">Name:</td>
+              <td style="padding: 8px 0; color: #333;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold; color: #555;">Email:</td>
+              <td style="padding: 8px 0; color: #333;"><a href="mailto:${email}">${email}</a></td>
+            </tr>
+            ${company ? `<tr>
+              <td style="padding: 8px 0; font-weight: bold; color: #555;">Company:</td>
+              <td style="padding: 8px 0; color: #333;">${company}</td>
+            </tr>` : ''}
+          </table>
+          <div style="background: white; padding: 16px; border-radius: 6px; border-left: 4px solid #00E5FF; margin-top: 16px;">
+            <h4 style="color: #555; margin: 0 0 8px 0;">Message:</h4>
+            <p style="color: #333; white-space: pre-wrap; margin: 0;">${message}</p>
+          </div>
+          <p style="color: #999; font-size: 12px; margin-top: 20px;">Sent from your portfolio website at anurag07.vercel.app</p>
+        </div>
       `,
-    };
+    }
 
-    // Send the email in the background to reduce response latency
-    transporter.sendMail(mailOptions).then(() => {
-      console.log('[Contact Form Submission Success]', { name, email, company })
-    }).catch((error) => {
-      console.error('[Contact Form Email Error]', error)
-    });
+    // Await the email send — so we can return proper errors if it fails
+    await transporter.sendMail(mailOptions)
 
-    console.log('[Contact Form Received]', { name, email, company, message })
-
-    return NextResponse.json({ success: true, message: 'Message received!' })
-  } catch (error) {
-    console.error('[Contact API Error]', error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    console.log('[Contact Form Submission Success]', { name, email, company })
+    return NextResponse.json({ success: true, message: 'Message sent successfully!' })
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error('[Contact API Error]', errorMessage)
+    return NextResponse.json(
+      { error: `Failed to send email: ${errorMessage}` },
+      { status: 500 }
+    )
   }
 }
