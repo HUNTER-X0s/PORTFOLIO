@@ -340,22 +340,25 @@ class RAGPipeline:
 Your job is to help recruiters and potential employers understand Anurag's skills, experience, and suitability for roles.
 
 CRITICAL RULES:
-1. You have access to Anurag's portfolio context. If the user asks about Anurag, his skills, projects, or experience, use the context to provide accurate answers.
+1. You have access to Anurag's portfolio context. If the user asks about Anurag, his skills, projects, or experience, use the context to provide accurate, COMPREHENSIVE answers.
 2. If the user asks a general programming, tech, or conversational question NOT related to Anurag, answer it normally using your vast general AI knowledge. You are a helpful AI assistant.
-3. Be professional, concise, and recruiter-friendly.
-4. Use bullet points for lists. Keep answers focused and scannable.
-5. When mentioning projects, always include the GitHub URL if available.
+3. Be professional, detailed, and recruiter-friendly. Do NOT give short or truncated answers.
+4. Use Markdown formatting extensively: bold, headers (###), bullet points, and numbered lists to make responses highly readable.
+5. When mentioning projects, ALWAYS include the GitHub URL if available and describe what the project does.
 6. Speak in third person about Anurag (e.g., "Anurag has..." not "I have...").
-7. Highlight measurable achievements (stars, CGPA, duration, certifications) when relevant.
-{f'8. The recruiter is viewing Anurag as a {role_context} candidate — tailor your answer accordingly.' if role_context else ''}
+7. Highlight measurable achievements (stars, CGPA, duration, certifications, tech stack) in detail.
+8. Give LONG, THOROUGH answers covering all relevant aspects. Aim for 300-600 word responses for complex questions.
+9. For skills questions: list proficiency percentages, tools used, and real-world application from internships.
+10. For project questions: describe tech stack, features, impact, and any metrics.
+{f'11. The recruiter is viewing Anurag as a {role_context} candidate — tailor your answer accordingly.' if role_context else ''}
 
 Current candidate: Anurag Swain | B.Tech CSE @ GCE Kalahandi | CGPA 8.10 | 4 Internships (2025)"""
 
     def _build_user_prompt(self, query: str, context_chunks: list[dict], history: list[dict]) -> str:
         # Format retrieved context
         context_text = "\n\n".join([
-            f"[Source: {c['category']} / {c['topic']} | Relevance: {c['similarity']:.2f}]\n{c['content'][:600]}"
-            for c in context_chunks[:2]
+            f"[Source: {c['category']} / {c['topic']} | Relevance: {c['similarity']:.2f}]\n{c['content']}"
+            for c in context_chunks[:3]
         ])
 
         # Format conversation history (last 2 exchanges)
@@ -375,7 +378,7 @@ Current candidate: Anurag Swain | B.Tech CSE @ GCE Kalahandi | CGPA 8.10 | 4 Int
 
 QUESTION: {query}
 
-Provide a well-structured, highly readable response. Use Markdown, bold text for emphasis, and bullet points where appropriate to make the answer easy to scan and read. If the question is about Anurag, base your answer on the CONTEXT."""
+Provide a comprehensive, well-structured, highly detailed response. Use Markdown with headers (###), bold text for emphasis, bullet points, and numbered lists. Be thorough — cover all relevant aspects from the CONTEXT. Do NOT give a short answer. If the question is about Anurag, base your answer on the CONTEXT and elaborate fully."""
         return prompt
 
 
@@ -507,51 +510,48 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
 
 
     def _generate(self, system_prompt: str, user_prompt: str) -> str:
-        """Use Groq API for generation with automatic rate-limit retry."""
-        import httpx, time
+        """Use Groq API for generation."""
         api_key = os.getenv("GROQ_API_KEY", "")
         if not api_key:
             return "Please provide a GROQ_API_KEY in the environment variables."
 
-        for attempt in range(3):  # retry up to 3 times
-            try:
-                resp = httpx.post(
-                    "https://api.groq.com/openai/v1/chat/completions",
-                    headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-                    json={
-                        "model": os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
-                        "messages": [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_prompt},
-                        ],
-                        "temperature": float(os.getenv("OLLAMA_TEMPERATURE", "0.1")),
-                        "max_tokens": 800,
-                    },
-                    timeout=30,
-                )
-                if resp.status_code == 429:
-                    retry_after = float(resp.headers.get("retry-after", 6))
-                    logger.warning(f"⏳ Groq rate limit hit. Retrying in {retry_after:.1f}s (attempt {attempt+1}/3)")
-                    time.sleep(min(retry_after, 10))
-                    continue
-                resp.raise_for_status()
-                return resp.json()["choices"][0]["message"]["content"].strip()
-            except Exception as e:
-                if attempt < 2:
-                    time.sleep(2 ** attempt)
-                    continue
-                logger.warning(f"Groq generation failed after retries: {e}")
-                try:
-                    client = ollama.Client(host=OLLAMA_URL)
-                    ollama_model = os.getenv("OLLAMA_MODEL", "llama3")
-                    r = client.chat(model=ollama_model, messages=[
+        try:
+            import httpx
+            resp = httpx.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                json={
+                    "model": os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
+                    "messages": [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt},
-                    ])
-                    return r["message"]["content"].strip()
-                except Exception as e2:
-                    return "I'm temporarily rate-limited. Please try again in a few seconds!"
-        return "I'm temporarily rate-limited. Please try again in a few seconds!"
+                    ],
+                    "temperature": float(os.getenv("OLLAMA_TEMPERATURE", "0.1")),
+                    "max_tokens": 4096,
+                },
+                timeout=60,
+            )
+            resp.raise_for_status()
+            return resp.json()["choices"][0]["message"]["content"].strip()
+        except Exception as e:
+            logger.warning(f"Groq generation failed: {e}. Falling back to Ollama local model.")
+            try:
+                client = ollama.Client(host=OLLAMA_URL)
+                ollama_model = os.getenv("OLLAMA_MODEL", "llama3")
+                resp = client.chat(
+                    model=ollama_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ]
+                )
+                return resp["message"]["content"].strip()
+            except Exception as e2:
+                logger.error(f"Ollama fallback also failed: {e2}")
+                error_details = str(e)
+                if hasattr(e, "response") and hasattr(e.response, "text"):
+                    error_details = e.response.text
+                return f"Groq Error Details: {error_details}"
 
     def _generate_stream(self, system_prompt: str, user_prompt: str):
         """Streaming version using Groq API."""
@@ -574,8 +574,7 @@ Provide a well-structured, highly readable response. Use Markdown, bold text for
                         {"role": "user", "content": user_prompt},
                     ],
                     "temperature": float(os.getenv("OLLAMA_TEMPERATURE", "0.1")),
-                    "max_tokens": 2048,
-                    "stream": True,
+                    "max_tokens": 4096,
                 },
                 timeout=60,
             ) as response:
