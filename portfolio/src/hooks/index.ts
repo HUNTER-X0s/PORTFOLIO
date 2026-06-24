@@ -85,15 +85,26 @@ export function useActiveSection(sectionIds: string[]) {
   const setActiveSection = usePortfolioStore((s) => s.setActiveSection)
 
   useEffect(() => {
+    // Keep a map of which sections are intersecting our view band
+    const visibleSections = new Map<string, boolean>()
+
     const observer = new IntersectionObserver(
       (entries) => {
+        // Update the visibility state for all entries that changed
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id)
-          }
+          visibleSections.set(entry.target.id, entry.isIntersecting)
         })
+
+        // Always pick the first section from our ordered array that is currently visible.
+        // This prevents race conditions and handles browser scroll restoration perfectly.
+        const currentActive = sectionIds.find((id) => visibleSections.get(id))
+        
+        if (currentActive) {
+          setActiveSection(currentActive)
+        }
       },
-      { rootMargin: '-40% 0px -40% 0px' }
+      // Creates a 20% high band in the middle of the screen to detect the active section
+      { rootMargin: '-40% 0px -40% 0px', threshold: 0 }
     )
 
     sectionIds.forEach((id) => {
