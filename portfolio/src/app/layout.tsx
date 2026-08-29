@@ -4,6 +4,7 @@ import { ThemeProvider } from 'next-themes'
 import '@/app/globals.css'
 import {
   blogItemListSchema,
+  faqSchema,
   generateMetadata,
   personSchema,
   profilePageSchema,
@@ -49,6 +50,7 @@ const structuredData = JSON.stringify([
   profilePageSchema,
   projectItemListSchema,
   blogItemListSchema,
+  faqSchema,
 ]).replace(/</g, '\\u003c')
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

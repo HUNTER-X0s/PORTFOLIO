@@ -14,6 +14,7 @@ import Footer from '@/components/layout/Footer'
 // Dynamic Component Imports (SSR-disabled for performance & code-splitting)
 const CustomCursor = dynamic(() => import('@/components/layout/CustomCursor'), { ssr: false })
 const CommandPalette = dynamic(() => import('@/components/layout/CommandPalette'), { ssr: false })
+const AmbientSound = dynamic(() => import('@/components/layout/AmbientSound'), { ssr: false })
 const MusicModal = dynamic(() => import('@/components/layout/MusicModal'), { ssr: false })
 const ParticleField = dynamic(() => import('@/components/three/ParticleField'), { ssr: false })
 
@@ -49,7 +50,7 @@ const SECTION_IDS = [
 ]
 
 export default function HomePage() {
-  const { isLoaded, setIsLoaded, musicAsked } = usePortfolioStore()
+  const { isLoaded, setIsLoaded } = usePortfolioStore()
 
   // Activate section tracking
   useActiveSection(SECTION_IDS)
@@ -60,28 +61,25 @@ export default function HomePage() {
     return () => clearTimeout(timer)
   }, [setIsLoaded])
 
-  // Preload sounds
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const isMobile = window.innerWidth < 768
-      if (isMobile) {
-        document.body.classList.add('mobile')
-      }
-    }
-  }, [])
-
   return (
     <>
       {/* Global UI Layer */}
       <CustomCursor />
       <ScrollProgress />
       <CommandPalette />
-      {!musicAsked && <MusicModal />}
+      <AmbientSound />
+      <MusicModal />
 
-      {/* 3D Particle Background */}
+      {/* 3D Particle Background — sharp stars, 3D dynamic */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <ParticleField />
       </div>
+      {/* Subtle dark veil to separate background from foreground text */}
+      <div
+        className="fixed inset-0 z-[1] pointer-events-none"
+        style={{ background: 'linear-gradient(to bottom, rgba(2,2,9,0.25) 0%, rgba(2,2,9,0.15) 50%, rgba(2,2,9,0.3) 100%)' }}
+        aria-hidden="true"
+      />
 
       {/* Main content */}
       <div className="relative z-10">
@@ -90,7 +88,7 @@ export default function HomePage() {
         <main className="noise-overlay">
           {/* Grid overlay */}
           <div
-            className="fixed inset-0 pointer-events-none z-0 bg-grid opacity-40"
+            className="fixed inset-0 pointer-events-none z-0 bg-grid opacity-20"
             aria-hidden="true"
           />
 
@@ -115,39 +113,39 @@ export default function HomePage() {
             <Hero />
           </section>
 
-          <section id="about" style={{ scrollMarginTop: '72px' }}>
+          <section id="about" className="section-optimized" style={{ scrollMarginTop: '72px' }}>
             <About />
           </section>
 
-          <section id="skills" style={{ scrollMarginTop: '72px' }}>
+          <section id="skills" className="section-optimized" style={{ scrollMarginTop: '72px' }}>
             <Skills />
           </section>
 
-          <section id="projects" style={{ scrollMarginTop: '72px' }}>
+          <section id="projects" className="section-optimized" style={{ scrollMarginTop: '72px' }}>
             <Projects />
           </section>
 
-          <section id="experience" style={{ scrollMarginTop: '72px' }}>
+          <section id="experience" className="section-optimized" style={{ scrollMarginTop: '72px' }}>
             <Experience />
           </section>
 
-          <section id="education" style={{ scrollMarginTop: '72px' }}>
+          <section id="education" className="section-optimized" style={{ scrollMarginTop: '72px' }}>
             <Education />
           </section>
 
-          <section id="value" style={{ scrollMarginTop: '72px' }}>
+          <section id="value" className="section-optimized" style={{ scrollMarginTop: '72px' }}>
             <ValueProp />
           </section>
 
-          <section id="certifications" style={{ scrollMarginTop: '72px' }}>
+          <section id="certifications" className="section-optimized" style={{ scrollMarginTop: '72px' }}>
             <Certifications />
           </section>
 
-          <section id="blog" style={{ scrollMarginTop: '72px' }}>
+          <section id="blog" className="section-optimized" style={{ scrollMarginTop: '72px' }}>
             <Blog />
           </section>
 
-          <section id="contact" style={{ scrollMarginTop: '72px' }}>
+          <section id="contact" className="section-optimized" style={{ scrollMarginTop: '72px' }}>
             <Contact />
           </section>
         </main>

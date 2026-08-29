@@ -49,6 +49,7 @@ export interface UseVoiceAssistantReturn {
   stopSpeaking: () => void
   clearHistory: () => void
   speak: (text: string) => void
+  greet: () => void
   requestPermission: () => Promise<boolean>
   executeAction: (action: any, rawText: string) => Promise<void>
 }
@@ -63,14 +64,16 @@ function checkSupport() {
 function stripMarkdown(text: string): string {
   return text
     .replace(/[-=_*#~]{3,}/g, '')         // Remove horizontal rules and repeated punctuation like === or ---
+    .replace(/^#{1,6}\s*/gm, '')          // Strip markdown headings #, ##, ###
+    .replace(/#{1,6}/g, '')               // Stray hashes
     .replace(/\*\*([^*]+)\*\*/g, '$1')   // **bold**
     .replace(/\*([^*]+)\*/g, '$1')        // *italic*
-    .replace(/#{1,6}\s+/g, '')            // headings
     .replace(/`([^`]+)`/g, '$1')          // inline code
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links → label
-    .replace(/^[-•·*+]\s?/gm, '')         // bullets (added asterisk and plus, optional space)
+    .replace(/^[-•·*+]\s?/gm, '')         // bullets
+    .replace(/[⭐⚡→✓✔︎]/g, '')           // symbols
     .replace(/\n{2,}/g, '. ')            // paragraph breaks
-    .replace(/\n/g, ' ')                  // line breaks
+    .replace(/\n/g, '. ')                 // line breaks
     .trim()
 }
 
@@ -218,6 +221,22 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
     setStatus('idle')
   }, [])
 
+  // ── Jarvis Greeting ──────────────────────────────────────────
+  const greet = useCallback(() => {
+    const greetingText = "Hello, I am Jarvis. How can I help you?"
+    setMessages((prev) => {
+      if (prev.length > 0) return prev
+      return [{
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        text: greetingText,
+        timestamp: new Date(),
+        actionTaken: 'Jarvis greeting',
+      }]
+    })
+    speak(greetingText)
+  }, [speak])
+
   // ── Execute voice command ────────────────────────────────────
   const executeAction = useCallback(async (action: VoiceCommandAction, rawText: string) => {
     let responseText = ''
@@ -230,13 +249,13 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
         return
 
       case 'help':
-        responseText = "You can ask me about Anurag's skills, projects, and experience. Try saying: Show projects, Go to contact, View as AI engineer, Download resume, or ask any question about him."
+        responseText = "- **Voice Commands**: Try saying 'Show projects', 'Go to contact', or 'View as AI engineer'\n- **Candidate Questions**: Ask about Anurag's skills, projects, internships, and CGPA"
         actionDesc = 'Help displayed'
         break
 
       case 'navigate':
         scrollToSection(action.section)
-        responseText = `Navigating to the ${action.section} section.`
+        responseText = `- **Navigation**: Switched to the **${action.section}** section.`
         actionDesc = `Navigated → ${action.section}`
         break
 
@@ -248,32 +267,32 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
           ml_engineer: 'Machine Learning Engineer', dl_engineer: 'Deep Learning Engineer',
           data_scientist: 'Data Scientist', data_analyst: 'Data Analyst', cloud: 'Cloud Engineer',
         }
-        responseText = `Switched to ${roleLabels[action.roleId] || action.roleId} view. The portfolio is now showing content tailored for that role.`
+        responseText = `- **Role View**: Switched to **${roleLabels[action.roleId] || action.roleId}** view.`
         actionDesc = `Role → ${action.roleId}`
         break
 
       case 'openChat':
         setChatOpen(true)
-        responseText = "Opening the text chat interface for you."
+        responseText = "- **Chat**: Opening the text chat interface for you."
         actionDesc = 'Chat opened'
         break
 
       case 'openProject':
         scrollToSection('projects')
         if (action.projectId) setActiveProjectId(action.projectId)
-        responseText = "Showing the projects section now."
+        responseText = "- **Projects**: Showing the projects section now."
         actionDesc = `Project opened: ${action.projectId || 'projects'}`
         break
 
       case 'downloadResume':
         window.open('/resume.pdf', '_blank')
-        responseText = "Opening the resume for download."
+        responseText = "- **Resume**: Opening Anurag's resume for download."
         actionDesc = 'Resume download triggered'
         break
 
       case 'openLink':
         window.open(action.url, '_blank')
-        responseText = `Opening ${action.url} in a new tab.`
+        responseText = `- **Link**: Opening ${action.url} in a new tab.`
         actionDesc = `Link opened: ${action.url}`
         break
 
@@ -299,7 +318,7 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
             body: JSON.stringify({
               message: action.text || rawText,
               session_id: sessionId,
-              role_context: '',
+              role_context: 'jarvis_voice',
               top_k: 3,
               stream: true,
             }),
@@ -397,16 +416,16 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
   function getLocalFallback(query: string): string {
     const q = query.toLowerCase()
     if (q.includes('skill') || q.includes('tech'))
-      return "Anurag's strongest skills are Python at 88%, Scikit-Learn and Machine Learning at 82%, React and Next.js at 78%, and PyTorch and TensorFlow for deep learning. He's worked across AI, full-stack, and data science."
+      return "- **Python**: 88% proficiency across AI, ML, and Data Science\n- **Machine Learning & DL**: PyTorch, TensorFlow, Scikit-Learn\n- **Web & Backend**: React, Next.js 14, Node.js, FastAPI\n- **Databases & Cloud**: PostgreSQL, MongoDB, Docker, Git"
     if (q.includes('project'))
-      return "Anurag's key projects include an EV Charging Demand Prediction system built with Scikit-Learn for AICTE, a Research Agent using IBM Watson as an IBM Skills Build capstone, and an AI Chatbot built during his Infosys AI internship — all with GitHub stars."
+      return "- **AI Chat Bot**: Conversational NLP chatbot with multi-turn dialogue from Infosys\n- **EV Demand Prediction**: ML pipeline with Ridge Regression predicting charging loads\n- **Research Agent**: IBM SkillsBuild capstone using IBM Watson\n- **3D Portfolio**: Built with Next.js 14, Three.js, and RAG AI"
     if (q.includes('internship') || q.includes('experience') || q.includes('work'))
-      return "Anurag has completed 4 internships in 2025: AI Engineer at Infosys for 3 months, Web Developer at EISystems Technologies for 3 months, AI and Cloud at Edunet Foundation with IBM for 2 months, and Deep Learning at MicroGenesis TechSoft in Bangalore for 2 months."
+      return "- **Infosys**: AI Intern (3 months, NLP Chatbot)\n- **EISystems Technologies**: Web Developer Intern (3 months, React & Node.js)\n- **Edunet Foundation & IBM**: AI & Cloud Intern (2 months, EV Prediction)\n- **MicroGenesis TechSoft**: Deep Learning Intern (2 months, Bangalore)"
     if (q.includes('hire') || q.includes('available') || q.includes('job'))
-      return "Yes, Anurag is actively available for opportunities. He's open to SDE, AI Engineer, and ML Engineer roles. You can reach him at anurag.swain35@gmail.com. He responds within 24 hours."
-    if (q.includes('education') || q.includes('college'))
-      return "Anurag is pursuing a B.Tech in Computer Science at Government College of Engineering Kalahandi, with a CGPA of 8.10 out of 10, graduating in 2027."
-    return "I couldn't connect to the AI system right now. You can contact Anurag directly at anurag.swain35@gmail.com or explore the portfolio sections using the navigation."
+      return "- **Availability**: Actively available for AI Engineer, ML Engineer, and SDE roles\n- **Contact**: anurag.swain35@gmail.com with under 24-hour response time"
+    if (q.includes('education') || q.includes('college') || q.includes('cgpa') || q.includes('gpa') || q.includes('degree'))
+      return "- **Degree**: B.Tech in Computer Science & Engineering\n- **College**: Government College of Engineering, Kalahandi\n- **CGPA**: 8.10 out of 10.00 (Class of 2027)"
+    return "- Anurag is a Full Stack AI Engineer. Ask me about his skills, projects, or internships."
   }
 
   // ── Speech Recognition ───────────────────────────────────────
@@ -449,75 +468,54 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
         ? 'No speech detected. Please try again.'
         : `Voice error: ${e.error}`
       setError(msg)
-      setStatus('idle')
-      stopAnalyser()
+      setStatus('error')
     }
 
-    rec.onend = async () => {
-      stopAnalyser()
-      // Use refs to always get the latest values (avoids stale closure)
-      const spoken = finalTranscriptRef.current || transcriptRef.current
-      if (!spoken.trim()) {
+    rec.onend = () => {
+      const recognized = finalTranscriptRef.current || transcriptRef.current
+      if (recognized.trim()) {
+        const userMsg: VoiceMessage = {
+          id: crypto.randomUUID(),
+          role: 'user',
+          text: recognized.trim(),
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, userMsg])
+        const action = parseVoiceCommand(recognized.trim())
+        executeAction(action, recognized.trim())
+      } else {
         setStatus('idle')
-        setTranscript('')
-        return
       }
-
-      // Add user message
-      const userMsg: VoiceMessage = {
-        id: crypto.randomUUID(),
-        role: 'user',
-        text: spoken,
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, userMsg])
       setTranscript('')
-      setFinalTranscript('')
-      transcriptRef.current = ''
-      finalTranscriptRef.current = ''
-
-      // Parse and execute
-      const action = parseVoiceCommand(spoken)
-      await executeAction(action, spoken)
     }
 
     return rec
-  }, [isSupported, executeAction, stopAnalyser])
+  }, [isSupported, executeAction])
 
   // ── Start listening ───────────────────────────────────────────
   const startListening = useCallback(async () => {
-    if (status === 'listening') return
+    if (!isSupported) return
+    setError(null)
 
     // Stop any ongoing speech
     stopSpeaking()
 
-    // Check permission
-    if (navigator.permissions) {
-      try {
-        const perm = await navigator.permissions.query({ name: 'microphone' as PermissionName })
-        if (perm.state === 'denied') {
-          setError('Microphone permission denied. Please allow it in browser settings.')
-          return
-        }
-      } catch {}
-    }
-
-    await startAnalyser()
-
-    const rec = initRecognition()
-    if (!rec) {
-      setError('Voice recognition is not supported in this browser. Please use Chrome or Edge.')
-      return
-    }
-    recognitionRef.current = rec
     try {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort()
+      }
+      const rec = initRecognition()
+      if (!rec) return
+      recognitionRef.current = rec
+      transcriptRef.current = ''
+      finalTranscriptRef.current = ''
       rec.start()
-      setHasPermission(true)
-    } catch (e) {
-      setError('Could not start voice recognition. Please try again.')
-      setStatus('idle')
+      await startAnalyser()
+    } catch (e: any) {
+      setError('Could not start microphone. Please try again.')
+      setStatus('error')
     }
-  }, [status, stopSpeaking, startAnalyser, initRecognition])
+  }, [isSupported, initRecognition, stopSpeaking, startAnalyser])
 
   // ── Stop listening ────────────────────────────────────────────
   const stopListening = useCallback(() => {
@@ -562,6 +560,6 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
     isSupported, hasPermission, isSpeaking, audioLevel,
     sessionId, error,
     startListening, stopListening, stopSpeaking,
-    clearHistory, speak, requestPermission, executeAction,
+    clearHistory, speak, greet, requestPermission, executeAction,
   }
 }

@@ -5,6 +5,8 @@ import { Calendar, GraduationCap, Award, Trophy, Users, Code2, Cpu } from 'lucid
 import { useInView } from '@/hooks'
 import { education } from '@/data/portfolio'
 import { StaggerReveal, staggerItemLeft } from '@/components/animations/ScrollReveal'
+import { Dynamic3DCard } from '@/components/animations/Dynamic3DCard'
+import { Dynamic3DText } from '@/components/animations/Dynamic3DText'
 
 // ── Education card (full-width) ─────────────────────────────
 function EducationCard({ edu, index }: { edu: typeof education[0]; index: number }) {
@@ -21,7 +23,8 @@ function EducationCard({ edu, index }: { edu: typeof education[0]; index: number
         />
       </div>
 
-      <div className="glass-card p-6 relative overflow-hidden">
+      <Dynamic3DCard intensity={10} depth={18} glowColor={`${color}25`}>
+        <div className="glass-card p-6 relative overflow-hidden">
         {/* Top accent line */}
         <div
           className="absolute top-0 left-0 right-0 h-[2px]"
@@ -59,29 +62,30 @@ function EducationCard({ edu, index }: { edu: typeof education[0]; index: number
           </div>
         </div>
 
-        {/* Activities */}
-        {edu.activities.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-white/[0.06]">
-            <p className="text-xs font-medium text-text-secondary uppercase tracking-wider mb-3">
-              Highlights
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {edu.activities.map((a) => (
-                <div key={a} className="flex items-start gap-2.5 text-sm text-text-secondary">
-                  <span
-                    className="flex-shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full"
-                    style={{ background: color, boxShadow: `0 0 6px ${color}` }}
-                  />
-                  <span className="leading-snug">{a}</span>
+              {/* Activities */}
+              {edu.activities.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-white/[0.06]">
+                  <p className="text-xs font-medium text-text-secondary uppercase tracking-wider mb-3">
+                    Highlights
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {edu.activities.map((a) => (
+                      <div key={a} className="flex items-start gap-2.5 text-sm text-text-secondary">
+                        <span
+                          className="flex-shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full"
+                          style={{ background: color, boxShadow: `0 0 6px ${color}` }}
+                        />
+                        <span className="leading-snug">{a}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
-          </div>
-        )}
-      </div>
-    </motion.div>
-  )
-}
+        </Dynamic3DCard>
+      </motion.div>
+    )
+  }
 
 // ── Club / Activity card ────────────────────────────────────
 const clubsData = [
@@ -150,9 +154,11 @@ export default function EducationSection() {
             className="section-header"
           >
             <p className="section-label">05 / Education</p>
-            <h2 className="section-title">
-              Academic <span className="text-gradient">Background</span>
-            </h2>
+            <Dynamic3DText intensity={12} enableDepth={true}>
+              <h2 className="section-title text-3d-title">
+                Academic <span className="text-gradient">Background</span>
+              </h2>
+            </Dynamic3DText>
             <p className="text-text-secondary mt-3 max-w-xl">
               My formal education, extracurricular leadership, and active involvement in technical communities.
             </p>
@@ -166,7 +172,7 @@ export default function EducationSection() {
             className="flex items-center gap-2 mt-12 mb-8"
           >
             <GraduationCap size={16} className="text-violet" />
-            <h3 className="font-display font-semibold text-text-primary">Education</h3>
+            <h3 className="font-display font-semibold text-text-primary text-3d-interactive">Education</h3>
           </motion.div>
 
           <div className="relative">
@@ -186,7 +192,7 @@ export default function EducationSection() {
             className="flex items-center gap-2 mt-16 mb-8"
           >
             <Award size={16} className="text-neon-orange" />
-            <h3 className="font-display font-semibold text-text-primary">Clubs &amp; Activities</h3>
+            <h3 className="font-display font-semibold text-text-primary text-3d-interactive">Clubs &amp; Activities</h3>
           </motion.div>
 
           <StaggerReveal className="grid grid-cols-1 sm:grid-cols-2 gap-4" delay={0.1}>
@@ -196,57 +202,56 @@ export default function EducationSection() {
                 <motion.div
                   key={item.title}
                   variants={staggerItemLeft}
-                  className="relative glass-card p-5 flex flex-col gap-4 overflow-hidden group"
+                  className="h-full"
                 >
-                  {/* Top accent */}
-                  <div
-                    className="absolute top-0 left-0 right-0 h-[2px]"
-                    style={{ background: `linear-gradient(90deg, ${item.color}, transparent 80%)` }}
-                  />
-                  {/* Hover glow */}
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                    style={{ background: `radial-gradient(ellipse at top left, ${item.color}12, transparent 70%)` }}
-                  />
+                  <Dynamic3DCard intensity={12} depth={18} glowColor={`${item.color}30`} className="h-full">
+                    <div className="relative glass-card p-5 flex flex-col gap-4 overflow-hidden group h-full">
+                      {/* Top accent */}
+                      <div
+                        className="absolute top-0 left-0 right-0 h-[2px]"
+                        style={{ background: `linear-gradient(90deg, ${item.color}, transparent 80%)` }}
+                      />
 
-                  {/* Icon + role badge */}
-                  <div className="flex items-start justify-between">
-                    <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ background: `${item.color}18`, border: `1px solid ${item.color}30` }}
-                    >
-                      <Icon size={18} style={{ color: item.color }} />
-                    </div>
-                    <span
-                      className="text-[10px] font-medium px-2 py-1 rounded-full"
-                      style={{
-                        color: item.color,
-                        background: `${item.color}15`,
-                        border: `1px solid ${item.color}25`,
-                      }}
-                    >
-                      {item.role}
-                    </span>
-                  </div>
-
-                  {/* Title + org */}
-                  <div>
-                    <p className="text-base font-semibold text-text-primary leading-snug">{item.title}</p>
-                    <p className="text-xs text-text-secondary mt-1">{item.org}</p>
-                  </div>
-
-                  {/* Detail bullets */}
-                  <ul className="space-y-2 mt-auto">
-                    {item.details.map((d) => (
-                      <li key={d} className="flex items-start gap-2 text-xs text-text-secondary">
+                      {/* Icon + role badge */}
+                      <div className="flex items-start justify-between">
+                        <div
+                          className="w-10 h-10 rounded-xl flex items-center justify-center"
+                          style={{ background: `${item.color}18`, border: `1px solid ${item.color}30` }}
+                        >
+                          <Icon size={18} style={{ color: item.color }} />
+                        </div>
                         <span
-                          className="flex-shrink-0 mt-[5px] w-1 h-1 rounded-full"
-                          style={{ background: item.color }}
-                        />
-                        <span className="leading-snug">{d}</span>
-                      </li>
-                    ))}
-                  </ul>
+                          className="text-xs font-medium px-2.5 py-1 rounded-full"
+                          style={{
+                            color: item.color,
+                            background: `${item.color}15`,
+                            border: `1px solid ${item.color}25`,
+                          }}
+                        >
+                          {item.role}
+                        </span>
+                      </div>
+
+                      {/* Title + org */}
+                      <div>
+                        <p className="text-lg font-semibold text-text-primary leading-snug text-3d-interactive">{item.title}</p>
+                        <p className="text-sm text-text-secondary mt-1">{item.org}</p>
+                      </div>
+
+                      {/* Detail bullets */}
+                      <ul className="space-y-2.5 mt-auto">
+                        {item.details.map((d) => (
+                          <li key={d} className="flex items-start gap-2 text-sm text-text-secondary">
+                            <span
+                              className="flex-shrink-0 mt-[7px] w-1.5 h-1.5 rounded-full"
+                              style={{ background: item.color }}
+                            />
+                            <span className="leading-relaxed">{d}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </Dynamic3DCard>
                 </motion.div>
               )
             })}

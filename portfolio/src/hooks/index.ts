@@ -4,17 +4,33 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 
 // ============================================================
-// useSound — plays a subtle click/interaction sound
+// useSound — plays a subtle click/interaction sound (Singleton AudioContext)
 // ============================================================
+let sharedAudioCtx: AudioContext | null = null
+function getAudioContext(): AudioContext | null {
+  if (typeof window === 'undefined') return null
+  try {
+    if (!sharedAudioCtx) {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
+      if (AudioCtx) sharedAudioCtx = new AudioCtx()
+    }
+    if (sharedAudioCtx && sharedAudioCtx.state === 'suspended') {
+      sharedAudioCtx.resume().catch(() => {})
+    }
+    return sharedAudioCtx
+  } catch {
+    return null
+  }
+}
+
 export function useSound() {
   const soundEnabled = usePortfolioStore((s) => s.soundEnabled)
-  const audioRef = useRef<AudioContext | null>(null)
 
   const playClick = useCallback(() => {
     if (!soundEnabled || typeof window === 'undefined') return
     try {
-      const ctx = audioRef.current || new AudioContext()
-      audioRef.current = ctx
+      const ctx = getAudioContext()
+      if (!ctx) return
       const oscillator = ctx.createOscillator()
       const gainNode = ctx.createGain()
       oscillator.connect(gainNode)
@@ -33,8 +49,8 @@ export function useSound() {
   const playHover = useCallback(() => {
     if (!soundEnabled || typeof window === 'undefined') return
     try {
-      const ctx = audioRef.current || new AudioContext()
-      audioRef.current = ctx
+      const ctx = getAudioContext()
+      if (!ctx) return
       const oscillator = ctx.createOscillator()
       const gainNode = ctx.createGain()
       oscillator.connect(gainNode)

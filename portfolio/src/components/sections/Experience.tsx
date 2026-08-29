@@ -12,6 +12,8 @@ import { enhancedExperiences, type EnhancedExperience, type InternshipProject } 
 import { certifications } from '@/data/certifications'
 import { cn } from '@/lib/utils'
 import { StaggerReveal, staggerItemLeft } from '@/components/animations/ScrollReveal'
+import { Dynamic3DCard } from '@/components/animations/Dynamic3DCard'
+import { Dynamic3DText } from '@/components/animations/Dynamic3DText'
 
 // ── Project expandable card ────────────────────────────────
 function ProjectCard({ project, accentColor }: { project: InternshipProject; accentColor: string }) {
@@ -195,141 +197,141 @@ function ExperienceCard({ exp, isLast }: { exp: EnhancedExperience; isLast: bool
         </div>
       </div>
 
-      <div className="glass-card overflow-hidden">
-        {/* Card top accent */}
-        <div
-          className="h-[2px] w-full"
-          style={{ background: `linear-gradient(90deg, ${exp.companyColor}, transparent 60%)` }}
-        />
+      <Dynamic3DCard intensity={10} depth={18} glowColor={`${exp.companyColor}25`}>
+        <div className="glass-card overflow-hidden">
+          {/* Card top accent */}
+          <div
+            className="h-[2px] w-full"
+            style={{ background: `linear-gradient(90deg, ${exp.companyColor}, transparent 60%)` }}
+          />
 
-        <div className="p-5">
-          {/* Header */}
-          <div className="flex items-start justify-between gap-3 mb-4">
-            <div className="flex items-start gap-3">
-              <div
-                className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-                style={{ background: `${exp.companyColor}12`, border: `1.5px solid ${exp.companyColor}28` }}
-              >
-                🏢
-              </div>
-              <div>
-                <h3 className="font-display font-bold text-text-primary text-base leading-tight">{exp.role}</h3>
-                <p className="text-sm font-semibold mt-0.5" style={{ color: exp.companyColor }}>
-                  {exp.companyFullName}
-                </p>
-              </div>
-            </div>
-            <span
-              className="text-xs px-2.5 py-1 rounded-full font-mono flex-shrink-0 capitalize"
-              style={{ background: `${exp.companyColor}10`, border: `1px solid ${exp.companyColor}22`, color: exp.companyColor }}
-            >
-              {exp.roleType}
-            </span>
-          </div>
-
-          {/* Meta */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-text-secondary mb-3">
-            <span className="flex items-center gap-1.5">
-              <Calendar size={11} />
-              {exp.startDate} – {exp.endDate} · {exp.duration}
-            </span>
-            <span className="flex items-center gap-1.5">
-              {locationIcon} {exp.location.split(',')[0]}
-              <span className="text-text-tertiary capitalize">({exp.locationType})</span>
-            </span>
-          </div>
-
-          {/* Overview */}
-          <p className="text-sm text-text-secondary leading-relaxed mb-4">{exp.overview}</p>
-
-          {/* Responsibilities (collapsible) */}
-          <div>
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-2 text-xs font-mono text-text-secondary hover:text-text-primary transition-colors mb-3"
-            >
-              <Briefcase size={11} />
-              Responsibilities & Achievements
-              {expanded ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
-            </button>
-
-            <AnimatePresence>
-              {expanded && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="overflow-hidden"
+          <div className="p-5">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div className="flex items-start gap-3">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+                  style={{ background: `${exp.companyColor}12`, border: `1.5px solid ${exp.companyColor}28` }}
                 >
-                  <div className="space-y-1.5 mb-4">
-                    {exp.responsibilities.map((r, i) => (
-                      <div key={i} className="flex items-start gap-2 text-sm text-text-secondary">
-                        <span className="flex-shrink-0 mt-1.5 w-1 h-1 rounded-full" style={{ background: exp.companyColor }} />
-                        {r}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {exp.techStack.map((t) => (
-                      <span key={t} className="text-xs px-2 py-0.5 rounded-md font-mono text-text-secondary bg-white/[0.03] border border-white/[0.06]">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Achievements */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {exp.achievements.map((a) => (
-                      <span key={a} className="text-xs px-2.5 py-1 rounded-full bg-neon-green/8 border border-neon-green/15 text-neon-green">
-                        ✓ {a}
-                      </span>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Projects — always visible */}
-          {exp.projects.length > 0 && (
-            <div>
-              <p className="text-xs font-mono text-text-secondary uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                <Code2 size={10} style={{ color: exp.companyColor }} />
-                What I Built Here ({exp.projects.length} project{exp.projects.length > 1 ? 's' : ''})
-              </p>
-              <div className="space-y-3">
-                {exp.projects.map((project) => (
-                  <ProjectCard key={project.id} project={project} accentColor={exp.companyColor} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Cert badge */}
-          {cert && (
-            <div className="mt-4 pt-3 border-t border-white/[0.05] flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-base">{cert.badge}</span>
+                  🏢
+                </div>
                 <div>
-                  <p className="text-xs font-medium text-text-primary">{cert.title.slice(0, 45)}…</p>
-                  <p className="text-[10px] text-text-secondary font-mono">{cert.issueDate}</p>
+                  <h3 className="font-display font-bold text-text-primary text-base leading-tight text-3d-interactive">{exp.role}</h3>
+                  <p className="text-sm font-semibold mt-0.5" style={{ color: exp.companyColor }}>
+                    {exp.companyFullName}
+                  </p>
                 </div>
               </div>
-              <a
-                href={cert.credentialUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[10px] font-mono px-2.5 py-1 rounded-lg transition-all"
-                style={{ background: `${cert.issuerColor}10`, border: `1px solid ${cert.issuerColor}25`, color: cert.issuerColor }}
+              <span
+                className="text-xs px-2.5 py-1 rounded-full font-mono flex-shrink-0 capitalize"
+                style={{ background: `${exp.companyColor}10`, border: `1px solid ${exp.companyColor}22`, color: exp.companyColor }}
               >
-                View Cert →
-              </a>
+                {exp.roleType}
+              </span>
             </div>
-          )}
+
+            {/* Meta */}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-text-secondary mb-3">
+              <span className="flex items-center gap-1.5">
+                <Calendar size={11} />
+                {exp.startDate} – {exp.endDate} · {exp.duration}
+              </span>
+              <span className="flex items-center gap-1.5">
+                {locationIcon} {exp.location.split(',')[0]}
+                <span className="text-text-tertiary capitalize">({exp.locationType})</span>
+              </span>
+            </div>
+
+            {/* Overview */}
+            <p className="text-sm text-text-secondary leading-relaxed mb-4">{exp.overview}</p>
+
+            {/* Responsibilities (collapsible) */}
+            <div>
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="flex items-center gap-2 text-xs font-mono text-text-secondary hover:text-text-primary transition-colors mb-3"
+              >
+                <Briefcase size={11} />
+                Responsibilities & Achievements
+                {expanded ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
+              </button>
+
+              <AnimatePresence>
+                {expanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="space-y-1.5 mb-4">
+                      {exp.responsibilities.map((r, i) => (
+                        <div key={i} className="flex items-start gap-2 text-sm text-text-secondary">
+                          <span className="flex-shrink-0 mt-1.5 w-1 h-1 rounded-full" style={{ background: exp.companyColor }} />
+                          {r}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 mb-4">
+                      {exp.techStack.map((t) => (
+                        <span key={t} className="text-xs px-2 py-0.5 rounded-md font-mono text-text-secondary bg-white/[0.03] border border-white/[0.06]">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Achievements */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {exp.achievements.map((a) => (
+                        <span key={a} className="text-xs px-2.5 py-1 rounded-full bg-neon-green/8 border border-neon-green/15 text-neon-green">
+                          ✓ {a}
+                        </span>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Projects — always visible */}
+            {exp.projects.length > 0 && (
+              <div>
+                <p className="text-xs font-mono text-text-secondary uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                  <Code2 size={10} style={{ color: exp.companyColor }} />
+                  What I Built Here ({exp.projects.length} project{exp.projects.length > 1 ? 's' : ''})
+                </p>
+                <div className="space-y-3">
+                  {exp.projects.map((proj) => (
+                    <ProjectCard key={proj.name} project={proj} accentColor={exp.companyColor} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Certificate link */}
+            {cert && (
+              <div className="mt-4 pt-4 border-t border-white/[0.04] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Award size={13} style={{ color: cert.issuerColor }} />
+                  <span className="text-xs text-text-secondary">Verified Certificate:</span>
+                  <span className="text-xs font-medium text-text-primary">{cert.title}</span>
+                </div>
+                <a
+                  href={cert.credentialUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] font-mono px-2.5 py-1 rounded-lg transition-all btn-3d"
+                  style={{ background: `${cert.issuerColor}10`, border: `1px solid ${cert.issuerColor}25`, color: cert.issuerColor }}
+                >
+                  View Cert →
+                </a>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </Dynamic3DCard>
     </motion.div>
   )
 }
@@ -350,9 +352,11 @@ export default function ExperienceSection() {
             className="section-header"
           >
             <p className="section-label">04 / Experience</p>
-            <h2 className="section-title">
-              Professional <span className="text-gradient">Journey</span>
-            </h2>
+            <Dynamic3DText intensity={12} enableDepth={true}>
+              <h2 className="section-title text-3d-title">
+                Professional <span className="text-gradient">Journey</span>
+              </h2>
+            </Dynamic3DText>
             <p className="text-text-secondary mt-3 max-w-xl">
               4 internships · 4 companies · ~10 months of hands-on industry experience in 2025.
               Every internship linked to real projects with measurable impact.
@@ -372,10 +376,12 @@ export default function ExperienceSection() {
               { label: 'Months Experience', value: '~10', color: '#00FF87' },
               { label: 'Certs Earned', value: '7', color: '#FFE500' },
             ].map((s) => (
-              <div key={s.label} className="flex items-center gap-2 glass border border-white/[0.07] px-4 py-2.5 rounded-xl">
-                <span className="font-display font-bold text-lg" style={{ color: s.color }}>{s.value}</span>
-                <span className="text-xs text-text-secondary font-mono">{s.label}</span>
-              </div>
+              <Dynamic3DCard key={s.label} intensity={14} depth={12} glowColor={`${s.color}25`}>
+                <div className="flex items-center gap-2 glass border border-white/[0.08] px-4 py-2.5 rounded-xl h-full">
+                  <span className="font-display font-bold text-lg text-3d-interactive" style={{ color: s.color }}>{s.value}</span>
+                  <span className="text-xs text-text-secondary font-mono">{s.label}</span>
+                </div>
+              </Dynamic3DCard>
             ))}
           </motion.div>
 

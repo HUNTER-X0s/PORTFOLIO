@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ArrowRight, Hash, ExternalLink, Github, Linkedin, Twitter, Code2, X } from 'lucide-react'
+import { Search, ArrowRight, Hash, ExternalLink, Github, Linkedin, Twitter, Code2, X, Music, Volume2 } from 'lucide-react'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { navItems, projects, personalInfo } from '@/data/portfolio'
 import { useCommandPalette, useSound } from '@/hooks'
@@ -22,6 +22,8 @@ export default function CommandPalette() {
       if (el) el.scrollIntoView({ behavior: 'smooth' })
       setOpen(false)
     }
+
+    const { musicEnabled, setMusicEnabled, soundEnabled, setSoundEnabled } = usePortfolioStore.getState()
 
     return [
       // Navigation
@@ -59,6 +61,59 @@ export default function CommandPalette() {
         category: 'social' as const,
       })),
       // Actions
+      {
+        id: 'action-music-player',
+        label: 'Open Sound Lounge (Music Player)',
+        description: 'Browse all background songs, moods, and playlist',
+        icon: 'music',
+        shortcut: undefined,
+        action: () => {
+          usePortfolioStore.getState().setMusicPlayerOpen(true)
+          playClick()
+          setOpen(false)
+        },
+        category: 'action' as const,
+      },
+      {
+        id: 'action-ambient',
+        label: musicEnabled ? 'Pause Background Music' : 'Play Background Music',
+        description: musicEnabled ? 'Pause soothing background soundtrack' : 'Play soothing background soundtrack',
+        icon: 'music',
+        shortcut: undefined,
+        action: () => {
+          setMusicEnabled(!musicEnabled)
+          playClick()
+          setOpen(false)
+        },
+        category: 'action' as const,
+      },
+      {
+        id: 'action-next-track',
+        label: 'Next Song / Track',
+        description: 'Skip to next soothing song in playlist',
+        icon: 'music',
+        shortcut: undefined,
+        action: () => {
+          usePortfolioStore.getState().nextTrack()
+          if (!musicEnabled) usePortfolioStore.getState().setMusicEnabled(true)
+          playClick()
+          setOpen(false)
+        },
+        category: 'action' as const,
+      },
+      {
+        id: 'action-sfx',
+        label: soundEnabled ? 'Mute Sound Effects' : 'Enable Sound Effects',
+        description: soundEnabled ? 'Disable interactive click sound effects' : 'Enable interactive click sound effects',
+        icon: 'volume',
+        shortcut: undefined,
+        action: () => {
+          setSoundEnabled(!soundEnabled)
+          playClick()
+          setOpen(false)
+        },
+        category: 'action' as const,
+      },
       {
         id: 'action-resume',
         label: 'Download Resume',
@@ -132,6 +187,8 @@ export default function CommandPalette() {
       case 'twitter': return <Twitter className={cls} />
       case 'code': return <Code2 className={cls} />
       case 'external': return <ExternalLink className={cls} />
+      case 'music': return <Music className={cls} />
+      case 'volume': return <Volume2 className={cls} />
       default: return <Hash className={cls} />
     }
   }
@@ -192,26 +249,26 @@ export default function CommandPalette() {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm"
-            onClick={() => setOpen(false)}
-          />
-
-          {/* Panel */}
-          <div className="fixed inset-0 z-[201] flex items-start justify-center pt-[5vh] sm:pt-[15vh] px-4">
+            {/* Backdrop */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: -20 }}
-              transition={{ duration: 0.2, ease: [0.19, 1, 0.22, 1] }}
-              className="w-full max-w-xl glass-strong rounded-2xl border border-white/[0.1] shadow-glass-lg overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="fixed inset-0 z-[200] bg-black/85 backdrop-blur-md"
+              onClick={() => setOpen(false)}
+            />
+
+            {/* Panel */}
+            <div className="fixed inset-0 z-[201] flex items-start justify-center pt-[5vh] sm:pt-[15vh] px-3 sm:px-4 pointer-events-none">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.94, y: -20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.94, y: -20 }}
+                transition={{ duration: 0.2, ease: [0.19, 1, 0.22, 1] }}
+                className="w-full max-w-xl glass-dropdown rounded-2xl overflow-hidden pointer-events-auto max-h-[80vh] flex flex-col"
+                onClick={(e) => e.stopPropagation()}
+              >
               {/* Search input */}
               <div className="flex items-center gap-3 px-4 py-4 border-b border-white/[0.06]">
                 <Search size={18} className="text-text-secondary flex-shrink-0" />
@@ -233,7 +290,7 @@ export default function CommandPalette() {
               </div>
 
               {/* Results */}
-              <div className="max-h-[220px] sm:max-h-[420px] overflow-y-auto no-scrollbar p-2">
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-2 min-h-0">
                 {filtered.length === 0 ? (
                   <div className="py-12 text-center text-text-secondary text-sm">
                     No results for &ldquo;{query}&rdquo;

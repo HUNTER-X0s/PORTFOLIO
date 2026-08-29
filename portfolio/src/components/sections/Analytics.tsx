@@ -111,15 +111,15 @@ export default function Analytics() {
                   { label: 'GitHub Stars', value: githubStats.totalStars, color: '#FFE500', suffix: '' },
                   { label: 'Day Streak', value: githubStats.contributionStreak, color: '#00FF87', suffix: ' days' },
                 ].map((m) => (
-                  <div key={m.label} className="glass-card p-5 text-center">
+                  <div key={m.label} className="glass-card p-4 sm:p-5 text-center">
                     <div
-                      className="font-display font-bold text-3xl"
+                      className="font-display font-bold text-2xl sm:text-3xl"
                       style={{ color: m.color }}
                     >
                       {inView && <CountUp end={m.value} duration={2} separator="," />}
                       {m.suffix}
                     </div>
-                    <div className="text-xs text-text-secondary mt-1">{m.label}</div>
+                    <div className="text-[10px] sm:text-xs text-text-secondary mt-1">{m.label}</div>
                   </div>
                 ))}
               </div>

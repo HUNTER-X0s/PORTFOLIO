@@ -7,6 +7,8 @@ import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { personalInfo, roleContents, roles } from '@/data/portfolio'
 import { useSound, useWindowSize } from '@/hooks'
 import { cn } from '@/lib/utils'
+import { Dynamic3DCard } from '@/components/animations/Dynamic3DCard'
+import { Dynamic3DText } from '@/components/animations/Dynamic3DText'
 
 // Animated terminal lines
 function Terminal({ lines, active }: { lines: string[]; active: boolean }) {
@@ -52,35 +54,35 @@ function Terminal({ lines, active }: { lines: string[]; active: boolean }) {
   }
 
   return (
-    <div className="terminal-window w-full max-w-lg">
+    <div className="terminal-window w-full">
       {/* Title bar */}
       <div className="terminal-titlebar">
         <div className="terminal-dot terminal-dot-red" />
         <div className="terminal-dot terminal-dot-yellow" />
         <div className="terminal-dot terminal-dot-green" />
-        <span className="ml-3 text-xs text-text-secondary font-mono flex-1 text-center">
+        <span className="ml-2 sm:ml-3 text-[10px] sm:text-xs text-text-secondary font-mono flex-1 text-center truncate">
           Anurag@portfolio ~ zsh
         </span>
       </div>
 
       {/* Body */}
-      <div className="terminal-body min-h-48">
+      <div className="terminal-body min-h-[140px] sm:min-h-48">
         {visibleLines.map((line, i) => (
-          <div key={i} className={cn('flex items-start gap-2', getLineClass(line))}>
+          <div key={i} className={cn('flex items-start gap-1.5 sm:gap-2', getLineClass(line))}>
             {line.startsWith('$') && (
               <span className="terminal-prompt flex-shrink-0">❯</span>
             )}
-            <span>{line.startsWith('$') ? line.slice(2) : line}</span>
+            <span className="break-words min-w-0">{line.startsWith('$') ? line.slice(2) : line}</span>
           </div>
         ))}
 
         {/* Currently typing */}
         {currentLine < lines.length && (
-          <div className={cn('flex items-start gap-2', getLineClass(lines[currentLine]))}>
+          <div className={cn('flex items-start gap-1.5 sm:gap-2', getLineClass(lines[currentLine]))}>
             {lines[currentLine].startsWith('$') && (
               <span className="terminal-prompt flex-shrink-0">❯</span>
             )}
-            <span>
+            <span className="break-words min-w-0">
               {lines[currentLine].startsWith('$') ? typedText.slice(2) : typedText}
               <span className="cursor-blink" />
             </span>
@@ -112,19 +114,6 @@ export default function Hero() {
   const { playClick } = useSound()
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const { scrollY } = useScroll()
-  const { width } = useWindowSize()
-  const isMobile = width > 0 && width < 768
-
-  // Always use MotionValues — switching between MotionValue and static number
-  // breaks framer-motion's scroll binding on production builds (Vercel).
-  const desktopOpacity = useTransform(scrollY, [0, 300], [1, 0])
-  const desktopY = useTransform(scrollY, [0, 300], [0, -80])
-
-  // On mobile: freeze at fully visible / no offset
-  const heroOpacity = useTransform(desktopOpacity, (v) => (isMobile ? 1 : v))
-  const heroY = useTransform(desktopY, (v) => (isMobile ? 0 : v))
-
   const content = roleContents[activeRole] || roleContents['fullstack']
   const currentRole = roles.find((r) => r.id === activeRole) || roles.find((r) => r.id === 'fullstack') || roles[0]
 
@@ -132,17 +121,17 @@ export default function Hero() {
   const headlineLen = (content.hero.headline + content.hero.subheadline).length
   const headlineSizeClass =
     headlineLen > 50
-      ? 'text-4xl sm:text-5xl lg:text-[3.25rem]'
+      ? 'text-3xl xs:text-4xl sm:text-5xl lg:text-[3.25rem]'
       : headlineLen > 35
-      ? 'text-4xl sm:text-5xl lg:text-6xl'
-      : 'text-5xl sm:text-6xl lg:text-7xl'
+      ? 'text-3xl xs:text-4xl sm:text-5xl lg:text-6xl'
+      : 'text-4xl xs:text-5xl sm:text-6xl lg:text-7xl'
 
   const subheadlineSizeClass =
     headlineLen > 50
-      ? 'text-2xl sm:text-3xl lg:text-[2.25rem]'
+      ? 'text-xl xs:text-2xl sm:text-3xl lg:text-[2.25rem]'
       : headlineLen > 35
-      ? 'text-3xl sm:text-4xl lg:text-[2.75rem]'
-      : 'text-4xl sm:text-5xl lg:text-[3.5rem]'
+      ? 'text-2xl xs:text-3xl sm:text-4xl lg:text-[2.75rem]'
+      : 'text-3xl xs:text-4xl sm:text-5xl lg:text-[3.5rem]'
 
   const handleScroll = (id: string) => {
     const el = document.getElementById(id)
@@ -151,10 +140,9 @@ export default function Hero() {
   }
 
   return (
-    <motion.div
+    <div
       ref={containerRef}
-      style={{ opacity: heroOpacity, y: heroY }}
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-20 sm:pb-16 px-0"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-24 sm:pb-16 px-0"
     >
       {/* HUD scan line */}
       <div
@@ -168,9 +156,9 @@ export default function Hero() {
       </div>
 
       <div className="section-container w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-8 items-center">
           {/* Left — Main Content */}
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Status badge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -203,8 +191,22 @@ export default function Hero() {
                 transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
                 className="font-display font-bold leading-[1.1] tracking-tight"
               >
-                <span className={cn("block text-text-primary", headlineSizeClass)}>{content.hero.headline}</span>
-                <span className={cn("block text-gradient mt-2", subheadlineSizeClass)}>{content.hero.subheadline}</span>
+                <Dynamic3DText intensity={12} enableDepth={true}>
+                  <span className={cn("block text-text-primary text-3d-title", headlineSizeClass)}>{content.hero.headline}</span>
+                </Dynamic3DText>
+                <Dynamic3DText intensity={14} enableDepth={true} glowColor="rgba(0, 229, 255, 0.4)">
+                  <span
+                    className={cn("block mt-2", subheadlineSizeClass)}
+                    style={{
+                      background: 'linear-gradient(135deg, #00E5FF 0%, #7C3AED 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      fontWeight: 700,
+                      fontFamily: 'var(--font-display)',
+                    }}
+                  >{content.hero.subheadline}</span>
+                </Dynamic3DText>
               </motion.h1>
             </div>
 
@@ -214,7 +216,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="text-text-secondary text-base sm:text-lg leading-relaxed max-w-xl"
+              className="text-text-secondary text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl"
             >
               {content.hero.description}
             </motion.p>
@@ -224,22 +226,23 @@ export default function Hero() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.55 }}
-              className="flex flex-wrap items-center gap-2 sm:gap-3"
+              className="flex flex-wrap items-center gap-2 sm:gap-3 w-full"
             >
               <motion.button
                 onClick={() => handleScroll('projects')}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                className="relative group flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm overflow-hidden btn-glow"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                className="relative group flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm overflow-hidden btn-glow btn-3d"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(0,229,255,0.15), rgba(124,58,237,0.15))',
-                  border: '1px solid rgba(0,229,255,0.35)',
+                  background: 'linear-gradient(135deg, rgba(0,229,255,0.2), rgba(124,58,237,0.2))',
+                  border: '1px solid rgba(0,229,255,0.4)',
                   color: '#F0F0FF',
+                  boxShadow: '0 4px 20px rgba(0,229,255,0.2)',
                 }}
               >
                 <Sparkles size={15} className="text-cyan" />
                 {content.hero.cta}
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan/10 to-violet/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan/15 to-violet/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </motion.button>
 
               <motion.a
@@ -247,9 +250,9 @@ export default function Hero() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => playClick()}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm text-text-secondary border border-white/[0.09] glass hover:border-white/20 hover:text-text-primary transition-all"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                className="flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm text-text-secondary border border-white/[0.12] glass hover:border-cyan/40 hover:text-text-primary transition-all btn-3d"
               >
                 <Download size={15} />
                 Resume
@@ -262,9 +265,9 @@ export default function Hero() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => playClick()}
-                  whileHover={{ scale: 1.08, y: -1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="p-3 rounded-xl glass border border-white/[0.07] text-text-secondary hover:text-text-primary hover:border-cyan/20 transition-all"
+                  whileHover={{ scale: 1.12, y: -3 }}
+                  whileTap={{ scale: 0.93 }}
+                  className="p-3 rounded-xl glass border border-white/[0.09] text-text-secondary hover:text-text-primary hover:border-cyan/30 hover:shadow-[0_0_15px_rgba(0,229,255,0.25)] transition-all btn-3d"
                   title={s.platform}
                 >
                   {s.platform === 'GitHub' ? <Github size={17} /> : s.platform === 'LinkedIn' ? <Linkedin size={17} /> : <ExternalLink size={17} />}
@@ -277,7 +280,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.75 }}
-              className="flex items-center gap-4 sm:gap-6 md:gap-8 pt-2 overflow-x-auto no-scrollbar pb-1"
+              className="flex flex-wrap items-center gap-x-5 gap-y-3 sm:gap-x-8 pt-2 w-full"
             >
               {[
                 { label: 'Projects', value: '6+', color: '#00E5FF' },
@@ -285,29 +288,34 @@ export default function Hero() {
                 { label: 'Stars', value: '3', color: '#FF6B2B' },
                 { label: 'Commits', value: '200+', color: '#00FF87' },
               ].map((stat) => (
-                <div key={stat.label} className="text-center flex-shrink-0">
+                <motion.div
+                  key={stat.label}
+                  whileHover={{ scale: 1.12, y: -2 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                  className="text-center flex-shrink-0 cursor-default p-2 rounded-xl glass border border-transparent hover:border-white/[0.1] transition-all"
+                >
                   <div
-                    className="font-display font-bold text-xl"
-                    style={{ color: stat.color }}
+                    className="font-display font-bold text-base sm:text-xl text-3d-interactive"
+                    style={{ color: stat.color, textShadow: `0 0 14px ${stat.color}40` }}
                   >
                     {stat.value}
                   </div>
-                  <div className="text-xs text-text-secondary font-mono mt-0.5">{stat.label}</div>
-                </div>
+                  <div className="text-[10px] sm:text-xs text-text-secondary font-mono mt-0.5">{stat.label}</div>
+                </motion.div>
               ))}
             </motion.div>
           </div>
 
           {/* Right — Terminal */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: 0, y: 24 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
-            className="flex flex-col items-center lg:items-end gap-4 sm:gap-6 w-full"
+            className="flex flex-col items-stretch lg:items-end gap-4 sm:gap-6 w-full"
           >
             {/* Role selector hint */}
-            <div className="w-full max-w-lg">
-              <div className="flex items-center gap-2 mb-3">
+            <div className="w-full">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
                 <span className="text-xs font-mono text-text-secondary">
                   Viewing as:
                 </span>
@@ -321,16 +329,18 @@ export default function Hero() {
                 >
                   {currentRole.icon} {currentRole.label}
                 </div>
-                <span className="text-xs font-mono text-text-tertiary">
+                <span className="text-xs font-mono text-text-tertiary hidden sm:inline">
                   — change in navbar ↑
                 </span>
               </div>
 
-              <Terminal lines={content.terminalLines} active={true} />
+              <Dynamic3DCard intensity={12} depth={22} glowColor="rgba(0, 229, 255, 0.2)">
+                <Terminal lines={content.terminalLines} active={true} />
+              </Dynamic3DCard>
             </div>
 
             {/* Role pills */}
-            <div className="w-full max-w-lg relative z-20">
+            <div className="w-full relative z-20">
               <p className="text-xs font-mono text-text-secondary mb-3">
                 Switch perspective :
               </p>
@@ -375,25 +385,8 @@ export default function Hero() {
           </motion.div>
         </div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4 }}
-        className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
-        onClick={() => handleScroll('about')}
-      >
-        <span className="text-xs font-mono text-text-secondary tracking-widest uppercase">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-8 h-8 rounded-full border border-white/[0.1] glass flex items-center justify-center"
-        >
-          <ArrowDown size={14} className="text-text-secondary" />
-        </motion.div>
-      </motion.div>
-    </motion.div>
+    </div>
   )
 }
+
 

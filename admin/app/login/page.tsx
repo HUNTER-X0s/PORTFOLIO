@@ -97,7 +97,7 @@ function LoginContent() {
                   <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
                   <input
                     type={showPass ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)}
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    placeholder="Enter your password"
                     className="w-full pl-10 pr-12 py-3 rounded-xl text-sm text-white placeholder-gray-400 outline-none transition-all"
                     style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
                     onFocus={(e) => e.target.style.borderColor = 'rgba(0,229,255,0.35)'}

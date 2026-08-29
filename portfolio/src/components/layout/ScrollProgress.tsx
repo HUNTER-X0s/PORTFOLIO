@@ -1,44 +1,45 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { useScrollProgress } from '@/hooks'
+import { useEffect, useRef } from 'react'
 
+/**
+ * High-performance ScrollProgress bar.
+ * Directly animates GPU scaleX on scroll without triggering ANY React component re-renders.
+ */
 export default function ScrollProgress() {
-  const progress = useScrollProgress()
+  const barRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    let rafId: number | null = null
+
+    const onScroll = () => {
+      if (rafId !== null) return
+      rafId = requestAnimationFrame(() => {
+        rafId = null
+        if (!barRef.current) return
+        const scrollTop = window.scrollY
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight
+        const p = docHeight > 0 ? scrollTop / docHeight : 0
+        barRef.current.style.transform = `scaleX(${p})`
+      })
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (rafId !== null) cancelAnimationFrame(rafId)
+    }
+  }, [])
 
   return (
-    <>
-      {/* Top bar (handled in Navbar) */}
-
-      {/* Side indicator */}
-      <div className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-1.5">
-        {['hero','about','skills','projects','experience','github','value','analytics','blog','contact'].map((id, i) => {
-          const sectionProgress = Math.max(0, Math.min(1, (progress * 10) - i))
-          return (
-            <motion.button
-              key={id}
-              onClick={() => {
-                const el = document.getElementById(id)
-                if (el) el.scrollIntoView({ behavior: 'smooth' })
-              }}
-              className="relative group"
-              title={id}
-            >
-              <div
-                className="w-1 h-1 rounded-full transition-all duration-300"
-                style={{
-                  background: sectionProgress > 0.3 ? '#00E5FF' : 'rgba(255,255,255,0.15)',
-                  transform: `scale(${sectionProgress > 0.3 ? 1.4 : 1})`,
-                  boxShadow: sectionProgress > 0.3 ? '0 0 6px rgba(0,229,255,0.6)' : 'none',
-                }}
-              />
-              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-xs font-mono text-text-secondary bg-surface-3 border border-glass-border px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none capitalize">
-                {id}
-              </span>
-            </motion.button>
-          )
-        })}
-      </div>
-    </>
+    <div
+      ref={barRef}
+      className="fixed top-0 left-0 right-0 z-[100] h-[2px] pointer-events-none origin-left will-change-transform"
+      style={{
+        background: 'linear-gradient(90deg, #00E5FF, #7C3AED)',
+        transform: 'scaleX(0)',
+        transformOrigin: 'left',
+      }}
+    />
   )
 }

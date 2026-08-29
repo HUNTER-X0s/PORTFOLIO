@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, subscribeWithSelector } from 'zustand/middleware'
 import type { RoleId, ChatMessage } from '@/types'
+import { musicPlaylist } from '@/data/music'
 
 interface PortfolioStore {
   // Role system
@@ -18,11 +19,19 @@ interface PortfolioStore {
   updateChatMessage: (id: string, updates: Partial<ChatMessage>) => void
   clearChat: () => void
 
-  // Music
+  // Music & Playlist
   musicEnabled: boolean
   musicAsked: boolean
+  currentTrackIndex: number
+  volume: number
+  isMusicPlayerOpen: boolean
   setMusicEnabled: (enabled: boolean) => void
   setMusicAsked: (asked: boolean) => void
+  setCurrentTrackIndex: (index: number) => void
+  setVolume: (volume: number) => void
+  setMusicPlayerOpen: (open: boolean) => void
+  nextTrack: () => void
+  prevTrack: () => void
 
   // Theme
   theme: 'dark' | 'light'
@@ -77,11 +86,26 @@ export const usePortfolioStore = create<PortfolioStore>()(
           })),
         clearChat: () => set({ chatMessages: [] }),
 
-        // Music
+        // Music & Playlist
         musicEnabled: false,
         musicAsked: false,
+        currentTrackIndex: 0,
+        volume: 0.4,
+        isMusicPlayerOpen: false,
         setMusicEnabled: (enabled) => set({ musicEnabled: enabled }),
         setMusicAsked: (asked) => set({ musicAsked: asked }),
+        setCurrentTrackIndex: (index) => set({ currentTrackIndex: index }),
+        setVolume: (vol) => set({ volume: vol }),
+        setMusicPlayerOpen: (open) => set({ isMusicPlayerOpen: open }),
+        nextTrack: () =>
+          set((state) => ({
+            currentTrackIndex: (state.currentTrackIndex + 1) % musicPlaylist.length,
+          })),
+        prevTrack: () =>
+          set((state) => ({
+            currentTrackIndex:
+              (state.currentTrackIndex - 1 + musicPlaylist.length) % musicPlaylist.length,
+          })),
 
         // Theme
         theme: 'dark',
@@ -111,8 +135,6 @@ export const usePortfolioStore = create<PortfolioStore>()(
         name: 'portfolio-store',
         partialize: (state) => ({
           activeRole: state.activeRole,
-          musicEnabled: state.musicEnabled,
-          musicAsked: state.musicAsked,
           theme: state.theme,
           soundEnabled: state.soundEnabled,
         }),

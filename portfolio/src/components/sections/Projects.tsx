@@ -8,6 +8,8 @@ import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { projects, roles } from '@/data/portfolio'
 import { cn } from '@/lib/utils'
 import type { Project } from '@/types'
+import { Dynamic3DCard } from '@/components/animations/Dynamic3DCard'
+import { Dynamic3DText } from '@/components/animations/Dynamic3DText'
 
 function TechBadge({ tech }: { tech: string }) {
   return (
@@ -47,91 +49,100 @@ function ProjectCard({ project, index, onClick }: {
       initial={{ opacity: 0, y: 32 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1, duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-      onClick={onClick}
-      className="glass-card group cursor-pointer overflow-hidden relative"
+      className="h-full"
     >
-      {/* Top gradient accent */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px opacity-60"
-        style={{ background: `linear-gradient(90deg, transparent, ${roleColor}, transparent)` }}
-      />
+      <Dynamic3DCard
+        intensity={14}
+        depth={22}
+        glowColor={`${roleColor}30`}
+        onClick={onClick}
+        className="h-full cursor-pointer"
+      >
+        <div className="glass-card group h-full overflow-hidden relative p-6 space-y-4 flex flex-col justify-between">
+          {/* Top gradient accent */}
+          <div
+            className="absolute top-0 left-0 right-0 h-[2px] opacity-70"
+            style={{ background: `linear-gradient(90deg, transparent, ${roleColor}, transparent)` }}
+          />
 
-      <div className="p-6 space-y-4">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1.5">
-              <span
-                className="text-xs px-2.5 py-1 rounded-full font-mono font-medium"
-                style={{ background: `${roleColor}12`, color: roleColor, border: `1px solid ${roleColor}22` }}
-              >
-                {project.category}
-              </span>
-              <span className="text-xs text-text-secondary font-mono">{project.year}</span>
+          <div className="space-y-4">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span
+                    className="text-xs px-2.5 py-1 rounded-full font-mono font-medium"
+                    style={{ background: `${roleColor}15`, color: roleColor, border: `1px solid ${roleColor}30` }}
+                  >
+                    {project.category}
+                  </span>
+                  <span className="text-xs text-text-secondary font-mono">{project.year}</span>
+                </div>
+                <h3 className="font-display font-bold text-text-primary text-lg leading-tight group-hover:text-cyan transition-colors text-3d-interactive">
+                  {project.title}
+                </h3>
+              </div>
+              <StatusBadge status={project.status} />
             </div>
-            <h3 className="font-display font-bold text-text-primary text-lg leading-tight group-hover:text-cyan transition-colors">
-              {project.title}
-            </h3>
-          </div>
-          <StatusBadge status={project.status} />
-        </div>
 
-        {/* Tagline */}
-        <p className="text-text-secondary text-sm leading-relaxed">{project.tagline}</p>
+            {/* Tagline */}
+            <p className="text-text-secondary text-sm leading-relaxed">{project.tagline}</p>
 
-        {/* Impact highlight */}
-        <div
-          className="flex items-start gap-2 p-3 rounded-lg"
-          style={{ background: `${roleColor}08`, border: `1px solid ${roleColor}15` }}
-        >
-          <Zap size={14} style={{ color: roleColor }} className="mt-0.5 flex-shrink-0" />
-          <p className="text-xs" style={{ color: roleColor }}>{project.impact}</p>
-        </div>
-
-        {/* Tech stack */}
-        <div className="flex flex-wrap gap-1.5">
-          {project.tech.slice(0, 5).map((t) => (
-            <TechBadge key={t} tech={t} />
-          ))}
-          {project.tech.length > 5 && (
-            <span className="text-xs text-text-secondary px-2.5 py-1 rounded-full border border-white/[0.06]">
-              +{project.tech.length - 5}
-            </span>
-          )}
-        </div>
-
-        {/* Footer links */}
-        <div className="flex items-center justify-between pt-1">
-          <div className="flex items-center gap-3">
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1.5 text-sm font-medium text-cyan hover:text-cyan/80 transition-colors"
+            {/* Impact highlight */}
+            <div
+              className="flex items-start gap-2 p-3 rounded-xl transition-all"
+              style={{ background: `${roleColor}0c`, border: `1px solid ${roleColor}20` }}
             >
-              <ExternalLink size={13} />
-              Live Demo
-            </a>
-            {project.githubUrl && (
+              <Zap size={14} style={{ color: roleColor }} className="mt-0.5 flex-shrink-0" />
+              <p className="text-xs font-medium" style={{ color: roleColor }}>{project.impact}</p>
+            </div>
+
+            {/* Tech stack */}
+            <div className="flex flex-wrap gap-1.5">
+              {project.tech.slice(0, 5).map((t) => (
+                <TechBadge key={t} tech={t} />
+              ))}
+              {project.tech.length > 5 && (
+                <span className="text-xs text-text-secondary px-2.5 py-1 rounded-full border border-white/[0.06]">
+                  +{project.tech.length - 5}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Footer links */}
+          <div className="flex items-center justify-between pt-2 border-t border-white/[0.06]">
+            <div className="flex items-center gap-3">
               <a
-                href={project.githubUrl}
+                href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-primary transition-colors"
+                className="flex items-center gap-1.5 text-sm font-medium text-cyan hover:text-cyan/80 transition-colors btn-3d"
               >
-                <Github size={13} />
-                Code
+                <ExternalLink size={13} />
+                Live Demo
               </a>
-            )}
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-primary transition-colors btn-3d"
+                >
+                  <Github size={13} />
+                  Code
+                </a>
+              )}
+            </div>
+            <button className="flex items-center gap-1 text-xs text-text-secondary group-hover:text-cyan transition-colors btn-3d">
+              Details
+              <ChevronRight size={12} />
+            </button>
           </div>
-          <button className="flex items-center gap-1 text-xs text-text-secondary group-hover:text-cyan transition-colors">
-            Details
-            <ChevronRight size={12} />
-          </button>
         </div>
-      </div>
+      </Dynamic3DCard>
     </motion.div>
   )
 }
@@ -144,7 +155,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[150] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
+      className="fixed inset-0 z-[150] bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4"
       onClick={onClose}
     >
       <motion.div
@@ -152,7 +163,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.94, y: 24 }}
         transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
-        className="w-full sm:max-w-2xl glass-strong rounded-t-2xl sm:rounded-2xl border border-white/[0.1] overflow-hidden max-h-[85vh] sm:max-h-[90vh] flex flex-col"
+        className="w-full sm:max-w-2xl glass-dropdown rounded-t-2xl sm:rounded-2xl overflow-hidden max-h-[85vh] sm:max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal header */}
@@ -291,9 +302,11 @@ export default function Projects() {
             className="section-header"
           >
             <p className="section-label">03 / Projects</p>
-            <h2 className="section-title">
-              What I&apos;ve <span className="text-gradient">Built</span>
-            </h2>
+            <Dynamic3DText intensity={12} enableDepth={true}>
+              <h2 className="section-title text-3d-title">
+                What I&apos;ve <span className="text-gradient">Built</span>
+              </h2>
+            </Dynamic3DText>
             <p className="text-text-secondary mt-3 max-w-xl">
               Real-world applications solving real problems — each with a live link, full architecture, and measurable results.
             </p>
@@ -311,10 +324,10 @@ export default function Projects() {
                 key={f}
                 onClick={() => setFilter(f)}
                 className={cn(
-                  'px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize',
+                  'px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize btn-3d',
                   filter === f
-                    ? 'bg-cyan/12 border border-cyan/25 text-cyan'
-                    : 'text-text-secondary border border-white/[0.07] glass hover:border-white/20 hover:text-text-primary'
+                    ? 'bg-cyan/15 border border-cyan/40 text-cyan shadow-[0_0_15px_rgba(0,229,255,0.2)]'
+                    : 'text-text-secondary border border-white/[0.08] glass hover:border-white/20 hover:text-text-primary'
                 )}
               >
                 {f === 'all' ? `All Projects (${projects.length})` : `Featured (${projects.filter((p) => p.featured).length})`}

@@ -1,6 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 
+// Cached pooled transporter for high-speed email dispatch
+let cachedTransporter: nodemailer.Transporter | null = null
+
+function getTransporter() {
+  if (!cachedTransporter && process.env.SMTP_USER && process.env.SMTP_PASS) {
+    cachedTransporter = nodemailer.createTransport({
+      service: 'gmail',
+      pool: true, // reuse connection pool
+      maxConnections: 3,
+      maxMessages: 100,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    })
+  }
+  return cachedTransporter
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -10,20 +29,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Validate env vars are present
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.CONTACT_EMAIL) {
+    const transporter = getTransporter()
+    if (!transporter || !process.env.CONTACT_EMAIL) {
       console.error('[Contact API] Missing SMTP environment variables')
       return NextResponse.json({ error: 'Email service is not configured' }, { status: 500 })
     }
-
-    // Configure nodemailer transporter for Gmail
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',  // use 'gmail' service shortcut — handles TLS automatically
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS, // Gmail App Password
-      },
-    })
 
     // Setup email data
     const mailOptions = {

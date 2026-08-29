@@ -53,8 +53,16 @@ session_store = diskcache.Cache(os.path.join(os.getenv("CACHE_DIR", "./cache"), 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("🚀 Starting RAG Chatbot API...")
-    # Warm up pipeline in background
-    asyncio.create_task(asyncio.to_thread(get_rag))
+    # Eagerly initialize pipeline AND warm up ONNX embedder so first user request is fast
+    def _warmup():
+        rag = get_rag()
+        try:
+            # Trigger a dummy embed to pre-load the ONNX model into memory
+            rag.vector_store.retrieve("warmup initialization query", top_k=1)
+            logger.info("✅ ONNX embedder warmed up — first user request will be fast")
+        except Exception as e:
+            logger.warning(f"Warmup retrieve failed (non-fatal): {e}")
+    asyncio.create_task(asyncio.to_thread(_warmup))
     yield
     logger.info("👋 Shutting down...")
 
@@ -99,6 +107,7 @@ class ChatResponse(BaseModel):
     sources: list[dict]
     confidence: float
     cached: bool
+    mode: str = "synthesis"   # 'groq' | 'ollama' | 'synthesis'
     timestamp: str
 
 class HistoryResponse(BaseModel):
@@ -112,6 +121,7 @@ class HealthResponse(BaseModel):
     chromadb: str
     indexed_chunks: int
     model: str
+    mode: str = "groq"
 
 # ── Suggested questions ───────────────────────────────────────
 SUGGESTED_QUESTIONS = [
@@ -154,23 +164,30 @@ async def health_check():
     """Health check endpoint — verifies Ollama, ChromaDB connectivity."""
     try:
         global _rag_pipeline
+        groq_key = os.getenv("GROQ_API_KEY", "").strip().strip('"').strip("'")
+        has_groq = bool(groq_key and not groq_key.startswith("your_"))
+        
         if _rag_pipeline is None:
             return HealthResponse(
                 status="initializing",
                 ollama="checking",
                 chromadb="checking",
                 indexed_chunks=0,
-                model=os.getenv("OLLAMA_MODEL", "llama3"),
+                model=os.getenv("GROQ_MODEL", "groq/compound-mini"),
+                mode="groq" if has_groq else "synthesis",
             )
             
         chunk_count = _rag_pipeline.vector_store.collection.count()
         ollama_status = "connected" if _rag_pipeline.embedder._check_ollama() else "fallback (sentence-transformers)"
+        active_mode = "groq" if has_groq else ("ollama" if _rag_pipeline.embedder._check_ollama() else "synthesis")
+        
         return HealthResponse(
             status="healthy",
             ollama=ollama_status,
             chromadb="connected",
             indexed_chunks=chunk_count,
-            model=os.getenv("OLLAMA_MODEL", "llama3"),
+            model=os.getenv("GROQ_MODEL", "groq/compound-mini"),
+            mode=active_mode,
         )
     except Exception as e:
         return JSONResponse(
@@ -282,6 +299,7 @@ async def chat(request: Request, body: ChatRequest):
             sources=result.get("sources", []),
             confidence=result.get("confidence", 0.0),
             cached=result.get("cached", False),
+            mode=result.get("mode", "synthesis"),
             timestamp=datetime.utcnow().isoformat(),
         )
 

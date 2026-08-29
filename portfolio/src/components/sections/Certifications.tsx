@@ -15,6 +15,8 @@ import {
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { cn } from '@/lib/utils'
 import { StaggerReveal, staggerItem } from '@/components/animations/ScrollReveal'
+import { Dynamic3DCard } from '@/components/animations/Dynamic3DCard'
+import { Dynamic3DText } from '@/components/animations/Dynamic3DText'
 
 // ── Category filter tabs ───────────────────────────────────
 const CATEGORY_FILTERS: { key: 'all' | CertCategory; label: string; icon: string }[] = [
@@ -51,13 +53,15 @@ function CertCard({ cert, index }: { cert: Certification; index: number }) {
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0, transition: { duration: 0.3, delay: index * 0.05, ease: [0.19, 1, 0.22, 1] } }}
-      className="glass-card overflow-hidden group relative"
+      className="h-full"
     >
-      {/* Top accent bar */}
-      <div
-        className="absolute top-0 left-0 right-0 h-[2px] opacity-70"
-        style={{ background: `linear-gradient(90deg, ${cert.issuerColor}, transparent 60%)` }}
-      />
+      <Dynamic3DCard intensity={12} depth={16} glowColor={`${cert.issuerColor}25`} className="h-full">
+        <div className="glass-card overflow-hidden group relative h-full">
+          {/* Top accent bar */}
+          <div
+            className="absolute top-0 left-0 right-0 h-[2px] opacity-70"
+            style={{ background: `linear-gradient(90deg, ${cert.issuerColor}, transparent 60%)` }}
+          />
 
       <div className="p-5">
         {/* Header row */}
@@ -188,7 +192,7 @@ function CertCard({ cert, index }: { cert: Certification; index: number }) {
             href={cert.credentialUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all"
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all btn-3d"
             style={{
               background: `${cert.issuerColor}10`,
               border: `1px solid ${cert.issuerColor}25`,
@@ -201,37 +205,44 @@ function CertCard({ cert, index }: { cert: Certification; index: number }) {
           <a
             href={cert.fileUrl}
             download
-            className="flex items-center justify-center p-2 rounded-lg glass border border-white/[0.07] text-text-secondary hover:text-text-primary hover:border-white/20 transition-all"
+            className="flex items-center justify-center p-2 rounded-lg glass border border-white/[0.07] text-text-secondary hover:text-text-primary hover:border-white/20 transition-all btn-3d"
             title="Download certificate"
           >
             <Download size={13} />
           </a>
         </div>
       </div>
+        </div>
+      </Dynamic3DCard>
     </motion.div>
   )
 }
 
 // ── Featured cert highlight strip ─────────────────────────
 function FeaturedStrip() {
-  const featured = getFeaturedCerts().slice(0, 3)
+  const featured = getFeaturedCerts()
+
   return (
-    <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
       {featured.map((cert) => (
-        <motion.div
-          key={cert.id}
-          whileHover={{ scale: 1.02, y: -2 }}
-          className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl glass border border-white/[0.07] hover:border-cyan/20 transition-all"
-        >
-          <span className="text-lg">{cert.badge}</span>
-          <div>
-            <p className="text-xs font-semibold text-text-primary leading-none">{cert.issuerShortName}</p>
-            <p className="text-[10px] text-text-secondary font-mono mt-0.5">{cert.issueDate}</p>
+        <Dynamic3DCard key={cert.id} intensity={14} depth={15} glowColor={`${cert.issuerColor}25`}>
+          <div
+            className="glass-card p-4 flex items-center gap-3 relative overflow-hidden h-full"
+            style={{ borderColor: `${cert.issuerColor}30` }}
+          >
+            <div
+              className="absolute top-0 left-0 bottom-0 w-1"
+              style={{ background: cert.issuerColor }}
+            />
+            <span className="text-2xl flex-shrink-0">{cert.badge}</span>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-text-primary truncate text-3d-interactive">{cert.title}</p>
+              <p className="text-[10px] font-mono mt-0.5" style={{ color: cert.issuerColor }}>
+                {cert.issuerShortName} · {cert.issueDate}
+              </p>
+            </div>
           </div>
-          <a href={cert.credentialUrl} target="_blank" rel="noopener noreferrer">
-            <ExternalLink size={11} className="text-text-tertiary hover:text-cyan transition-colors" />
-          </a>
-        </motion.div>
+        </Dynamic3DCard>
       ))}
     </div>
   )
@@ -239,7 +250,7 @@ function FeaturedStrip() {
 
 // ── Main component ─────────────────────────────────────────
 export default function CertificationsSection() {
-  const { ref, inView } = useInView(0.08)
+  const { ref, inView } = useInView(0.05)
   const activeRole = usePortfolioStore((s) => s.activeRole)
   const [categoryFilter, setCategoryFilter] = useState<'all' | CertCategory>('all')
   const [showRoleFilter, setShowRoleFilter] = useState(false)
@@ -266,9 +277,11 @@ export default function CertificationsSection() {
             className="section-header"
           >
             <p className="section-label">07 / Certifications</p>
-            <h2 className="section-title">
-              Verified <span className="text-gradient">Credentials</span>
-            </h2>
+            <Dynamic3DText intensity={12} enableDepth={true}>
+              <h2 className="section-title text-3d-title">
+                Verified <span className="text-gradient">Credentials</span>
+              </h2>
+            </Dynamic3DText>
             <p className="text-text-secondary mt-3 max-w-xl">
               {totalCerts} professional certificates from {uniqueIssuers} recognized organizations —
               including Infosys, IBM, and AICTE. All earned through active internships in 2025.
@@ -288,11 +301,13 @@ export default function CertificationsSection() {
               { label: 'Organizations', value: uniqueIssuers, color: '#7C3AED', icon: '🏛️' },
               { label: 'Year Earned', value: 2025, color: '#00FF87', icon: '📅' },
             ].map((s) => (
-              <div key={s.label} className="glass-card p-4 text-center">
-                <div className="text-xl mb-1">{s.icon}</div>
-                <div className="font-display font-bold text-2xl" style={{ color: s.color }}>{s.value}</div>
-                <div className="text-xs text-text-secondary font-mono mt-0.5">{s.label}</div>
-              </div>
+              <Dynamic3DCard key={s.label} intensity={14} depth={15} glowColor={`${s.color}25`}>
+                <div className="glass-card p-4 text-center h-full">
+                  <div className="text-xl mb-1">{s.icon}</div>
+                  <div className="font-display font-bold text-2xl text-3d-interactive" style={{ color: s.color }}>{s.value}</div>
+                  <div className="text-xs text-text-secondary font-mono mt-0.5">{s.label}</div>
+                </div>
+              </Dynamic3DCard>
             ))}
           </motion.div>
 

@@ -19,7 +19,7 @@ import { useSound } from '@/hooks'
 
 // ── Status label ──────────────────────────────────────────────
 const STATUS_LABEL: Record<string, string> = {
-  idle:       'Say something or tap the mic',
+  idle:       '',
   listening:  'Listening…',
   processing: 'Thinking…',
   speaking:   'Speaking…',
@@ -38,19 +38,24 @@ const STATUS_COLOR: Record<string, string> = {
 function VoiceMessageBubble({ msg }: { msg: { role: string; text: string; timestamp: Date; actionTaken?: string } }) {
   const isUser = msg.role === 'user'
   
-  // Render **bold** and bullet formatting
+  // Render **bold** and bullet formatting cleanly without markdown headers
   const formatContent = (text: string) => {
-    const lines = text.split('\n')
+    // Strip any markdown headings like ### or ##
+    const clean = text.replace(/^#{1,6}\s+/gm, '').replace(/[-=_*#~]{3,}/g, '')
+    const lines = clean.split('\n').filter((l) => l.trim().length > 0)
     return lines.map((line, lineIdx) => {
-      const parts = line.split(/(\*\*[^*]+\*\*)/g)
+      const isBullet = line.trim().startsWith('-') || line.trim().startsWith('•') || line.trim().startsWith('*')
+      const cleanLine = isBullet ? line.trim().replace(/^[-•*]\s*/, '') : line
+      const parts = cleanLine.split(/(\*\*[^*]+\*\*)/g)
       const formatted = parts.map((part, i) =>
         part.startsWith('**') && part.endsWith('**')
           ? <strong key={i} className="text-cyan-400 font-semibold">{part.slice(2, -2)}</strong>
           : <span key={i}>{part}</span>
       )
       return (
-        <span key={lineIdx} className="block mb-1 last:mb-0">
-          {formatted}
+        <span key={lineIdx} className={cn("block mb-1.5 last:mb-0", isBullet && "flex items-start gap-1.5")}>
+          {isBullet && <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0 mt-1 shadow-[0_0_6px_#00e5ff]" />}
+          <span className="flex-1 leading-relaxed">{formatted}</span>
         </span>
       )
     })
@@ -152,6 +157,13 @@ export default function VoiceAssistant() {
   const isSpeakingUI = va.status === 'speaking'
   const isActive     = isListening || isProcessing || isSpeakingUI
 
+  // Greet user immediately when Jarvis is opened
+  useEffect(() => {
+    if (isOpen) {
+      va.greet()
+    }
+  }, [isOpen, va.greet])
+
   // Mute: stop TTS but keep status
   useEffect(() => {
     if (muteVoice && isSpeakingUI) va.stopSpeaking()
@@ -179,7 +191,7 @@ export default function VoiceAssistant() {
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.93 }}
         title="Jarvis Voice Mode"
-        className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-[70] w-14 h-14 rounded-2xl flex items-center justify-center"
+        className="fixed bottom-3 left-3 sm:bottom-5 sm:left-5 md:bottom-6 md:left-6 z-[70] w-12 h-12 sm:w-13 sm:h-13 md:w-14 md:h-14 rounded-2xl flex items-center justify-center transition-transform"
         style={{
           background: 'linear-gradient(135deg, rgba(0,229,255,0.18), rgba(124,58,237,0.18))',
           border: '1px solid rgba(0,229,255,0.38)',
@@ -192,65 +204,94 @@ export default function VoiceAssistant() {
         <AnimatePresence mode="wait">
           {isOpen
             ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
-                <X size={20} className="text-cyan-400" />
+                <X size={18} className="text-cyan-400 sm:w-5 sm:h-5" />
               </motion.div>
             : <motion.div key="m" initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.7, opacity: 0 }}>
-                <Mic size={20} className={isActive ? 'text-violet-400' : 'text-cyan-400'} />
+                <Mic size={18} className={cn('sm:w-5 sm:h-5', isActive ? 'text-violet-400' : 'text-cyan-400')} />
               </motion.div>
           }
         </AnimatePresence>
 
         {/* Pulse indicator matching ChatBot */}
         {!isOpen && (
-          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-cyan-400 border-2 border-[#0A0A18] animate-pulse" />
+          <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-cyan-400 border-2 border-[#0A0A18] animate-pulse" />
         )}
         
         {/* Label */}
         {!isOpen && (
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-white/60 whitespace-nowrap tracking-wider">
+          <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 text-[7px] sm:text-[8px] font-mono text-white/60 whitespace-nowrap tracking-wider">
             JARVIS
           </div>
         )}
       </motion.button>
 
+      {/* ── Top-Right Close Jarvis Mode Button (Full Screen UI Button) ── */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.button
+            onClick={() => { setIsOpen(false); playClick() }}
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(0,229,255,0.4)' }}
+            whileTap={{ scale: 0.95 }}
+            className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[90] flex items-center gap-2 px-3.5 py-2 rounded-full font-mono text-xs font-semibold text-white transition-all cursor-pointer"
+            style={{
+              background: 'rgba(8, 8, 20, 0.85)',
+              border: '1px solid rgba(0, 229, 255, 0.4)',
+              backdropFilter: 'blur(12px)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 0 15px rgba(0,229,255,0.15)',
+            }}
+          >
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-cyan-300">Close Jarvis Mode</span>
+            <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center ml-0.5">
+              <X size={12} className="text-white" />
+            </div>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       {/* ── Expanded Panel ───────────────────────────────────── */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: -20, scale: 0.94 }}
+            initial={{ opacity: 0, x: -15, scale: 0.94 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -20, scale: 0.94 }}
-            transition={{ duration: 0.28, ease: [0.19, 1, 0.22, 1] }}
-            className="fixed bottom-20 left-4 right-4 md:left-6 md:bottom-24 md:right-auto z-[70] md:w-[320px] flex flex-col rounded-2xl overflow-hidden"
+            exit={{ opacity: 0, x: -15, scale: 0.94 }}
+            transition={{ duration: 0.25, ease: [0.19, 1, 0.22, 1] }}
+            className="fixed inset-x-2 bottom-16 top-14 sm:inset-auto sm:bottom-20 md:bottom-24 sm:left-4 md:left-6 z-[70] w-auto sm:w-[clamp(320px,25vw,420px)] h-auto sm:h-auto sm:max-h-[clamp(500px,70vh,680px)] flex flex-col rounded-2xl overflow-hidden"
             style={{
-              maxHeight: 'min(560px, calc(100dvh - 90px))',
               background: '#080814',
               border: '1.5px solid rgba(0,229,255,0.25)',
               boxShadow: '0 24px 64px rgba(0,0,0,0.95), 0 0 50px rgba(0,229,255,0.1), inset 0 1px 0 rgba(255,255,255,0.04)',
             }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/[0.06]">
-              <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-between px-3.5 sm:px-4 py-3 sm:py-3.5 border-b border-white/[0.06]">
+              <div className="flex items-center gap-2 sm:gap-2.5">
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-cyan-500/25 flex items-center justify-center">
-                    <Sparkles size={14} className="text-cyan-400" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-cyan-500/25 flex items-center justify-center">
+                    <Sparkles size={13} className="text-cyan-400 sm:w-3.5 sm:h-3.5" />
                   </div>
                   {isActive && (
-                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-cyan-400 border-2 border-[#070712] animate-pulse" />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-cyan-400 border-2 border-[#070712] animate-pulse" />
                   )}
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-white tracking-wide font-mono">JARVIS MODE</p>
-                  <p className={cn('text-[9px] font-mono transition-colors', STATUS_COLOR[va.status])}>
-                    {STATUS_LABEL[va.status]}
-                  </p>
+                  <p className="text-[11px] sm:text-xs font-bold text-white tracking-wide font-mono">JARVIS MODE</p>
+                  {STATUS_LABEL[va.status] && (
+                    <p className={cn('text-[8px] sm:text-[9px] font-mono transition-colors', STATUS_COLOR[va.status])}>
+                      {STATUS_LABEL[va.status]}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-1">
                 <button onClick={() => setShowTips(!showTips)}
-                  className="p-1.5 rounded-lg text-white/60 hover:text-white transition-colors">
-                  <Info size={12} />
+                  className="p-1.5 rounded-lg text-white/60 hover:text-white transition-colors"
+                  title="Voice tips">
+                  <Info size={13} />
                 </button>
                 <button onClick={() => setMuteVoice(!muteVoice)} title={muteVoice ? 'Unmute voice' : 'Mute voice'}
                   className="p-1.5 rounded-lg text-white/60 hover:text-white transition-colors">
@@ -258,11 +299,14 @@ export default function VoiceAssistant() {
                 </button>
                 <button onClick={va.clearHistory} title="Clear history"
                   className="p-1.5 rounded-lg text-white/60 hover:text-white transition-colors">
-                  <RotateCcw size={12} />
+                  <RotateCcw size={13} />
                 </button>
-                <button onClick={() => setIsOpen(false)} title="Close Jarvis"
-                  className="md:hidden p-1.5 rounded-lg text-white/60 hover:text-white transition-colors">
-                  <X size={13} />
+                <button
+                  onClick={() => setIsOpen(false)}
+                  title="Close Jarvis Mode"
+                  className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-1 ml-1"
+                >
+                  <X size={14} className="text-cyan-400" />
                 </button>
               </div>
             </div>
@@ -299,59 +343,59 @@ export default function VoiceAssistant() {
                 {/* Scrollable body: orb + messages + suggestions */}
                 <div className="flex-1 overflow-y-auto no-scrollbar">
                 {/* Orb + waveform */}
-                <div className="flex flex-col items-center gap-3 pt-5 pb-3 px-4">
+                <div className="flex flex-col items-center gap-2.5 sm:gap-3 pt-3.5 sm:pt-5 pb-2.5 sm:pb-3 px-3.5 sm:px-4">
                   <VoiceOrb
                     status={va.status}
                     audioLevel={va.audioLevel}
-                    size={72}
+                    size={64}
                     onClick={handleMicClick}
                   />
 
                   {/* Live transcript */}
-                  <div className="min-h-[28px] w-full text-center">
+                  <div className="min-h-[26px] sm:min-h-[28px] w-full text-center">
                     {va.transcript ? (
                       <motion.p
                         key={va.transcript}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="text-xs text-cyan-400/80 font-mono px-2 line-clamp-2"
+                        className="text-[11px] sm:text-xs text-cyan-400/80 font-mono px-2 line-clamp-2"
                       >
                         &ldquo;{va.transcript}&rdquo;
                       </motion.p>
                     ) : (
-                      <p className="text-[10px] text-white/60 font-mono">
+                      <p className="text-[9px] sm:text-[10px] text-white/60 font-mono">
                         {isListening ? 'Speak now…' : 'Tap orb to activate'}
                       </p>
                     )}
                   </div>
 
                   {/* Waveform */}
-                  <div className="w-full h-10 flex items-center">
+                  <div className="w-full h-8 sm:h-10 flex items-center">
                     <VoiceWaveform
                       audioLevel={va.audioLevel}
                       isActive={isListening || isSpeakingUI}
                       isSpeaking={isSpeakingUI}
                       color={isSpeakingUI ? '#7C3AED' : '#00E5FF'}
-                      barCount={36}
-                      height={40}
+                      barCount={32}
+                      height={34}
                     />
                   </div>
 
                   {/* Error */}
                   {va.error && (
-                    <div className="w-full px-3 py-2 rounded-lg bg-red-500/[0.08] border border-red-500/20">
-                      <p className="text-[10px] text-red-400 text-center">{va.error}</p>
+                    <div className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-red-500/[0.08] border border-red-500/20">
+                      <p className="text-[9px] sm:text-[10px] text-red-400 text-center">{va.error}</p>
                     </div>
                   )}
                 </div>
 
                 {/* Mic button */}
-                <div className="flex items-center justify-center pb-3 px-4">
+                <div className="flex items-center justify-center pb-2.5 sm:pb-3 px-3.5 sm:px-4">
                   <motion.button
                     onClick={handleMicClick}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.96 }}
-                    className="flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-semibold transition-all"
+                    className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold transition-all"
                     style={isListening ? {
                       background: 'rgba(239,68,68,0.12)',
                       border: '1px solid rgba(239,68,68,0.3)',
@@ -374,7 +418,7 @@ export default function VoiceAssistant() {
 
                 {/* Messages */}
                 {va.messages.length > 0 && (
-                  <div className="flex-1 overflow-y-auto no-scrollbar px-4 pb-3 space-y-2 max-h-[200px] border-t border-white/[0.06] pt-3" style={{ background: 'rgba(8,8,20,1)' }}>
+                  <div className="flex-1 overflow-y-auto no-scrollbar px-3 sm:px-4 pb-3 space-y-2 max-h-[160px] sm:max-h-[220px] border-t border-white/[0.06] pt-2.5 sm:pt-3" style={{ background: 'rgba(8,8,20,1)' }}>
                     {va.messages.slice(-8).map((msg) => (
                       <VoiceMessageBubble key={msg.id} msg={msg} />
                     ))}
@@ -383,18 +427,18 @@ export default function VoiceAssistant() {
 
                 {/* Suggestions (show when no messages) */}
                 {va.messages.length === 0 && (
-                  <div className="px-4 pb-4 border-t border-white/[0.04] pt-3">
-                    <p className="text-[9px] font-mono text-white/60 uppercase tracking-wider mb-2">Try saying:</p>
-                    <div className="grid grid-cols-2 gap-1.5">
+                  <div className="px-3 sm:px-4 pb-3 sm:pb-4 border-t border-white/[0.04] pt-2.5 sm:pt-3">
+                    <p className="text-[8px] sm:text-[9px] font-mono text-white/60 uppercase tracking-wider mb-1.5 sm:mb-2">Try saying:</p>
+                    <div className="grid grid-cols-2 gap-1 sm:gap-1.5">
                       {VOICE_SUGGESTIONS.slice(0, 6).map((s) => (
                         <button
                           key={s.text}
                           onClick={() => { handleSuggestion(s.text) }}
-                          className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-left transition-all hover:bg-white/[0.04]"
+                          className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-lg text-left transition-all hover:bg-white/[0.04]"
                           style={{ border: '1px solid rgba(255,255,255,0.05)' }}
                         >
-                          <span className="text-sm">{s.icon}</span>
-                          <span className="text-[10px] text-white/90 leading-tight line-clamp-2">{s.text}</span>
+                          <span className="text-xs sm:text-sm">{s.icon}</span>
+                          <span className="text-[9px] sm:text-[10px] text-white/90 leading-tight line-clamp-2">{s.text}</span>
                         </button>
                       ))}
                     </div>
@@ -405,8 +449,8 @@ export default function VoiceAssistant() {
             )}
 
             {/* Footer */}
-            <div className="px-4 py-2 border-t border-white/[0.06]" style={{ background: 'rgba(8,8,20,1)' }}>
-              <p className="text-[8px] font-mono text-white/50 text-center">
+            <div className="px-3 sm:px-4 py-1.5 sm:py-2 border-t border-white/[0.06]" style={{ background: 'rgba(8,8,20,1)' }}>
+              <p className="text-[7px] sm:text-[8px] font-mono text-white/50 text-center">
                 Voice · RAG AI · Web Speech API · No data stored
               </p>
             </div>
