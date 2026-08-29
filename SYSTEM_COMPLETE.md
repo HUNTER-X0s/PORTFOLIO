@@ -285,7 +285,7 @@ run_all.bat
 
 1. Add `GOOGLE_SITE_VERIFICATION` to `portfolio/.env.local` → verify in [Google Search Console](https://search.google.com/search-console)
 2. Add `BING_SITE_VERIFICATION` to `portfolio/.env.local` → verify in [Bing Webmaster Tools](https://www.bing.com/webmasters)
-3. Submit `https://anuragswain.dev/sitemap.xml` in both consoles
+3. Submit `https://anurag07.vercel.app/sitemap.xml` in both consoles
 4. Test rich snippets: [Rich Results Test](https://search.google.com/test/rich-results)
 
 ---

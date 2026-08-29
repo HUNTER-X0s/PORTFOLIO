@@ -4,7 +4,7 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=210&section=header&text=Anurag%20Swain&fontSize=68&fontAlignY=32&desc=AI%20Engineer%20%E2%80%A2%20Full%20Stack%20Developer%20%E2%80%A2%20ML%20Engineer&descAlignY=58&descAlign=50&animation=twinkling&fontColor=ffffff" width="100%"/>
 
 <!-- Dynamic Typing SVG Headline -->
-<a href="https://anuragswain.dev">
+<a href="https://anurag07.vercel.app">
   <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&duration=3000&pause=1000&color=00E5FF&center=true&vCenter=true&multiline=false&repeat=true&width=750&lines=🚀+Next-Gen+AI-Powered+Portfolio+Platform;🌌+Three.js+Neural+Cosmos+%7C+Real-time+3D;🤖+Custom+RAG+Chatbot+%2B+Ollama+Local+LLM;🎙️+Jarvis+AI+Voice+Assistant+Integration;⚡+60+FPS+Desktop-Optimized+at+1920%C3%971080;🎯+9+Dynamic+Engineering+Personas+in+1+App" alt="Typing SVG" />
 </a>
 
@@ -12,7 +12,7 @@
 <br/>
 
 <!-- Primary Status & Engagement Badges -->
-[![Portfolio Live](https://img.shields.io/badge/🌐_Live_Demo-anuragswain.dev-00E5FF?style=for-the-badge&logoColor=white)](https://anuragswain.dev)
+[![Portfolio Live](https://img.shields.io/badge/🌐_Live_Demo-anurag07.vercel.app-00E5FF?style=for-the-badge&logoColor=white)](https://anurag07.vercel.app)
 [![GitHub Stars](https://img.shields.io/github/stars/HUNTER-X0s/PORTFOLIO?style=for-the-badge&logo=github&color=7C3AED&labelColor=0d1117)](https://github.com/HUNTER-X0s/PORTFOLIO/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/HUNTER-X0s/PORTFOLIO?style=for-the-badge&logo=github&color=FF6B2B&labelColor=0d1117)](https://github.com/HUNTER-X0s/PORTFOLIO/network)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
@@ -41,7 +41,7 @@
   <h3>✨ The Ultimate AI Engineer & Full-Stack Portfolio Platform ✨</h3>
   <p><i>A cinematic, GPU-accelerated interactive experience built with Next.js 14, Three.js, RAG AI, and microservices architecture.</i></p>
   <br/>
-  <a href="https://anuragswain.dev">
+  <a href="https://anurag07.vercel.app">
     <img src="./portfolio_preview.jpg" width="100%" alt="Anurag Swain AI Portfolio Preview" style="border-radius: 14px; box-shadow: 0 10px 40px rgba(0, 229, 255, 0.25); border: 1px solid rgba(0, 229, 255, 0.3);" />
   </a>
   <br/>
@@ -256,7 +256,7 @@ npm run dev
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5001
 NEXT_PUBLIC_CHATBOT_URL=http://localhost:8001
-NEXT_PUBLIC_APP_URL=https://anuragswain.dev
+NEXT_PUBLIC_APP_URL=https://anurag07.vercel.app
 NEXT_PUBLIC_GITHUB_USERNAME=HUNTER-X0s
 GOOGLE_SITE_VERIFICATION=your_google_search_console_token
 BING_SITE_VERIFICATION=your_bing_webmaster_token
@@ -300,7 +300,7 @@ OPENAI_API_KEY=your_optional_openai_fallback_key
 
 <br/>
 
-[![Portfolio](https://img.shields.io/badge/🌐_Portfolio-anuragswain.dev-00E5FF?style=for-the-badge)](https://anuragswain.dev)
+[![Portfolio](https://img.shields.io/badge/🌐_Portfolio-anurag07.vercel.app-00E5FF?style=for-the-badge)](https://anurag07.vercel.app)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-anurag--swain--cse07-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/anurag-swain-cse07/)
 [![GitHub](https://img.shields.io/badge/GitHub-HUNTER--X0s-181717?style=for-the-badge&logo=github)](https://github.com/HUNTER-X0s)
 [![Twitter](https://img.shields.io/badge/Twitter-@Anurag__hunter07-1DA1F2?style=for-the-badge&logo=twitter)](https://x.com/Anurag_hunter07)
@@ -308,7 +308,7 @@ OPENAI_API_KEY=your_optional_openai_fallback_key
 
 </div>
 
-
+---
 
 ## ⭐ Show Your Support
 
@@ -337,7 +337,7 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for complete det
 
 <div align="center">
 
-**Crafted with 💙 and Neural Energy by [Anurag Swain](https://anuragswain.dev) • © 2026**
+**Crafted with 💙 and Neural Energy by [Anurag Swain](https://anurag07.vercel.app) • © 2026**
 
 *“Engineering Intelligence. Shipping Products. Solving Problems.”*
 

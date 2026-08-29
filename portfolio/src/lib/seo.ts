@@ -16,7 +16,7 @@ function normalizeSiteUrl(url?: string) {
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : undefined) ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
-    'https://anuragswain.dev'
+    'https://anurag07.vercel.app'
 
   return (url || fallback).replace(/\/+$/, '')
 }
