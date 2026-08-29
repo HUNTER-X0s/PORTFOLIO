@@ -5,7 +5,7 @@
 
 <!-- Dynamic Typing SVG Headline -->
 <a href="https://anurag07.vercel.app">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&duration=3000&pause=1000&color=00E5FF&center=true&vCenter=true&multiline=false&repeat=true&width=750&lines=🚀+Next-Gen+AI-Powered+Portfolio+Platform;🌌+Three.js+Neural+Cosmos+%7C+Real-time+3D;🤖+Custom+RAG+Chatbot+%2B+Ollama+Local+LLM;🎙️+Jarvis+AI+Voice+Assistant+Integration;⚡+60+FPS+Desktop-Optimized+at+1920%C3%971080;🎯+9+Dynamic+Engineering+Personas+in+1+App" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&duration=3000&pause=1000&color=00E5FF&center=true&vCenter=true&multiline=false&repeat=true&width=750&lines=Next-Gen+AI-Powered+Portfolio+Platform;Three.js+Neural+Cosmos+%7C+Real-Time+3D;Custom+RAG+Chatbot+%2B+Ollama+Local+LLM;Jarvis+AI+Voice+Assistant+Integration;Built+for+60+FPS+at+1920x1080+Dimensions;9+Dynamic+Engineering+Personas+in+1+App" alt="Anurag Swain - Dynamic Portfolio Platform" />
 </a>
 
 <br/>

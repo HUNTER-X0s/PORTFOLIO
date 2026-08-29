@@ -225,33 +225,6 @@ export default function VoiceAssistant() {
         )}
       </motion.button>
 
-      {/* ── Top-Right Close Jarvis Mode Button (Full Screen UI Button) ── */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.button
-            onClick={() => { setIsOpen(false); playClick() }}
-            initial={{ opacity: 0, y: -20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.9 }}
-            whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(0,229,255,0.4)' }}
-            whileTap={{ scale: 0.95 }}
-            className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[90] flex items-center gap-2 px-3.5 py-2 rounded-full font-mono text-xs font-semibold text-white transition-all cursor-pointer"
-            style={{
-              background: 'rgba(8, 8, 20, 0.85)',
-              border: '1px solid rgba(0, 229, 255, 0.4)',
-              backdropFilter: 'blur(12px)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 0 15px rgba(0,229,255,0.15)',
-            }}
-          >
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-cyan-300">Close Jarvis Mode</span>
-            <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center ml-0.5">
-              <X size={12} className="text-white" />
-            </div>
-          </motion.button>
-        )}
-      </AnimatePresence>
-
       {/* ── Expanded Panel ───────────────────────────────────── */}
       <AnimatePresence>
         {isOpen && (
@@ -267,7 +240,7 @@ export default function VoiceAssistant() {
               boxShadow: '0 24px 64px rgba(0,0,0,0.95), 0 0 50px rgba(0,229,255,0.1), inset 0 1px 0 rgba(255,255,255,0.04)',
             }}
           >
-            {/* Header */}
+            {/* Header (with Close button at the top right of the Jarvis box) */}
             <div className="flex items-center justify-between px-3.5 sm:px-4 py-3 sm:py-3.5 border-b border-white/[0.06]">
               <div className="flex items-center gap-2 sm:gap-2.5">
                 <div className="relative">
@@ -302,11 +275,11 @@ export default function VoiceAssistant() {
                   <RotateCcw size={13} />
                 </button>
                 <button
-                  onClick={() => setIsOpen(false)}
-                  title="Close Jarvis Mode"
-                  className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-1 ml-1"
+                  onClick={() => { setIsOpen(false); playClick() }}
+                  title="Close Jarvis"
+                  className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center ml-1 cursor-pointer"
                 >
-                  <X size={14} className="text-cyan-400" />
+                  <X size={15} className="text-cyan-400 hover:text-cyan-300" />
                 </button>
               </div>
             </div>
