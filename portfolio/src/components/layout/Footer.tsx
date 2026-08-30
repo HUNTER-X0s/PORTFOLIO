@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Mail, Phone, MapPin, Github, Linkedin, Twitter, Instagram, ArrowUpRight } from 'lucide-react'
+import { Mail, Phone, MapPin, Github, Linkedin, Twitter, Instagram, ArrowUpRight, Sparkles } from 'lucide-react'
 import { personalInfo, navItems } from '@/data/portfolio'
 
 export default function Footer() {
@@ -128,15 +128,21 @@ export default function Footer() {
           <p className="text-sm text-text-tertiary">
             &copy; {currentYear} <span className="text-text-secondary">{personalInfo.name}</span>. All rights reserved.
           </p>
-          <div className="flex items-center gap-2 text-sm text-text-tertiary">
-            <span>Crafted with</span>
-            <a href="https://nextjs.org" target="_blank" rel="noreferrer" className="text-text-secondary hover:text-cyan transition-colors">Next.js</a>
-            <span>&</span>
-            <a href="https://threejs.org" target="_blank" rel="noreferrer" className="text-text-secondary hover:text-cyan transition-colors">Three.js</a>
+          <div className="flex items-center gap-2 text-sm text-text-secondary">
+            <span className="text-text-tertiary">Engineered with</span>
+            <Sparkles size={14} className="text-cyan animate-pulse" />
+            <span className="text-text-tertiary">&amp; neural precision by</span>
+            <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-cyan via-blue-400 to-violet-400">
+              {personalInfo.name}
+            </span>
           </div>
-          <p className="text-sm text-text-tertiary font-mono">
-            v1.0.0
-          </p>
+          <div className="flex items-center gap-2 text-xs text-text-tertiary font-mono">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="text-emerald-400/90 font-medium">Available for Opportunities</span>
+          </div>
         </div>
       </div>
     </footer>
