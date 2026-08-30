@@ -34,7 +34,7 @@ services:
       - key: RAG_FAST_MODE
         value: "true"
       - key: ALLOWED_ORIGINS
-        value: https://anurag07.vercel.app,http://localhost:3000
+        value: https://anuragswain.vercel.app,https://anurag07.vercel.app,http://localhost:3000
       - key: CANDIDATE_NAME
         value: Anurag Swain
       - key: CANDIDATE_GITHUB
