@@ -5,17 +5,43 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useInView, useSound } from '@/hooks'
 import { personalInfo } from '@/data/portfolio'
 import {
-  Send, Mail, MapPin, Github, Linkedin, Twitter, CheckCircle2,
+  Send, Mail, MapPin, Github, Linkedin, Twitter, Instagram, CheckCircle2,
   Loader2, User, Building, MessageSquare, Sparkles, Copy, Check
 } from 'lucide-react'
 import type { ContactForm } from '@/types'
 import { Dynamic3DCard } from '@/components/animations/Dynamic3DCard'
 import { Dynamic3DText } from '@/components/animations/Dynamic3DText'
 
-const socialIcons: Record<string, typeof Github> = {
-  github: Github,
-  linkedin: Linkedin,
-  twitter: Twitter,
+function ThreadsIcon({ size = 20, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 192 192"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.745C77.0123 44.745 61.4284 55.4858 54.3414 74.2435C48.0697 90.8415 50.4908 111.458 60.7725 125.753C70.1837 138.835 84.767 146.255 101.895 146.255C120.301 146.255 135.035 137.669 141.564 122.842C144.385 116.438 145.827 109.112 145.856 101.077H126.791C126.657 121.217 114.739 129.213 101.328 129.213C85.5771 129.213 71.3653 118.847 68.3297 95.8451C73.3444 98.4116 79.2882 100.089 86.0617 100.49C96.7997 101.127 107.563 98.0566 114.869 92.2773C122.88 85.9388 127.353 76.5186 127.445 65.7383C127.561 52.0723 118.665 44.745 97.222 44.745C80.3644 44.745 68.0494 54.4092 63.4862 70.9785C59.7126 84.6781 60.5283 102.735 69.1767 114.761C76.2483 124.596 87.4114 130.222 100.672 130.222C115.756 130.222 125.438 121.849 125.759 107.135C125.793 105.589 125.793 104.043 125.759 102.497L141.537 88.9883ZM108.643 78.4316C104.757 81.5088 98.6656 83.1816 91.4365 82.7539C84.3496 82.334 78.415 80.0879 73.7431 76.082C76.8407 68.3496 83.9579 61.7871 97.222 61.7871C107.96 61.7871 110.871 66.8633 110.803 72.8223C110.745 74.9629 109.967 76.9941 108.643 78.4316Z" />
+    </svg>
+  )
+}
+
+const renderContactSocialIcon = (icon: string, size = 20, className = '') => {
+  switch (icon.toLowerCase()) {
+    case 'github':
+      return <Github size={size} className={className} />
+    case 'linkedin':
+      return <Linkedin size={size} className={className} />
+    case 'twitter':
+      return <Twitter size={size} className={className} />
+    case 'instagram':
+      return <Instagram size={size} className={className} />
+    case 'threads':
+      return <ThreadsIcon size={size} className={className} />
+    default:
+      return <Github size={size} className={className} />
+  }
 }
 
 
@@ -156,9 +182,8 @@ export default function Contact() {
                 <p className="text-xs font-mono text-text-secondary uppercase tracking-widest mb-3">
                   Find me on
                 </p>
-                <div className="grid grid-cols-3 sm:flex gap-3">
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 sm:gap-3">
                   {personalInfo.social.map((s) => {
-                    const Icon = socialIcons[s.icon] || Github
                     return (
                       <Dynamic3DCard key={s.platform} intensity={15} depth={16} glowColor="rgba(0, 229, 255, 0.25)">
                         <motion.a
@@ -168,11 +193,11 @@ export default function Contact() {
                           onClick={() => playClick()}
                           whileHover={{ scale: 1.08, y: -2 }}
                           whileTap={{ scale: 0.95 }}
-                          className="flex flex-col items-center gap-2 p-4 rounded-xl glass border border-white/[0.08] hover:border-cyan/40 transition-all group w-full"
+                          className="flex flex-col items-center justify-center gap-2 p-3 sm:p-4 rounded-xl glass border border-white/[0.08] hover:border-cyan/40 transition-all group w-full h-full text-center"
                           title={s.platform}
                         >
-                          <Icon size={20} className="text-text-secondary group-hover:text-cyan transition-colors" />
-                          <span className="text-xs text-text-secondary group-hover:text-text-primary transition-colors">{s.platform}</span>
+                          {renderContactSocialIcon(s.icon, 20, "text-text-secondary group-hover:text-cyan transition-colors")}
+                          <span className="text-[11px] sm:text-xs font-medium text-text-secondary group-hover:text-text-primary transition-colors truncate w-full">{s.platform}</span>
                         </motion.a>
                       </Dynamic3DCard>
                     )
