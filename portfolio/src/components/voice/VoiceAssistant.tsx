@@ -38,24 +38,50 @@ const STATUS_COLOR: Record<string, string> = {
 function VoiceMessageBubble({ msg }: { msg: { role: string; text: string; timestamp: Date; actionTaken?: string } }) {
   const isUser = msg.role === 'user'
   
-  // Render **bold** and bullet formatting cleanly without markdown headers
+  // Render **bold**, headings, and bullet formatting cleanly matching chatbot layout
   const formatContent = (text: string) => {
-    // Strip any markdown headings like ### or ##
-    const clean = text.replace(/^#{1,6}\s+/gm, '').replace(/[-=_*#~]{3,}/g, '')
-    const lines = clean.split('\n').filter((l) => l.trim().length > 0)
-    return lines.map((line, lineIdx) => {
-      const isBullet = line.trim().startsWith('-') || line.trim().startsWith('•') || line.trim().startsWith('*')
-      const cleanLine = isBullet ? line.trim().replace(/^[-•*]\s*/, '') : line
-      const parts = cleanLine.split(/(\*\*[^*]+\*\*)/g)
+    const rawLines = text.split('\n').filter((l) => l.trim().length > 0)
+    return rawLines.map((rawLine, lineIdx) => {
+      const trimmed = rawLine.trim()
+      const isH3 = trimmed.startsWith('### ')
+      const isH4 = trimmed.startsWith('#### ')
+      const isBullet = trimmed.startsWith('- ') || trimmed.startsWith('• ') || trimmed.startsWith('* ')
+      
+      let cleanLine = trimmed
+      if (isH3) cleanLine = trimmed.replace(/^###\s*/, '')
+      else if (isH4) cleanLine = trimmed.replace(/^####\s*/, '')
+      else if (isBullet) cleanLine = trimmed.replace(/^[-•*]\s*/, '')
+
+      // Parse markdown links [text](url) -> text
+      const linkParsed = cleanLine.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+
+      const parts = linkParsed.split(/(\*\*[^*]+\*\*)/g)
       const formatted = parts.map((part, i) =>
         part.startsWith('**') && part.endsWith('**')
-          ? <strong key={i} className="text-cyan-400 font-semibold">{part.slice(2, -2)}</strong>
+          ? <strong key={i} className="text-cyan font-semibold">{part.slice(2, -2)}</strong>
           : <span key={i}>{part}</span>
       )
+
+      if (isH3) {
+        return (
+          <div key={lineIdx} className="text-[11px] sm:text-xs font-semibold text-cyan-300 mt-2 first:mt-0 mb-1 border-b border-white/[0.08] pb-0.5 flex items-center gap-1">
+            {formatted}
+          </div>
+        )
+      }
+
+      if (isH4) {
+        return (
+          <div key={lineIdx} className="text-[10px] sm:text-[11px] font-medium text-text-secondary mt-1.5 mb-0.5 font-mono">
+            {formatted}
+          </div>
+        )
+      }
+
       return (
         <span key={lineIdx} className={cn("block mb-1.5 last:mb-0", isBullet && "flex items-start gap-1.5")}>
-          {isBullet && <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0 mt-1 shadow-[0_0_6px_#00e5ff]" />}
-          <span className="flex-1 leading-relaxed">{formatted}</span>
+          {isBullet && <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan flex-shrink-0 mt-1 shadow-[0_0_6px_#00e5ff]" />}
+          <span className="flex-1 leading-relaxed text-text-secondary">{formatted}</span>
         </span>
       )
     })
@@ -148,7 +174,7 @@ export default function VoiceAssistant() {
   const [muteVoice, setMuteVoice] = useState(false)
   const [showTips,  setShowTips]  = useState(false)
 
-  const { playClick } = useSound()
+  const { playClick, playJarvisChime } = useSound()
 
   const va = useVoiceAssistant()
 
@@ -187,7 +213,15 @@ export default function VoiceAssistant() {
     <>
       {/* ── FAB ─────────────────────────────────────────────── */}
       <motion.button
-        onClick={() => { setIsOpen(!isOpen); playClick() }}
+        onClick={() => {
+          const next = !isOpen
+          setIsOpen(next)
+          if (next) {
+            playJarvisChime()
+          } else {
+            playClick()
+          }
+        }}
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.93 }}
         title="Jarvis Voice Mode"
@@ -233,18 +267,18 @@ export default function VoiceAssistant() {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -15, scale: 0.94 }}
             transition={{ duration: 0.25, ease: [0.19, 1, 0.22, 1] }}
-            className="fixed inset-x-2 bottom-16 top-14 sm:inset-auto sm:bottom-20 md:bottom-24 sm:left-4 md:left-6 z-[70] w-auto sm:w-[clamp(320px,25vw,420px)] h-auto sm:h-auto sm:max-h-[clamp(500px,70vh,680px)] flex flex-col rounded-2xl overflow-hidden"
+            className="fixed inset-x-1.5 xs:inset-x-2 bottom-[60px] top-[52px] sm:inset-auto sm:bottom-20 md:bottom-24 sm:left-3 md:left-6 lg:left-8 z-[70] w-auto sm:w-[clamp(300px,28vw,440px)] lg:w-[clamp(360px,25vw,480px)] xl:w-[clamp(380px,22vw,500px)] h-auto sm:h-auto sm:max-h-[clamp(480px,72vh,700px)] flex flex-col rounded-xl sm:rounded-2xl overflow-hidden"
             style={{
               background: '#080814',
               border: '1.5px solid rgba(0,229,255,0.25)',
               boxShadow: '0 24px 64px rgba(0,0,0,0.95), 0 0 50px rgba(0,229,255,0.1), inset 0 1px 0 rgba(255,255,255,0.04)',
             }}
           >
-            {/* Header (with Close button at the top right of the Jarvis box) */}
-            <div className="flex items-center justify-between px-3.5 sm:px-4 py-3 sm:py-3.5 border-b border-white/[0.06]">
+            {/* Header */}
+            <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3.5 border-b border-white/[0.06] flex-shrink-0">
               <div className="flex items-center gap-2 sm:gap-2.5">
-                <div className="relative">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-cyan-500/25 flex items-center justify-center">
+                <div className="relative flex-shrink-0">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-cyan-500/25 flex items-center justify-center">
                     <Sparkles size={13} className="text-cyan-400 sm:w-3.5 sm:h-3.5" />
                   </div>
                   {isActive && (
@@ -316,11 +350,11 @@ export default function VoiceAssistant() {
                 {/* Scrollable body: orb + messages + suggestions */}
                 <div className="flex-1 overflow-y-auto no-scrollbar">
                 {/* Orb + waveform */}
-                <div className="flex flex-col items-center gap-2.5 sm:gap-3 pt-3.5 sm:pt-5 pb-2.5 sm:pb-3 px-3.5 sm:px-4">
+                <div className="flex flex-col items-center gap-2 sm:gap-3 pt-3 sm:pt-5 pb-2 sm:pb-3 px-3 sm:px-4 flex-shrink-0">
                   <VoiceOrb
                     status={va.status}
                     audioLevel={va.audioLevel}
-                    size={64}
+                    size={56}
                     onClick={handleMicClick}
                   />
 
@@ -363,12 +397,12 @@ export default function VoiceAssistant() {
                 </div>
 
                 {/* Mic button */}
-                <div className="flex items-center justify-center pb-2.5 sm:pb-3 px-3.5 sm:px-4">
+                <div className="flex items-center justify-center pb-2 sm:pb-3 px-3 sm:px-4 flex-shrink-0">
                   <motion.button
                     onClick={handleMicClick}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.96 }}
-                    className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold transition-all"
+                    className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold transition-all"
                     style={isListening ? {
                       background: 'rgba(239,68,68,0.12)',
                       border: '1px solid rgba(239,68,68,0.3)',
@@ -391,7 +425,7 @@ export default function VoiceAssistant() {
 
                 {/* Messages */}
                 {va.messages.length > 0 && (
-                  <div className="flex-1 overflow-y-auto no-scrollbar px-3 sm:px-4 pb-3 space-y-2 max-h-[160px] sm:max-h-[220px] border-t border-white/[0.06] pt-2.5 sm:pt-3" style={{ background: 'rgba(8,8,20,1)' }}>
+                  <div className="overflow-y-auto no-scrollbar px-2.5 sm:px-4 pb-2.5 space-y-1.5 sm:space-y-2 max-h-[140px] sm:max-h-[210px] border-t border-white/[0.06] pt-2 sm:pt-3 flex-shrink-0" style={{ background: 'rgba(8,8,20,1)' }}>
                     {va.messages.slice(-8).map((msg) => (
                       <VoiceMessageBubble key={msg.id} msg={msg} />
                     ))}
@@ -400,8 +434,8 @@ export default function VoiceAssistant() {
 
                 {/* Suggestions (show when no messages) */}
                 {va.messages.length === 0 && (
-                  <div className="px-3 sm:px-4 pb-3 sm:pb-4 border-t border-white/[0.04] pt-2.5 sm:pt-3">
-                    <p className="text-[8px] sm:text-[9px] font-mono text-white/60 uppercase tracking-wider mb-1.5 sm:mb-2">Try saying:</p>
+                  <div className="px-2.5 sm:px-4 pb-2.5 sm:pb-4 border-t border-white/[0.04] pt-2 sm:pt-3 flex-shrink-0">
+                    <p className="text-[7px] sm:text-[9px] font-mono text-white/60 uppercase tracking-wider mb-1 sm:mb-2">Try saying:</p>
                     <div className="grid grid-cols-2 gap-1 sm:gap-1.5">
                       {VOICE_SUGGESTIONS.slice(0, 6).map((s) => (
                         <button
@@ -422,8 +456,8 @@ export default function VoiceAssistant() {
             )}
 
             {/* Footer */}
-            <div className="px-3 sm:px-4 py-1.5 sm:py-2 border-t border-white/[0.06]" style={{ background: 'rgba(8,8,20,1)' }}>
-              <p className="text-[7px] sm:text-[8px] font-mono text-white/50 text-center">
+            <div className="px-3 sm:px-4 py-1 sm:py-2 border-t border-white/[0.06] flex-shrink-0" style={{ background: 'rgba(8,8,20,1)' }}>
+              <p className="text-[6px] sm:text-[8px] font-mono text-white/50 text-center">
                 Voice · RAG AI · Web Speech API · No data stored
               </p>
             </div>

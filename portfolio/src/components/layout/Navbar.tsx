@@ -119,7 +119,7 @@ export default function Navbar() {
             </motion.a>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-0.5">
+            <nav className="hidden xl:flex items-center gap-0.5">
               {navItems.map((item) => (
                 <a
                   key={item.id}
@@ -143,32 +143,34 @@ export default function Navbar() {
 
             {/* Right Controls */}
             <div className="flex items-center gap-1.5">
-              {/* Background Music Player Toggle */}
-              <button
-                data-music-toggle
-                onClick={() => {
-                  setMusicPlayerOpen(!isMusicPlayerOpen)
-                  playClick()
-                }}
-                className={cn(
-                  'p-2 rounded-xl transition-all flex items-center justify-center border relative',
-                  musicEnabled || isMusicPlayerOpen
-                    ? 'border-cyan/45 bg-cyan/15 text-cyan shadow-[0_0_12px_rgba(0,229,255,0.25)]'
-                    : 'border-white/[0.08] text-text-secondary hover:text-text-primary hover:bg-white/[0.05]'
-                )}
-                title={musicEnabled ? 'Music Playing (Click for Sound Lounge)' : 'Music (Click for Sound Lounge)'}
-              >
-                <Music size={15} className={cn(musicEnabled && 'animate-pulse text-cyan')} />
-                {musicEnabled && (
-                  <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-cyan animate-ping" />
-                )}
-              </button>
+              {/* Background Music Player Toggle & Anchored Sound Lounge Popover */}
+              <div className="relative">
+                <button
+                  data-music-toggle
+                  onClick={() => {
+                    setMusicPlayerOpen(!isMusicPlayerOpen)
+                    playClick()
+                  }}
+                  className={cn(
+                    'p-2 rounded-xl transition-all flex items-center justify-center border relative',
+                    musicEnabled || isMusicPlayerOpen
+                      ? 'border-cyan/45 bg-cyan/15 text-cyan shadow-[0_0_12px_rgba(0,229,255,0.25)]'
+                      : 'border-white/[0.08] text-text-secondary hover:text-text-primary hover:bg-white/[0.05]'
+                  )}
+                  title={musicEnabled ? 'Music Playing (Click for Sound Lounge)' : 'Music (Click for Sound Lounge)'}
+                >
+                  <Music size={15} className={cn(musicEnabled && 'animate-pulse text-cyan')} />
+                  {musicEnabled && (
+                    <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-cyan animate-ping" />
+                  )}
+                </button>
+              </div>
 
               {/* Sound Effects Toggle (Click SFX) */}
               <button
                 onClick={() => { setSoundEnabled(!soundEnabled); playClick() }}
                 className={cn(
-                  'p-2 rounded-xl text-text-secondary hover:text-text-primary hover:bg-white/[0.05] transition-all flex border',
+                  'p-2 rounded-xl text-text-secondary hover:text-text-primary hover:bg-white/[0.05] transition-all flex items-center justify-center border',
                   soundEnabled ? 'border-white/[0.08] text-cyan' : 'border-white/[0.04] text-text-secondary/40'
                 )}
                 title={soundEnabled ? 'Click Sound Effects: ON (Click to mute)' : 'Click Sound Effects: OFF (Click to enable)'}
@@ -217,7 +219,7 @@ export default function Navbar() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.15 }}
-                        className="fixed inset-0 z-[290] bg-black/50 backdrop-blur-[3px] lg:hidden"
+                        className="fixed inset-0 z-[290] bg-black/50 backdrop-blur-[3px] xl:hidden"
                         onClick={() => setIsRoleDropdownOpen(false)}
                       />
 
@@ -270,7 +272,7 @@ export default function Navbar() {
               {/* Mobile menu */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/[0.05] transition-all"
+                className="xl:hidden p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/[0.05] transition-all"
               >
                 {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
               </button>
@@ -286,7 +288,7 @@ export default function Navbar() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25 }}
-              className="lg:hidden mx-3 sm:mx-4 mt-2 glass-dropdown rounded-2xl overflow-hidden max-h-[calc(100vh-5rem)] overflow-y-auto custom-scrollbar"
+              className="xl:hidden mx-3 sm:mx-4 mt-2 glass-dropdown rounded-2xl overflow-hidden max-h-[calc(100vh-5rem)] overflow-y-auto custom-scrollbar"
             >
               <div className="p-3 sm:p-4 space-y-0.5">
                 {navItems.map((item, i) => (
@@ -352,10 +354,8 @@ export default function Navbar() {
         </AnimatePresence>
       </motion.header>
 
-      {/* Floating Sound Lounge Music Player */}
+      {/* Global Sound Lounge Popover */}
       <MusicPlayerPopover />
-
-
     </>
   )
 }

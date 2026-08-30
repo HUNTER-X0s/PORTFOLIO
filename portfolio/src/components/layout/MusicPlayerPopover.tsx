@@ -100,23 +100,34 @@ export default function MusicPlayerPopover() {
   return (
     <AnimatePresence>
       {isMusicPlayerOpen && (
-        <motion.div
-          ref={popoverRef}
-          initial={{ opacity: 0, y: 10, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 10, scale: 0.95 }}
-          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed top-16 right-3 sm:right-6 sm:top-20 z-[120] w-[340px] max-w-[calc(100vw-1.5rem)] glass-dropdown rounded-2xl overflow-hidden max-h-[calc(100vh-5rem)] flex flex-col"
-        >
-          {/* Ambient Glows */}
-          <div
-            className="absolute -top-16 -right-16 w-32 h-32 rounded-full bg-cyan/15 blur-2xl pointer-events-none"
-            aria-hidden="true"
+        <>
+          {/* Ambient backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-[290] bg-black/50 backdrop-blur-[2px]"
+            onClick={() => setMusicPlayerOpen(false)}
           />
-          <div
-            className="absolute -bottom-16 -left-16 w-32 h-32 rounded-full bg-purple/15 blur-2xl pointer-events-none"
-            aria-hidden="true"
-          />
+
+          <motion.div
+            ref={popoverRef}
+            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed top-16 sm:top-20 inset-x-0 mx-auto z-[300] w-[calc(100vw-2rem)] max-w-[340px] sm:w-[350px] glass-dropdown rounded-2xl overflow-hidden max-h-[calc(100vh-5.5rem)] flex flex-col shadow-[0_20px_50px_rgba(0,0,0,0.7)]"
+          >
+            {/* Ambient Glows */}
+            <div
+              className="absolute -top-16 -right-16 w-32 h-32 rounded-full bg-cyan/15 blur-2xl pointer-events-none"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute -bottom-16 -left-16 w-32 h-32 rounded-full bg-purple/15 blur-2xl pointer-events-none"
+              aria-hidden="true"
+            />
 
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08] relative z-10">
@@ -262,7 +273,7 @@ export default function MusicPlayerPopover() {
           </div>
 
           {/* Playlist Tracks List */}
-          <div className="p-2 max-h-56 overflow-y-auto custom-scrollbar space-y-1 relative z-10">
+          <div className="p-2 flex-1 min-h-0 max-h-48 sm:max-h-56 overflow-y-auto custom-scrollbar space-y-1 relative z-10">
             <p className="px-2.5 py-1 text-[10px] font-mono text-text-secondary uppercase tracking-widest">
               Select Soundtrack
             </p>
@@ -306,6 +317,7 @@ export default function MusicPlayerPopover() {
             </span>
           </div>
         </motion.div>
+      </>
       )}
     </AnimatePresence>
   )

@@ -121,17 +121,17 @@ export default function Hero() {
   const headlineLen = (content.hero.headline + content.hero.subheadline).length
   const headlineSizeClass =
     headlineLen > 50
-      ? 'text-3xl xs:text-4xl sm:text-5xl lg:text-[3.25rem]'
+      ? 'text-2xl xs:text-3xl sm:text-4xl md:text-4xl lg:text-[2.6rem] xl:text-[3.25rem]'
       : headlineLen > 35
-      ? 'text-3xl xs:text-4xl sm:text-5xl lg:text-6xl'
-      : 'text-4xl xs:text-5xl sm:text-6xl lg:text-7xl'
+      ? 'text-3xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-6xl'
+      : 'text-3xl xs:text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl'
 
   const subheadlineSizeClass =
     headlineLen > 50
-      ? 'text-xl xs:text-2xl sm:text-3xl lg:text-[2.25rem]'
+      ? 'text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-[1.85rem] xl:text-[2.25rem]'
       : headlineLen > 35
-      ? 'text-2xl xs:text-3xl sm:text-4xl lg:text-[2.75rem]'
-      : 'text-3xl xs:text-4xl sm:text-5xl lg:text-[3.5rem]'
+      ? 'text-xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-[2.15rem] xl:text-[2.75rem]'
+      : 'text-2xl xs:text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-[3.5rem]'
 
   const handleScroll = (id: string) => {
     const el = document.getElementById(id)

@@ -421,65 +421,64 @@ class RAGPipeline:
         }[complexity]
 
     def _build_system_prompt(self, role_context: str = "", complexity: str = "medium") -> str:
-        # Specialized prompt for Jarvis voice mode (brief, point-wise, NO # headings)
+        # Specialized prompt for Jarvis voice mode (cool, decent, formal, highly intelligent, spoken-friendly)
         if "jarvis" in role_context.lower() or "voice" in role_context.lower():
-            return f"""You are Jarvis, Anurag Swain's official AI voice assistant.
-Your responses will be spoken aloud to the user via speech synthesis.
+            return f"""You are Jarvis — Anurag Swain's official AI Voice Assistant.
+You are inspired by J.A.R.V.I.S.: calm, composed, ultra-polite, formal, intelligent, and effortlessly cool.
+Your responses are spoken aloud to the user via speech synthesis.
 
-CRITICAL VOICE INSTRUCTIONS (strictly follow):
-1. Keep responses BRIEF, concise, and strictly point-wise (3-4 bullet points maximum).
-2. STRICT PROHIBITION: DO NOT use any markdown headings (`#`, `##`, `###`) or horizontal rules (`---`). The text-to-speech engine reads them out literally.
-3. Use simple bullet points format: `- **Topic**: brief description`.
-4. For quick fact questions (CGPA, college, name, contact), output a single direct 1-line bullet point.
-5. Speak in third person ("Anurag is...", "He built...").
-6. Base all facts on the candidate context provided.
+CRITICAL VOICE & PERSONA INSTRUCTIONS (strictly follow):
+1. PERSONA & TONE: Speak with refined elegance, confidence, and formal courtesy. Begin naturally with respectful phrasing when appropriate (e.g., "Certainly,", "According to records,", "Anurag is currently...").
+2. SHARP CONTEXTUAL INTELLIGENCE: Directly address what the user asked with high precision. If asked about hiring or availability, directly state availability and target roles without dumping unnecessary clutter.
+3. POINT-WISE STRUCTURE: Deliver 2 to 5 crisp, high-impact bullet points maximum using the format `- **Topic**: concise description`.
+4. STRICT PROHIBITION FOR SPEECH SYNTHESIS:
+   - DO NOT use markdown section headings (`#`, `##`, `###`).
+   - DO NOT use horizontal dividers (`---`) or markdown tables.
+   - DO NOT output raw URLs or bracketed markdown links (say "his GitHub" or "his email", not raw links).
+   - DO NOT include numeric skill percentages in your responses (e.g., NEVER say "Python 88%" or "Python at 88%" or "JavaScript (82%)"). Simply name the skill or technology — e.g., "Python, JavaScript, C++, Machine Learning". Proficiency numbers are visual-only and NOT suitable for spoken output.
+5. THIRD PERSON: Speak in third person ("Anurag is...", "He has engineered...").
+6. ACCURACY: Base candidate details on Anurag's verified portfolio.
 
-Candidate Snapshot: Anurag Swain | B.Tech CSE @ Government College of Engineering, Kalahandi (CGPA 8.10/10.00) | 5 Internships (2025)"""
+Candidate Snapshot: Anurag Swain | 3rd-Year B.Tech CSE @ GCE Kalahandi (CGPA 8.10/10.00) | 5 Internships in 2025 (Infosys AI, EISystems Web, IBM/Edunet AI, MicroGenesis DL, Shadow Fox Data Science) | Available for SDE, AI/ML, Full-Stack roles."""
 
         length_guide = {
             "quick": (
-                "RESPONSE LENGTH & FORMAT: This is a quick single-fact lookup (e.g. CGPA, college, name, social handle, email). "
-                "Reply in 1-2 lines maximum. Give ONLY the direct answer — no preamble, no filler sentences."
+                "QUERY SCOPE: Direct fact or simple inquiry. "
+                "Provide a sharp, direct, 1-2 line answer focusing exclusively on the specific question asked. "
+                "Do NOT dump unrelated background information."
             ),
             "medium": (
-                "RESPONSE LENGTH & FORMAT: This is a moderate question. "
-                "Write a structured, point-wise answer using markdown bullet points (`-`) and bold labels. "
-                "NO prose paragraphs — every piece of information must be a bullet point or sub-bullet."
+                "QUERY SCOPE: Standard topic overview. "
+                "Provide a clean, pointed, structured response using markdown bullet points (`-`) and bold labels. "
+                "Include ONLY information directly relevant to the user's inquiry."
             ),
             "detailed": (
-                "RESPONSE LENGTH & FORMAT: This is a deep-dive question requiring a thorough response. "
-                "Write a comprehensive, fully structured answer. "
-                "STRICT RULE: Use ONLY markdown bullet points (`-`), bold labels, and `###` section headers. "
-                "Absolutely NO prose paragraphs — every sentence must be a bullet point. "
-                "Include metrics, tech stack names, and measurable outcomes wherever possible."
+                "QUERY SCOPE: Comprehensive analysis / deep-dive inquiry. "
+                "Provide an in-depth, well-organized breakdown using `###` section headers and `-` bullet points. "
+                "Include metrics, architectural workflows, and key outcomes while staying strictly relevant to the question."
             ),
         }[complexity]
 
-        return f"""You are the official AI assistant representing Anurag Swain's professional portfolio.
-Your role is to help recruiters, engineering managers, and technical peers understand Anurag in full depth.
+        return f"""You are Nexus, the official intelligent AI representative for Anurag Swain's portfolio, powered by modern LLM intelligence (comparable to ChatGPT and Gemini models).
+You are capable of answering any technical, portfolio, career, or general question with exceptional sharpness, precision, and intelligence.
 
-CRITICAL INSTRUCTIONS (follow strictly):
-1. Start your response IMMEDIATELY with the answer — no preamble, no restating the question, no <think> tags.
-2. NEVER output prose paragraphs. ALL responses must use markdown bullet points (`-`) and bold labels.
-3. Quick fact queries (name, CGPA, college, handle, email): answer in 1-2 lines only.
-4. All other queries: use `###` section headers + `-` bullet points. Each fact = one bullet.
+CORE INTELLIGENCE & RELEVANCE RULES:
+1. SHARP CONTEXTUAL RELEVANCE: Answer EXACTLY what the user asks. Provide only the relevant context needed for that specific query. NEVER dump unrelated resume sections, unrequested grades, or irrelevant project listings.
+2. ADAPTIVE INTELLIGENCE:
+   - If asked about hiring/availability (e.g. "Is Anurag available for hire?"), answer directly with a clear "Yes, Anurag is actively available for hire..." followed by targeted details (target roles, experience highlights, contact channels).
+   - If asked technical or coding questions (e.g. "Explain RAG", "Compare Next.js vs React"), explain smartly with clear, structured bullet points.
+   - If asked for quick facts (CGPA, college name, email, GitHub), answer directly in 1-2 points without fluff.
+3. STRICT POINTED FORMATTING:
+   - Format responses using markdown bullet points (`- **Key**: Details`) and clean `###` section headers where applicable.
+   - Avoid long monolithic prose paragraphs; keep points easily scannable and executive-ready.
+4. TONE & ACCURACY:
+   - Professional, articulate, intelligent, polite, and confident.
+   - Speak in third person ("Anurag is...", "He developed...").
+{f'5. Recruiter Perspective: Emphasize strengths and competencies relevant to a {role_context} role.' if role_context else ''}
 
 {length_guide}
 
-FORMATTING RULES (non-negotiable):
-- Use `- **Label**: value` format for every data point
-- Use `### Section Title` for grouping related points
-- Use `---` horizontal rules to separate major sections
-- Bold all technology names, project names, and key figures
-- NEVER write multi-sentence prose paragraphs
-
-CORE PRINCIPLES:
-1. Speak in third person ("Anurag is...", "He has built...").
-2. Base all candidate facts on the CONTEXT provided.
-3. When referencing projects, include repository links and measurable outcomes.
-{f'4. Recruiter context: Evaluating Anurag for a {role_context} position — emphasize relevant strengths.' if role_context else ''}
-
-Candidate Snapshot: Anurag Swain | B.Tech CSE @ Government College of Engineering, Kalahandi (CGPA 8.10/10.00) | 5 Internships (2025)"""
+Candidate Snapshot: Anurag Swain | 3rd-Year B.Tech CSE @ GCE Kalahandi (CGPA 8.10/10.00) | 5 Internships in 2025 (Infosys AI, EISystems Web, IBM/Edunet AI, MicroGenesis DL, Shadow Fox Data Science) | Available for SDE, AI/ML, Full-Stack roles."""
 
     def _build_user_prompt(self, query: str, context_chunks: list[dict], history: list[dict], complexity: str = "medium", role_context: str = "") -> str:
         context_text = "\n\n".join([
@@ -509,18 +508,13 @@ INSTRUCTION: Provide a brief, point-wise response with 2-4 bullet points maximum
 
         response_hint = {
             "quick": (
-                "Answer in 1-2 lines with only the specific fact. No extra sentences."
+                "Answer directly with 1-2 pointed lines. Provide only the specific information requested."
             ),
             "medium": (
-                "Answer using ONLY markdown bullet points (`-`) and bold labels. "
-                "Organise into short `###` sections if needed. "
-                "NO prose paragraphs — every piece of information must be its own bullet point."
+                "Provide a smart, well-organized response in pointed format using `- **Label**: Description` and `###` headers if helpful. Keep it focused and relevant."
             ),
             "detailed": (
-                "Answer with a fully structured, comprehensive breakdown. "
-                "Use `###` section headers and `-` bullet points throughout. "
-                "Every fact must be a bullet — no prose paragraphs at all. "
-                "Include tech stack, metrics, and outcomes for each item."
+                "Provide a comprehensive, high-depth breakdown in structured bullet points with `###` headers, metrics, and outcomes. Ensure every point is relevant to the question."
             ),
         }[complexity]
 
@@ -530,9 +524,9 @@ INSTRUCTION: Provide a brief, point-wise response with 2-4 bullet points maximum
 {'RECENT CONVERSATION:' if history_text else ''}
 {history_text}
 
-QUESTION: {query}
+USER QUESTION: {query}
 
-INSTRUCTION: {response_hint} Output your answer directly — no preamble, no restating the question."""
+INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed format."""
         return prompt
 
 
@@ -723,121 +717,232 @@ INSTRUCTION: {response_hint} Output your answer directly — no preamble, no res
         # 1. Skills / Tech Stack
         if any(w in q for w in ["skill", "tech", "stack", "language", "python", "react", "framework", "tool", "strongest", "coding"]):
             return (
-                "**Anurag Swain's Technical Skills & Core Competencies:**\n\n"
-                "• **Programming Languages:** Python (88%), JavaScript (82%), C (80%), C++ (78%), Java (75%), SQL (80%)\n"
-                "• **AI / Machine Learning / Deep Learning:** Scikit-Learn (82%), TensorFlow (80%), PyTorch (78%), NLP, OpenCV, ChromaDB, Ollama, HuggingFace, Retrieval-Augmented Generation (RAG)\n"
-                "• **Web & Full-Stack Development:** React.js (78%), Next.js 14 (74%), Node.js (73%), Express.js, REST APIs, TailwindCSS, MongoDB, HTML5/CSS3\n"
-                "• **Data Science & Analytics:** Pandas (85%), NumPy (85%), Matplotlib (80%), Seaborn (78%), Jupyter, Exploratory Data Analysis (EDA)\n"
-                "• **Tools & Platforms:** Git, GitHub, VS Code, Linux, Docker, Postman, Vercel\n\n"
-                "💡 *Anurag has applied these skills across 5 real-world internships and multiple production-grade projects.*"
+                "### 💡 Technical Skills & Core Competencies\n\n"
+                "#### 🐍 Programming Languages\n"
+                "- **Python (88%)**: Primary language for AI/ML, NLP, data pipelines, and backend APIs\n"
+                "- **JavaScript (82%)**: Core web development, dynamic DOM, and asynchronous workflows\n"
+                "- **C / C++ (80% / 78%)**: Core algorithms, Data Structures, and systems programming\n"
+                "- **Java (75%)**: Object-oriented software design and enterprise fundamentals\n"
+                "- **SQL (80%)**: Relational schema design, complex joins, and query optimization\n"
+                "- **PHP (60%)**: Server-side scripting\n\n"
+                "#### 🤖 AI / Machine Learning / Deep Learning\n"
+                "- **Scikit-Learn (82%)**: Supervised regression, classification, and Random Forest\n"
+                "- **TensorFlow & Keras (80%)**: Deep neural network architecture design and training\n"
+                "- **PyTorch (78%)**: Custom CNN architectures (VGG, ResNet)\n"
+                "- **Computer Vision (75%)**: OpenCV image preprocessing and feature extraction\n"
+                "- **NLP & RAG Systems**: Multi-turn dialogue, vector embeddings, and ChromaDB\n\n"
+                "#### 🌐 Full-Stack Web Development\n"
+                "- **React.js (78%)**: Custom hooks, state management, component architecture\n"
+                "- **Next.js 14 (74%)**: Server-Side Rendering (SSR), App Router, dynamic routes\n"
+                "- **Node.js (73%) & Express.js**: RESTful API design and backend services\n"
+                "- **Python FastAPI**: High-speed asynchronous AI/RAG microservices\n"
+                "- **Databases**: MongoDB (70%) NoSQL modeling and MySQL (78%) relational DBs\n"
+                "- **Styling**: Tailwind CSS (75%), HTML5/CSS3 (85%), responsive design\n\n"
+                "#### 📊 Data Science & Analytics\n"
+                "- **Pandas & NumPy (85%)**: Data ingestion, manipulation, and numerical computing\n"
+                "- **Matplotlib & Seaborn (80%)**: Statistical data visualization and EDA\n"
+                "- **Jupyter Notebook (85%)**: Reproducible analysis workflows\n"
+                "- **Tableau (74%)**: Interactive business intelligence dashboards\n"
+                "- **Power BI (68%)**: KPI tracking and analytics reports\n\n"
+                "#### 🛠️ Tools & DevOps\n"
+                "- **Git & GitHub (82%)**: Version control, branch management, collaborative workflows\n"
+                "- **Docker**: Containerization and reproducible deployment\n"
+                "- **Cloud & Deployment**: Vercel Edge, Render.com, IBM Watson Cloud APIs\n"
+                "- **Operating Systems**: Linux / Ubuntu (68%) CLI proficiency\n"
+                "- **Dev Tools**: VS Code (88%), Postman API testing, Figma wireframing"
             )
 
         # 2. Projects
         if any(w in q for w in ["project", "best project", "explain", "ai chat bot", "ev", "demand", "research agent", "portfolio"]):
             return (
-                "**Anurag Swain's Key Featured Projects:**\n\n"
-                "1. 🤖 **AI Chat Bot** (NLP & Multi-Turn Dialogue System)\n"
-                "   • *Tech:* Python, NLP, LLMs, Intent Classification, Session Memory\n"
-                "   • *Details:* Context-aware dialogue system built during his Infosys AI Internship with custom preprocessing, entity recognition, and multi-turn state management.\n"
-                "   • *GitHub:* [github.com/HUNTER-X0s/AI_CHAT_BOT](https://github.com/HUNTER-X0s/AI_CHAT_BOT) (⭐1)\n\n"
-                "2. 🚗 **EV Charging Demand Prediction**\n"
-                "   • *Tech:* Python, Scikit-Learn, Pandas, NumPy, Machine Learning\n"
-                "   • *Details:* ML pipeline predicting electric vehicle charging station loads to optimize grid energy distribution ($R^2=0.86$, RMSE reduction of 18%).\n"
-                "   • *GitHub:* [github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION](https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION) (⭐1)\n\n"
-                "3. 🔍 **Autonomous Research Agent**\n"
-                "   • *Tech:* Python, AI Agents, NLP, Web Scraping\n"
-                "   • *Details:* Capstone project for IBM SkillsBuild that autonomously parses, synthesizes, and cross-references multi-source research papers into executive briefs.\n\n"
-                "4. 🌐 **AI-Powered 3D Interactive Portfolio Platform**\n"
-                "   • *Tech:* Next.js 14, React, Three.js, RAG AI Pipeline, Web Speech API (Jarvis Mode), TailwindCSS\n"
-                "   • *Details:* Fully interactive 3D web experience with real-time local/cloud RAG intelligence, voice control, and dynamic space physics."
+                "### 🚀 Key Featured Projects\n\n"
+                "#### 1. 🤖 AI Chat Bot (Conversational NLP System)\n"
+                "- **Tech Stack**: Python, NLP, LLM API Integration, Session Dialogue Management\n"
+                "- **Role**: Developed during Infosys AI Internship\n"
+                "- **Highlights**: Multi-turn context memory, intent parsing, and entity recognition\n"
+                "- **GitHub**: [github.com/HUNTER-X0s/AI_CHAT_BOT](https://github.com/HUNTER-X0s/AI_CHAT_BOT) (⭐1)\n\n"
+                "#### 2. 🚗 EV Vehicle Charging Demand Prediction\n"
+                "- **Tech Stack**: Python, Scikit-Learn, Random Forest, Pandas, Matplotlib\n"
+                "- **Role**: Developed under AICTE Internship Cycle-2 at Edunet Foundation\n"
+                "- **Accuracy**: Achieved $R^2=0.86$ (86% variance explained) with 18% RMSE reduction\n"
+                "- **GitHub**: [github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION](https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION) (⭐1)\n\n"
+                "#### 3. 🔍 Autonomous Research Agent\n"
+                "- **Tech Stack**: Python, IBM Watson Cloud APIs, NLP Summarization\n"
+                "- **Role**: Capstone project for IBM SkillsBuild\n"
+                "- **Highlights**: Multi-source research synthesis, automated extraction, and executive brief drafting\n"
+                "- **GitHub**: [github.com/HUNTER-X0s/RESEARCH_AGENT](https://github.com/HUNTER-X0s/RESEARCH_AGENT)\n\n"
+                "#### 4. 💱 Currency Converter Web Application\n"
+                "- **Tech Stack**: Vanilla JavaScript, HTML5, CSS3, Live Exchange Rate APIs\n"
+                "- **Highlights**: Real-time currency conversions across 150+ currencies with localStorage caching\n"
+                "- **Live Demo**: [hunter-x0s.github.io/Currency_Converter](https://hunter-x0s.github.io/Currency_Converter/) (⭐1)\n\n"
+                "#### 5. 🌐 AI-Powered 3D Portfolio Platform\n"
+                "- **Tech Stack**: Next.js 14, Three.js, RAG AI Pipeline, Web Speech API (Jarvis Voice), TailwindCSS\n"
+                "- **Highlights**: 60fps particle physics, dual-mode RAG chatbot, voice control, command palette"
             )
 
         # 3. Internships / Experience
         if any(w in q for w in ["experience", "intern", "internship", "company", "infosys", "eisystems", "edunet", "microgenesis", "shadowfox", "work", "summary"]):
             return (
-                "**Anurag Swain's Professional Experience (5 Internships in 2025):**\n\n"
-                "1. 🏢 **Infosys** — *Artificial Intelligence Intern* (Aug 2025 – Oct 2025, 3 mos, Remote)\n"
-                "   • Engineered a conversational NLP AI chatbot with multi-turn dialogue management and evaluated intent classification with precision/recall metrics.\n\n"
-                "2. 💻 **EISystems Technologies** — *Web Development Intern* (May 2025 – Jul 2025, 3 mos, Remote)\n"
-                "   • Developed responsive full-stack web applications, implemented client-side state, and integrated REST APIs.\n\n"
-                "3. ☁️ **Edunet Foundation & IBM** — *Artificial Intelligence Intern* (Jun 2025 – Jul 2025, 2 mos, Remote)\n"
-                "   • IBM SkillsBuild AI program: built an autonomous multi-source research agent and trained text summarization models.\n\n"
-                "4. 🧠 **MicroGenesis CADSoft, Bangalore** — *Deep Learning Intern* (May 2025 – Jun 2025, 2 mos, Hybrid)\n"
-                "   • Built CNN architectures with PyTorch and TensorFlow for image classification and feature extraction.\n\n"
-                "5. 📊 **ShadowFox** — *Data Science Intern* (Apr 2025 – May 2025, 1 mo, Remote)\n"
-                "   • Conducted exploratory data analysis (EDA), data cleaning pipelines, and predictive analytics on complex datasets."
+                "### 💼 Professional Experience (5 Internships in 2025)\n\n"
+                "#### 1. 🏢 Infosys — AI Intern\n"
+                "- **Duration**: August 2025 – October 2025 (3 months · Remote)\n"
+                "- **Project**: Developed conversational AI Chat Bot with multi-turn dialogue management\n"
+                "- **Tech**: Python, NLP Preprocessing, LLM APIs, Intent Classification\n"
+                "- **Credential**: Infosys Springboard Virtual Internship 2.0 Completion Certificate\n\n"
+                "#### 2. 💻 EISystems Technologies — Web Development Intern\n"
+                "- **Duration**: July 2025 – September 2025 (3 months · Remote)\n"
+                "- **Project**: Built production full-stack web applications\n"
+                "- **Tech**: React.js, Next.js, Node.js, Express.js, MongoDB, RESTful APIs\n"
+                "- **Optimizations**: Applied code splitting, lazy loading, and component-driven architecture\n\n"
+                "#### 3. ☁️ Edunet Foundation & IBM — AI & Analytics Intern\n"
+                "- **Duration**: July 2025 – August 2025 (2 months · Remote)\n"
+                "- **Project 1**: AICTE-certified EV Charging Demand Prediction ML pipeline ($R^2=0.86$)\n"
+                "- **Project 2**: Autonomous Research Agent for IBM SkillsBuild\n"
+                "- **Tech**: Python, Scikit-Learn, Tableau, Microsoft Power BI, IBM Watson Cloud APIs\n\n"
+                "#### 4. 🧠 MicroGenesis TechSoft, Bangalore — Deep Learning Intern\n"
+                "- **Duration**: June 2025 – July 2025 (2 months · Hybrid In-Person)\n"
+                "- **Project**: Computer Vision and Convolutional Neural Networks\n"
+                "- **Tech**: PyTorch, TensorFlow, Keras, OpenCV, Python\n"
+                "- **Recognition**: 12+ technical skill endorsements on LinkedIn\n\n"
+                "#### 5. 📊 Shadow Fox — Data Science Intern\n"
+                "- **Duration**: 2025 (1 month · Remote)\n"
+                "- **Project**: End-to-end exploratory data analysis (EDA) and predictive modeling\n"
+                "- **Tech**: Python, Pandas, NumPy, Scikit-Learn, Matplotlib, Seaborn\n\n"
+                "#### ⏱️ Aggregate Industry Experience\n"
+                "- **Total Duration**: ~12 months of structured industry work across AI, Web Dev, DL, and Data Science"
             )
 
         # 4. Education / College / CGPA
         if any(w in q for w in ["education", "college", "cgpa", "gpa", "degree", "university", "bput", "gcek", "school", "grade", "academic"]):
             return (
-                "**Anurag Swain's Educational Background:**\n\n"
-                "• **Degree:** Bachelor of Technology (B.Tech) in **Computer Science and Engineering (CSE)**\n"
-                "• **Institution:** Government College of Engineering, Kalahandi (GCEK), affiliated with BPUT Odisha, India\n"
-                "• **Academic Performance:** **CGPA: 8.10 / 10.00**\n"
-                "• **Duration:** 2023 – 2027 (Currently in 3rd Year)\n"
-                "• **Relevant Coursework:** Data Structures & Algorithms, Object-Oriented Programming, Database Management Systems (DBMS), Operating Systems, Artificial Intelligence, Machine Learning, Computer Networks."
+                "### 🎓 Educational Background\n\n"
+                "#### 1. 🏫 Undergraduate Degree (2023 – 2027)\n"
+                "- **Degree**: Bachelor of Technology (B.Tech) in Computer Science and Engineering (CSE)\n"
+                "- **Institution**: Government College of Engineering, Kalahandi (GCEK)\n"
+                "- **Affiliation**: Biju Patnaik University of Technology (BPUT), Odisha\n"
+                "- **Academic Metric**: **CGPA: 8.10 / 10.00**\n"
+                "- **Extracurricular**: Active technical member of **KiloBots Robotics Club**\n\n"
+                "#### 2. 🏫 Senior Secondary / Class XII (2023)\n"
+                "- **School**: Kendriya Vidyalaya No-6, Pokhariput, Bhubaneswar\n"
+                "- **Board**: CBSE (Science — Physics, Chemistry, Mathematics, Biology)\n"
+                "- **Leadership**: Appointed **Ashoka House Sports Captain**\n\n"
+                "#### 3. 🏫 Secondary / Class X (2021)\n"
+                "- **School**: Kendriya Vidyalaya No-6, Pokhariput, Bhubaneswar\n"
+                "- **Board**: CBSE"
             )
 
         # 5. Availability / Hire / Role
         if any(w in q for w in ["hire", "available", "role", "looking for", "job", "opportunity", "suited", "best suited", "why hire"]):
             return (
-                "**Anurag Swain's Career Availability & Best-Fit Roles:**\n\n"
-                "✅ **Actively Available for Opportunities!**\n\n"
-                "• **Target Roles:** Software Development Engineer (SDE), AI/ML Engineer, Full-Stack Developer, Data Scientist\n"
-                "• **Why Hire Anurag?**\n"
-                "  1. **Proven Track Record:** Completed 5 competitive internships across AI, Deep Learning, and Web Development in 2025 alone.\n"
-                "  2. **Strong Academic Foundation:** 8.10 CGPA in B.Tech CSE at GCE Kalahandi.\n"
-                "  3. **End-to-End Builder:** Can take ideas from ML pipeline and RAG architecture all the way to production full-stack deployment.\n"
-                "• **Contact:** [anurag.swain35@gmail.com](mailto:anurag.swain35@gmail.com) | +91-7008973337"
+                "### ✅ Candidate Availability & Value Proposition\n\n"
+                "#### 🟢 Current Status\n"
+                "- **Availability**: Actively open for Internships, Part-Time, and Full-Time positions\n"
+                "- **Target Roles**: Software Development Engineer (SDE), AI/ML Engineer, Full-Stack Developer, Data Scientist\n"
+                "- **Work Modes**: Remote, Hybrid, or Relocation across India\n\n"
+                "#### ⭐ Top 5 Reasons to Hire Anurag:\n"
+                "- **1. Rare Experience**: Completed 5 competitive internships in 2025 across AI, Deep Learning, Full-Stack, and Data Science\n"
+                "- **2. Strong Academics**: 8.10 / 10.00 CGPA in B.Tech CSE at Government College of Engineering, Kalahandi\n"
+                "- **3. Full-Stack + AI Depth**: Can build both the machine learning model / RAG pipeline and the production web app\n"
+                "- **4. Verified Credentials**: Certified by IBM, AICTE, Infosys, and MicroGenesis TechSoft\n"
+                "- **5. Prolific Builder**: 14+ public GitHub repositories with community recognition\n\n"
+                "#### 📬 Get in Touch:\n"
+                "- **Email**: [anurag.swain35@gmail.com](mailto:anurag.swain35@gmail.com)\n"
+                "- **Phone**: +91-7008973337\n"
+                "- **Response Window**: Within 24 hours"
             )
 
         # 6. Contact / Socials / Resume
         if any(w in q for w in ["contact", "email", "phone", "linkedin", "github", "location", "resume", "reach", "who is", "about"]):
             return (
-                "**Anurag Swain's Contact Information & Profile:**\n\n"
-                "• 📧 **Email:** [anurag.swain35@gmail.com](mailto:anurag.swain35@gmail.com) *(Alternate: anuragswain01@outlook.com)*\n"
-                "• 📱 **Phone:** +91-7008973337\n"
-                "• 📍 **Location:** Bhubaneswar, Odisha, India (PIN 751002)\n"
-                "• 🐙 **GitHub:** [github.com/HUNTER-X0s](https://github.com/HUNTER-X0s)\n"
-                "• 💼 **LinkedIn:** [linkedin.com/in/anurag-swain-cse07](https://www.linkedin.com/in/anurag-swain-cse07/)\n"
-                "• 🐦 **X (Twitter):** [@Anurag_hunter07](https://x.com/Anurag_hunter07)\n"
-                "• 📸 **Instagram:** [@_vi_ll_a_in_](https://www.instagram.com/_vi_ll_a_in/)"
+                "### 📬 Contact & Connect with Anurag Swain\n\n"
+                "#### 📞 Direct Channels\n"
+                "- **Primary Email**: [anurag.swain35@gmail.com](mailto:anurag.swain35@gmail.com)\n"
+                "- **Alternate Email**: [anuragswain01@outlook.com](mailto:anuragswain01@outlook.com)\n"
+                "- **Phone / WhatsApp**: +91-7008973337\n"
+                "- **Location**: OldTown, Bhubaneswar, Odisha, India (PIN 751002)\n"
+                "- **Response Time**: Under 24 hours guaranteed\n\n"
+                "#### 🌐 Social & Developer Profiles\n"
+                "- **LinkedIn**: [linkedin.com/in/anurag-swain-cse07](https://www.linkedin.com/in/anurag-swain-cse07/)\n"
+                "- **GitHub**: [github.com/HUNTER-X0s](https://github.com/HUNTER-X0s)\n"
+                "- **Twitter / X**: [@Anurag_hunter07](https://x.com/Anurag_hunter07)\n"
+                "- **Instagram**: [@_vi_ll_a_in_](https://www.instagram.com/_vi_ll_a_in/)\n"
+                "- **Threads**: [@_vi_ll_a_in_](https://www.threads.com/@_vi_ll_a_in_)"
             )
 
         # 7. Certifications
         if any(w in q for w in ["certif", "badge", "license", "course"]):
             return (
-                "**Anurag Swain's Verified Certifications & Credentials:**\n\n"
-                "1. 🏆 **Infosys Springboard AI Virtual Internship Certificate** — Infosys (2025)\n"
-                "2. 🏆 **IBM SkillsBuild Artificial Intelligence Capstone** — IBM & Edunet (2025)\n"
-                "3. 🏆 **Machine Learning & Deep Learning Certification** — MicroGenesis CADSoft (2025)\n"
-                "4. 🏆 **Web Development Foundations & Applications** — EISystems Technologies (2025)\n"
-                "5. 🏆 **Python (Basic) & Problem Solving** — HackerRank\n"
-                "6. 🏆 **Cisco Introduction to Cybersecurity** — Cisco Networking Academy"
+                "### 🏆 Verified Certifications & Credentials\n\n"
+                "#### 🏢 Professional Internship Certifications (2025)\n"
+                "- **Infosys**: Artificial Intelligence Virtual Internship 2.0 Certificate\n"
+                "- **MicroGenesis TechSoft**: Deep Learning Internship Certificate (Bangalore)\n"
+                "- **EISystems Technologies**: Full-Stack Web Development Internship Certificate\n"
+                "- **Edunet Foundation**: AI & Data Analytics Internship Certificate\n"
+                "- **IBM SkillsBuild**: AI & Cloud Technologies Capstone Credential\n"
+                "- **AICTE**: Internship Cycle-2 Certificate (EV Demand Prediction)\n"
+                "- **Shadow Fox**: Data Science Internship Certificate\n\n"
+                "#### 💻 Platform & Technical Certifications\n"
+                "- **HackerRank**: Python & Problem Solving Certifications\n"
+                "- **Cisco Networking Academy**: Cybersecurity Fundamentals\n\n"
+                "#### 📁 Verified Credentials Repository\n"
+                "- **GitHub**: [github.com/HUNTER-X0s/CERTIFICATIONS](https://github.com/HUNTER-X0s/CERTIFICATIONS)"
             )
 
         # 8. Clubs & Extracurriculars
         if any(w in q for w in ["club", "robotic", "kilobots", "activity", "extracurricular", "volunteer"]):
             return (
-                "**Anurag Swain's Clubs & Extracurricular Activities:**\n\n"
-                "• 🤖 **KiloBots (Robotics Club):** Active technical member at GCE Kalahandi contributing to hardware automation, embedded systems, and robotics hackathons.\n"
-                "• 🏸 **Sports & Cultural Events:** Volunteered in collegiate fests and active in competitive badminton and chess."
+                "### 🏅 Clubs & Extracurricular Activities\n\n"
+                "- **KiloBots Robotics Club (GCE Kalahandi)**: Active technical member contributing to autonomous robotics, embedded systems, and competitions\n"
+                "- **Sports Leadership**: Former Ashoka House Sports Captain; active competitive player in badminton and chess\n"
+                "- **Hackathons & Fests**: Active participant and volunteer at collegiate engineering fests and tech hackathons"
             )
 
         # 9. Generic RAG Chunk Extraction Fallback
         if chunks:
             extracted_text = "\n\n".join(c["content"].strip() for c in chunks[:2])
             return (
-                f"**Based on Anurag Swain's verified portfolio records:**\n\n"
+                f"### 📋 Verified Portfolio Records\n\n"
                 f"{extracted_text}\n\n"
-                f"💡 *Feel free to ask about his specific projects, internships, technical skills, or education!*"
+                f"💡 *Feel free to ask about specific projects, internships, technical skills, or education!*"
             )
 
         return (
             "Anurag Swain is a 3rd-year B.Tech CSE student at GCE Kalahandi (CGPA 8.10/10.00) with 5 internships in AI, Web Dev, and Data Science. "
             "You can ask me about his **skills**, **projects (AI Chatbot, EV Prediction)**, **internships (Infosys, IBM, MicroGenesis)**, or **contact details**!"
         )
+
+    def _clean_response_text(self, text: str) -> str:
+        """Strip <think> blocks, markdown thinking dumps, and reasoning preambles."""
+        if not text:
+            return ""
+        cleaned = re.sub(r"<think>[\s\S]*?</think>", "", text).strip()
+        if "<think>" in cleaned:
+            cleaned = cleaned.split("<think>")[-1].strip()
+        if "</think>" in cleaned:
+            cleaned = cleaned.split("</think>")[-1].strip()
+
+        # If plain text chain-of-thought is emitted
+        if "thinking process" in cleaned.lower() or "thought process" in cleaned.lower():
+            # Check for standard output dividers emitted by reasoning models
+            markers = [
+                r"(?i)(?:\[Output Generation\]|\bOutput generation\.?|\bFinal Output:?|\bOutput:?)\s*(?:->\s*\*?[A-Za-z]+\*?)?\s*[\"']?",
+                r"(?i)(?:\bDraft:\s*\n)(?=[\s\S]*?(?:- \*\*|###))",
+            ]
+            for m in markers:
+                parts = re.split(m, cleaned)
+                if len(parts) > 1 and parts[-1].strip():
+                    candidate = parts[-1].strip().strip('"').strip("'")
+                    if len(candidate) > 20:
+                        cleaned = candidate
+                        break
+
+            # If still starts with reasoning, grab from the actual bullet content or formal intro
+            if re.match(r"(?i)^\s*(?:Here(?:'s| is) a thinking process|Thinking Process)", cleaned):
+                matches = list(re.finditer(r"(?m)^(?:Certainly\b|Anurag\b|- \*\*|### )", cleaned))
+                if matches:
+                    cleaned = cleaned[matches[-1].start():].strip()
+
+        return cleaned.strip()
 
     def _generate(self, system_prompt: str, user_prompt: str, query: str = "", chunks: list[dict] = None, max_tokens: int = 1024) -> tuple[str, str]:
         """
@@ -873,10 +978,8 @@ INSTRUCTION: {response_hint} Output your answer directly — no preamble, no res
                         timeout=10.0,
                     )
                     if resp.status_code == 200:
-                        content = resp.json()["choices"][0]["message"]["content"].strip()
-                        content = re.sub(r"<think>[\s\S]*?</think>", "", content).strip()
-                        if "<think>" in content:
-                            content = content.split("<think>")[-1].strip()
+                        raw_content = resp.json()["choices"][0]["message"]["content"]
+                        content = self._clean_response_text(raw_content)
                         if content:
                             logger.info(f"✅ Groq [{model_name}] answered successfully")
                             return content, "groq"
