@@ -16,7 +16,7 @@ function normalizeSiteUrl(url?: string) {
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : undefined) ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
-    'https://anurag07.vercel.app'
+    'https://anuragswain.vercel.app'
 
   return (url || fallback).replace(/\/+$/, '')
 }
@@ -47,10 +47,27 @@ const primaryBrandKeywords = [
   'Anurag website',
   'anurag website',
   'Anurag Swain website',
+  'Anurag Swain portfolio website',
+  'anurag swain portfolio website',
+  'Anurag Swain official website',
+  'anurag swain official website',
+  'Anurag Swain AI',
+  'Anurag Swain machine learning',
+  'anurag swain developer',
+  'anurag swain engineer',
+  'anurag swain bhubaneswar',
+  'anurag swain odisha',
+  'anurag swain gcek',
+  'anurag swain gce kalahandi',
+  'anurag swain cse',
+  'anurag swain github',
+  'anurag swain linkedin',
+  'anuragswain',
+  'anuragswain.vercel.app',
+  'https://anuragswain.vercel.app',
   'Anurag07',
   'anurag07',
   'anurag07.vercel.app',
-  'https://anurag07.vercel.app',
   'HUNTER-X0s',
   'HUNTER-X0s portfolio',
 ]
@@ -252,6 +269,7 @@ const sameAs = [
   `https://github.com/${SEO_CONFIG.github}`,
   `https://www.linkedin.com/in/${SEO_CONFIG.linkedin}/`,
   `https://x.com/Anurag_hunter07`,
+  `https://anuragswain.vercel.app`,
   `https://anurag07.vercel.app`,
 ]
 
@@ -352,9 +370,15 @@ export const websiteSchema = {
   name: 'Anurag Portfolio',
   alternateName: [
     'Anurag',
+    'Anurag Portfolio',
     'anurag portfolio',
     'Anurag Swain Portfolio',
+    'anurag swain portfolio',
+    'Anurag Swain Website',
+    'anurag swain website',
     'Anurag AI Portfolio',
+    'anuragswain',
+    'anuragswain.vercel.app',
     'anurag07',
     'anurag07.vercel.app',
   ],
@@ -470,7 +494,7 @@ export const faqSchema = {
       name: 'What is Anurag\'s official portfolio website?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'https://anurag07.vercel.app is the official portfolio website of Anurag Swain (Anurag). It features interactive 3D graphics, real-time RAG AI chatbot, Jarvis voice mode, full-stack projects, and resume download.',
+        text: 'https://anuragswain.vercel.app is the official portfolio website of Anurag Swain. It features interactive 3D graphics, real-time RAG AI chatbot (Jarvis voice mode), full-stack and AI/ML projects, and a downloadable resume. Anurag Swain is a B.Tech CSE student at GCE Kalahandi, India.',
       },
     },
     {
@@ -494,7 +518,7 @@ export const faqSchema = {
       name: 'How can I contact or hire Anurag Swain?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'You can contact Anurag Swain directly via the contact form on his portfolio at https://anurag07.vercel.app, via email at anurag.swain35@gmail.com, or through LinkedIn at https://www.linkedin.com/in/anurag-swain-cse07/.',
+        text: 'You can contact Anurag Swain directly via the contact form on his portfolio at https://anuragswain.vercel.app, via email at anurag.swain35@gmail.com, or through LinkedIn at https://www.linkedin.com/in/anurag-swain-cse07/.',
       },
     },
     {
@@ -502,7 +526,23 @@ export const faqSchema = {
       name: 'Where can I view Anurag\'s AI and software projects?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'All featured AI, machine learning, and full-stack projects by Anurag are hosted with live demos and GitHub source code on his portfolio: https://anurag07.vercel.app/#projects.',
+        text: 'All featured AI, machine learning, and full-stack projects by Anurag Swain are hosted with live demos and GitHub source code on his portfolio: https://anuragswain.vercel.app/#projects.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the website of Anurag Swain?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The official website of Anurag Swain is https://anuragswain.vercel.app — an AI-powered portfolio featuring RAG chatbot, Jarvis voice assistant, 3D Three.js visuals, and showcasing his AI, ML, and full-stack engineering work.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where can I find Anurag Swain online?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Anurag Swain can be found at: Portfolio: https://anuragswain.vercel.app | GitHub: https://github.com/HUNTER-X0s | LinkedIn: https://www.linkedin.com/in/anurag-swain-cse07/ | Email: anurag.swain35@gmail.com',
       },
     },
   ],

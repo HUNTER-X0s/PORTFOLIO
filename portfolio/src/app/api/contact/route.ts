@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
             <h4 style="color: #555; margin: 0 0 8px 0;">Message:</h4>
             <p style="color: #333; white-space: pre-wrap; margin: 0;">${message}</p>
           </div>
-          <p style="color: #999; font-size: 12px; margin-top: 20px;">Sent from your portfolio website at anurag07.vercel.app</p>
+          <p style="color: #999; font-size: 12px; margin-top: 20px;">Sent from your portfolio website at anuragswain.vercel.app</p>
         </div>
       `,
     }

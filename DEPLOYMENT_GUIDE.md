@@ -62,7 +62,7 @@ Nginx (reverse proxy + SSL)
    SMTP_USER=your@gmail.com
    SMTP_PASS=your_app_password
    CONTACT_EMAIL=anurag.swain35@gmail.com
-   CLIENT_URL=https://anurag07.vercel.app
+   CLIENT_URL=https://anuragswain.vercel.app
    GITHUB_USERNAME=HUNTER-X0s
    ```
 
@@ -114,7 +114,7 @@ Or: Connect GitHub repo at https://vercel.com/new
 
 **Environment Variables in Vercel dashboard:**
 ```
-NEXT_PUBLIC_APP_URL=https://anurag07.vercel.app
+NEXT_PUBLIC_APP_URL=https://anuragswain.vercel.app
 NEXT_PUBLIC_API_URL=https://portfolio-backend-xxxx.onrender.com
 NEXT_PUBLIC_CHATBOT_URL=https://portfolio-chatbot-xxxx.onrender.com
 NEXT_PUBLIC_GITHUB_USERNAME=HUNTER-X0s
@@ -126,7 +126,7 @@ MONGODB_URI=mongodb+srv://...
 
 ### Step 5 — Custom Domain (Vercel)
 
-1. Vercel Dashboard → Domains → Add `anurag07.vercel.app`
+1. Vercel Dashboard → Domains → Add `anuragswain.vercel.app`
 2. Add DNS records at your registrar:
    ```
    A     @    76.76.19.61
@@ -178,7 +178,7 @@ sudo apt install -y nginx certbot python3-certbot-nginx
 
 ### Step 2 — SSL Certificate
 ```bash
-sudo certbot --nginx -d anurag07.vercel.app -d www.anurag07.vercel.app -d admin.anurag07.vercel.app
+sudo certbot --nginx -d anuragswain.vercel.app -d www.anuragswain.vercel.app -d admin.anuragswain.vercel.app
 ```
 
 ### Step 3 — Clone & Configure
@@ -238,7 +238,7 @@ VERCEL_ORG_ID             # .vercel/project.json after `vercel link`
 VERCEL_PROJECT_ID         # .vercel/project.json after `vercel link`
 RENDER_DEPLOY_HOOK_BACKEND  # Render → Service → Settings → Deploy Hooks
 RENDER_DEPLOY_HOOK_CHATBOT  # Render → Service → Settings → Deploy Hooks
-NEXT_PUBLIC_APP_URL       # https://anurag07.vercel.app
+NEXT_PUBLIC_APP_URL       # https://anuragswain.vercel.app
 NEXT_PUBLIC_API_URL       # https://your-backend.onrender.com
 ```
 
@@ -278,9 +278,9 @@ git push origin main
 
 ### Google Search Console
 1. Go to https://search.google.com/search-console
-2. Add property → URL prefix → `https://anurag07.vercel.app`
+2. Add property → URL prefix → `https://anuragswain.vercel.app`
 3. Download verification HTML file → place in `/public/`
-4. Submit sitemap: `https://anurag07.vercel.app/sitemap.xml`
+4. Submit sitemap: `https://anuragswain.vercel.app/sitemap.xml`
 5. Request indexing for key pages
 
 ---
@@ -289,7 +289,7 @@ git push origin main
 
 ### portfolio/.env.local
 ```env
-NEXT_PUBLIC_APP_URL=https://anurag07.vercel.app
+NEXT_PUBLIC_APP_URL=https://anuragswain.vercel.app
 NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
 NEXT_PUBLIC_CHATBOT_URL=https://your-chatbot.onrender.com
 NEXT_PUBLIC_GITHUB_USERNAME=HUNTER-X0s
@@ -308,7 +308,7 @@ ADMIN_PASSWORD=<strong password>
 SMTP_HOST=smtp.gmail.com
 SMTP_USER=your@gmail.com
 SMTP_PASS=your_app_password
-CLIENT_URL=https://anurag07.vercel.app
+CLIENT_URL=https://anuragswain.vercel.app
 GITHUB_USERNAME=HUNTER-X0s
 ```
 
@@ -326,7 +326,7 @@ CHROMA_PERSIST_DIR=./chroma_db
 
 ```bash
 # Frontend
-curl https://anurag07.vercel.app
+curl https://anuragswain.vercel.app
 
 # Backend
 curl https://your-backend.onrender.com/api/health

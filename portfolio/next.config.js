@@ -94,6 +94,23 @@ const nextConfig = {
       },
     ]
   },
+  async redirects() {
+    return [
+      // 301 redirect from old domain for SEO authority transfer
+      // If this project is ever deployed to the old URL again, redirect everything
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'anurag07.vercel.app',
+          },
+        ],
+        destination: 'https://anuragswain.vercel.app/:path*',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig
