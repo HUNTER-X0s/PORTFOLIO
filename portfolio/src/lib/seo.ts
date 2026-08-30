@@ -240,7 +240,7 @@ export function generateMetadata(overrides?: MetadataOverrides): Metadata {
       ],
     },
     verification: {
-      ...(googleVerification ? { google: googleVerification } : {}),
+      google: googleVerification || 'EsgM4LaT0JqZyOACJWk-zAHUF9biyb7oOgvcBD93Xo0',
       ...(bingVerification ? { other: { 'msvalidate.01': bingVerification } } : {}),
     },
     other: {
