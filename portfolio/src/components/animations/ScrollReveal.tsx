@@ -9,7 +9,7 @@ const staggerContainer = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.04,
       delayChildren: 0,
     },
   },
@@ -17,20 +17,20 @@ const staggerContainer = {
 
 // ── Item variants (exported for child components) ──────────
 export const staggerItem = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 12 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.19, 1, 0.22, 1] },
+    transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
   },
 }
 
 export const staggerItemLeft = {
-  hidden: { opacity: 0, x: -20 },
+  hidden: { opacity: 0, x: -12 },
   show: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.5, ease: [0.19, 1, 0.22, 1] },
+    transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
   },
 }
 
@@ -49,14 +49,14 @@ export function StaggerReveal({ children, className, delay = 0 }: StaggerRevealP
         show: {
           opacity: 1,
           transition: {
-            staggerChildren: 0.1,
+            staggerChildren: 0.04,
             delayChildren: delay,
           },
         },
       }}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, margin: '-60px' }}
+      viewport={{ once: true, margin: '180px 0px 180px 0px', amount: 'some' }}
       className={className}
     >
       {children}

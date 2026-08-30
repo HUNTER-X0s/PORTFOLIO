@@ -1483,29 +1483,26 @@ function CosmicScene({ tier }: { tier: 'mobile' | 'desktop' | 'high' }) {
   const textures = useCosmicTextures()
   const isMobile = tier === 'mobile'
   const isHigh = tier === 'high'
-  const isDesktop = tier === 'desktop'
 
   return (
     <>
-      {/* Flight rig: desktop gets mouse-free light version to save GPU */}
-      {isDesktop ? <CosmicFlightRigLight /> : <CosmicFlightRigFull />}
+      {/* Flight rig: Light float on mobile/desktop, full parallax on high-end */}
+      {isHigh ? <CosmicFlightRigFull /> : <CosmicFlightRigLight />}
       <CosmicLighting />
-      {/* 🌌 Layer 1: Nebula — skip on standard desktop (additive blend = very GPU expensive) */}
-      {!isDesktop && <CosmicNebulaClouds count={isMobile ? 160 : 400} texture={textures.nebula} />}
+      {/* 🌌 Layer 1: Nebula — enable on high-end only */}
+      {isHigh && <CosmicNebulaClouds count={280} texture={textures.nebula} />}
       {/* ✨ Layer 2: Deep-Space Starfield */}
-      <DeepFieldStars count={isMobile ? 5000 : isHigh ? 12000 : 5000} texture={textures.star} />
+      <DeepFieldStars count={isMobile ? 3500 : isHigh ? 10000 : 4500} texture={textures.star} />
       {/* ✨ Layer 3: Glowing Point Stars */}
-      <GlowingPointStars count={isMobile ? 800 : isHigh ? 2000 : 900} texture={textures.glowingPoint} />
+      <GlowingPointStars count={isMobile ? 400 : isHigh ? 1500 : 700} texture={textures.glowingPoint} />
       {/* 🌐 Layer 4: Constellation Network */}
-      <ConstellationNetwork count={isMobile ? 16 : isHigh ? 32 : 18} />
+      <ConstellationNetwork count={isMobile ? 12 : isHigh ? 28 : 16} />
       {/* ✨ Layer 5: Twinkling Stars */}
-      <TwinklingStars count={isMobile ? 800 : isHigh ? 2000 : 900} texture={textures.star} />
+      <TwinklingStars count={isMobile ? 400 : isHigh ? 1500 : 700} texture={textures.star} />
       {/* 🌟 Layer 6: Starburst Focal Stars */}
-      <StarburstFocalStars count={isMobile ? 30 : isHigh ? 80 : 35} texture={textures.starburst} />
-      {/* 🚀 Layer 7: Warp Streaks — skip on standard desktop (expensive per-frame position math) */}
-      {!isDesktop && <WarpStarfield count={isMobile ? 350 : 800} texture={textures.star} />}
+      <StarburstFocalStars count={isMobile ? 18 : isHigh ? 60 : 25} texture={textures.starburst} />
       {/* 🌀 Layer 8: Spiral Galaxy */}
-      <SpiralGalaxy starCount={isMobile ? 400 : isHigh ? 800 : 450} />
+      <SpiralGalaxy starCount={isMobile ? 250 : isHigh ? 600 : 350} />
       {/* 🪐 Layer 9: Planetary Fleet */}
       <PlanetaryFleet />
       {/* 🛸 Layer 10: Alien Spaceships */}
@@ -1513,7 +1510,7 @@ function CosmicScene({ tier }: { tier: 'mobile' | 'desktop' | 'high' }) {
       {/* ☄️ Layer 11: Meteors */}
       <Meteors count={isMobile ? 2 : isHigh ? 4 : 2} />
       {/* 🪨 Layer 12: Asteroid Belt */}
-      <AsteroidBelt count={isMobile ? 10 : isHigh ? 20 : 12} />
+      <AsteroidBelt count={isMobile ? 8 : isHigh ? 16 : 10} />
     </>
   )
 }
@@ -1522,7 +1519,7 @@ function CosmicScene({ tier }: { tier: 'mobile' | 'desktop' | 'high' }) {
 // Hardware tier detection
 function detectTier(): 'mobile' | 'desktop' | 'high' {
   if (typeof window === 'undefined') return 'desktop'
-  if (window.innerWidth < 768) return 'mobile'
+  if (window.innerWidth < 1024) return 'mobile'
   const cores = (navigator as any).hardwareConcurrency ?? 4
   const mem = (navigator as any).deviceMemory ?? 4
   // High-end: 8+ cores AND 8+ GB RAM
@@ -1537,16 +1534,11 @@ export default function ParticleField() {
 
   useEffect(() => {
     const handleVisibility = () => setIsTabVisible(!document.hidden)
-    document.addEventListener('visibilitychange', handleVisibility)
+    document.addEventListener('visibilitychange', handleVisibility, { passive: true })
     return () => document.removeEventListener('visibilitychange', handleVisibility)
   }, [])
 
-  // DPR strategy:
-  // mobile: 1 (native resolution)
-  // desktop standard: 0.65 — renders at 65% resolution → 58% fewer pixels per frame
-  //   e.g. 1920×1080 → effectively 1248×702 → massive GPU fill-rate savings and ultra-fast 120fps scrolling
-  // high-end: 1.0 (native)
-  const dpr: number = isMobile ? 1 : tier === 'high' ? 1 : 0.65
+  const dpr: number = isMobile ? 1 : tier === 'high' ? 1 : 0.75
 
   return (
     <Canvas

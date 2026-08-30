@@ -32,7 +32,7 @@ function StatCard({ label, value, icon: Icon, color }: {
 }
 
 export default function GitHub() {
-  const { ref, inView } = useInView(0.1)
+  const { ref, inView } = useInView(0.05)
 
   return (
     <div className="py-10 sm:py-14 md:py-20">

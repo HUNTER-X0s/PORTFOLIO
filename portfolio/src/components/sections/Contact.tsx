@@ -16,7 +16,7 @@ import { SocialIcon } from '@/components/icons/SocialIcons'
 
 
 export default function Contact() {
-  const { ref, inView } = useInView(0.1)
+  const { ref, inView } = useInView(0.05)
   const { playClick } = useSound()
   const [form, setForm] = useState<ContactForm>({
     name: '',

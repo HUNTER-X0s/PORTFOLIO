@@ -281,7 +281,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
 }
 
 export default function Projects() {
-  const { ref, inView } = useInView(0.1)
+  const { ref, inView } = useInView(0.05)
   const activeRole = usePortfolioStore((s) => s.activeRole)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [filter, setFilter] = useState<'all' | 'featured'>('all')

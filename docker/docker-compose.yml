@@ -1,5 +1,9 @@
 version: '3.9'
 
+# ── This file mirrors the root docker-compose.yml
+# ── Run from project root: docker-compose -f docker/docker-compose.yml up
+# ── All paths are relative to the REPOSITORY ROOT (../), not this folder.
+
 services:
   # ── MongoDB ──────────────────────────────────────────────────
   mongodb:
@@ -12,7 +16,6 @@ services:
       MONGO_INITDB_DATABASE: portfolio
     volumes:
       - mongo_data:/data/db
-      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/init.js:ro
     ports:
       - "27017:27017"
     networks:
@@ -23,7 +26,7 @@ services:
       timeout: 10s
       retries: 3
 
-  # ── Redis (session/cache) ────────────────────────────────────
+  # ── Redis ────────────────────────────────────────────────────
   redis:
     image: redis:7.2-alpine
     container_name: portfolio-redis
@@ -39,21 +42,22 @@ services:
       test: ["CMD", "redis-cli", "--pass", "${REDIS_PASSWORD:-redispassword}", "ping"]
       interval: 30s
       timeout: 5s
+      retries: 3
 
   # ── Express Backend ───────────────────────────────────────────
   backend:
     build:
-      context: ./server
+      context: ../server
       dockerfile: Dockerfile
     container_name: portfolio-backend
     restart: unless-stopped
-    env_file: ./server/.env
+    env_file: ../server/.env
     environment:
       NODE_ENV: production
       MONGODB_URI: mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASS:-changeme}@mongodb:27017/portfolio?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD:-redispassword}@redis:6379
     volumes:
-      - ./server/uploads:/app/uploads
+      - ../server/uploads:/app/uploads
     ports:
       - "5001:5001"
     depends_on:
@@ -64,7 +68,7 @@ services:
     networks:
       - portfolio-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5001/api/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:5001/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -72,76 +76,62 @@ services:
   # ── RAG Chatbot Backend ───────────────────────────────────────
   chatbot:
     build:
-      context: ./rag-chatbot
+      context: ../rag-chatbot
       dockerfile: Dockerfile
     container_name: portfolio-chatbot
     restart: unless-stopped
-    env_file: ./rag-chatbot/.env
+    env_file: ../rag-chatbot/.env
     environment:
-      OLLAMA_BASE_URL: http://ollama:11434
+      HOST: 0.0.0.0
+      PORT: 8001
+      ENV: production
+      USE_OLLAMA_EMBED: "false"
       CHROMA_PERSIST_DIR: /app/chroma_db
+      CACHE_DIR: /app/cache
     volumes:
-      - ./rag-chatbot/chroma_db:/app/chroma_db
+      - ../rag-chatbot/chroma_db:/app/chroma_db
+      - ../rag-chatbot/cache:/app/cache
     ports:
       - "8001:8001"
-    depends_on:
-      - ollama
     networks:
       - portfolio-net
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8001/api/health || exit 1"]
       interval: 60s
       timeout: 15s
+      start_period: 120s
       retries: 3
-
-  # ── Ollama (Local LLM) ────────────────────────────────────────
-  ollama:
-    image: ollama/ollama:latest
-    container_name: portfolio-ollama
-    restart: unless-stopped
-    volumes:
-      - ollama_data:/root/.ollama
-    ports:
-      - "11434:11434"
-    networks:
-      - portfolio-net
-    # GPU support (uncomment if GPU available)
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [gpu]
 
   # ── Next.js Frontend ──────────────────────────────────────────
   frontend:
     build:
-      context: ./portfolio
+      context: ../portfolio
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:5001}
         NEXT_PUBLIC_CHATBOT_URL: ${NEXT_PUBLIC_CHATBOT_URL:-http://localhost:8001}
-        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://anuragswain.dev}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://anurag07.vercel.app}
         NEXT_PUBLIC_GITHUB_USERNAME: HUNTER-X0s
     container_name: portfolio-frontend
     restart: unless-stopped
-    env_file: ./portfolio/.env.local
+    env_file: ../portfolio/.env.local
     ports:
       - "3000:3000"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - portfolio-net
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000 || exit 1"]
       interval: 30s
       timeout: 10s
+      retries: 3
 
   # ── Admin Panel ───────────────────────────────────────────────
   admin:
     build:
-      context: ./admin
+      context: ../admin
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:5001}
@@ -150,9 +140,15 @@ services:
     ports:
       - "3001:3001"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - portfolio-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # ── Nginx Reverse Proxy ───────────────────────────────────────
   nginx:
@@ -160,8 +156,8 @@ services:
     container_name: portfolio-nginx
     restart: unless-stopped
     volumes:
-      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./docker/ssl:/etc/nginx/ssl:ro
+      - ../nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../nginx/ssl:/etc/nginx/ssl:ro
     ports:
       - "80:80"
       - "443:443"
@@ -171,11 +167,15 @@ services:
       - chatbot
     networks:
       - portfolio-net
+    healthcheck:
+      test: ["CMD-SHELL", "nginx -t || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   mongo_data:
   redis_data:
-  ollama_data:
 
 networks:
   portfolio-net:

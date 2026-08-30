@@ -118,10 +118,8 @@ export default function Footer() {
           <p className="text-sm text-text-tertiary">
             &copy; {currentYear} <span className="text-text-secondary">{personalInfo.name}</span>. All rights reserved.
           </p>
-          <div className="flex items-center gap-2 text-sm text-text-secondary">
-            <span className="text-text-tertiary">Engineered with</span>
-            <Sparkles size={14} className="text-cyan animate-pulse" />
-            <span className="text-text-tertiary">&amp; neural precision by</span>
+          <div className="flex items-center gap-1.5 text-xs sm:text-sm text-text-tertiary">
+            <span>Built by</span>
             <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-cyan via-blue-400 to-violet-400">
               {personalInfo.name}
             </span>

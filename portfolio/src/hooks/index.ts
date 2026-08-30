@@ -239,12 +239,12 @@ export function useMousePosition() {
 // ============================================================
 // useInView — simplified IntersectionObserver hook
 // ============================================================
-export function useInView(threshold = 0.2) {
+export function useInView(threshold = 0.05) {
   const ref = useRef<HTMLElement>(null)
   const [inView, setInView] = useState(false)
 
   useEffect(() => {
-    // On mobile screens, disable scroll animations by forcing them to be visible immediately
+    // On mobile screens, elements are instantly visible for zero lag
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       setInView(true)
       return
@@ -260,7 +260,10 @@ export function useInView(threshold = 0.2) {
           observer.disconnect()
         }
       },
-      { threshold }
+      {
+        threshold,
+        rootMargin: '250px 0px 250px 0px',
+      }
     )
     observer.observe(el)
     return () => observer.disconnect()

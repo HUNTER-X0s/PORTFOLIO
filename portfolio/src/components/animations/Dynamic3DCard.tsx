@@ -14,8 +14,6 @@ interface Dynamic3DCardProps extends React.HTMLAttributes<HTMLDivElement> {
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
-const IS_TOUCH = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
-
 export function Dynamic3DCard({
   children,
   className,
@@ -34,7 +32,7 @@ export function Dynamic3DCard({
 
   const rafId = useRef<number | null>(null)
   const moveRafId = useRef<number | null>(null)
-  const isHoveredRef = useRef(false)
+  const isInteractingRef = useRef(false)
   const rectRef = useRef<DOMRect | null>(null)
 
   const current = useRef({ rx: 0, ry: 0, scale: 1, tz: 0, gx: 50, gy: 50, go: 0 })
@@ -44,7 +42,7 @@ export function Dynamic3DCard({
   const updateCardTransform = useCallback(() => {
     if (!innerRef.current) return
 
-    const factor = isHoveredRef.current ? 0.22 : 0.12
+    const factor = isInteractingRef.current ? 0.22 : 0.12
     const cur = current.current
     const tar = target.current
 
@@ -81,12 +79,12 @@ export function Dynamic3DCard({
       Math.abs(tar.scale - cur.scale) +
       Math.abs(tar.go - cur.go)
 
-    if (isHoveredRef.current || delta > 0.015) {
+    if (isInteractingRef.current || delta > 0.015) {
       rafId.current = requestAnimationFrame(updateCardTransform)
     } else {
       rafId.current = null
       // When completely resting, release 3D transform strings to allow browser to optimize
-      if (!isHoveredRef.current && innerRef.current) {
+      if (!isInteractingRef.current && innerRef.current) {
         innerRef.current.style.transform = ''
         innerRef.current.style.willChange = 'auto'
         innerRef.current.style.transformStyle = 'flat'
@@ -111,14 +109,10 @@ export function Dynamic3DCard({
     }
   }, [updateCardTransform, enableParallax])
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (IS_TOUCH) return
+  const setCoords = useCallback(
+    (clientX: number, clientY: number) => {
       if (!cardRef.current) return
-
       if (moveRafId.current !== null) return
-      const clientX = e.clientX
-      const clientY = e.clientY
 
       moveRafId.current = requestAnimationFrame(() => {
         moveRafId.current = null
@@ -147,21 +141,26 @@ export function Dynamic3DCard({
     [intensity, depth, startLoop]
   )
 
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      setCoords(e.clientX, e.clientY)
+    },
+    [setCoords]
+  )
+
   const handleMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (IS_TOUCH) return
       if (cardRef.current) {
         rectRef.current = cardRef.current.getBoundingClientRect()
       }
-      isHoveredRef.current = true
-      handleMouseMove(e)
+      isInteractingRef.current = true
+      setCoords(e.clientX, e.clientY)
     },
-    [handleMouseMove]
+    [setCoords]
   )
 
   const handleMouseLeave = useCallback(() => {
-    if (IS_TOUCH) return
-    isHoveredRef.current = false
+    isInteractingRef.current = false
     rectRef.current = null
 
     target.current.rx = 0
@@ -175,9 +174,35 @@ export function Dynamic3DCard({
     startLoop()
   }, [startLoop])
 
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (cardRef.current) {
+        rectRef.current = cardRef.current.getBoundingClientRect()
+      }
+      isInteractingRef.current = true
+      if (e.touches.length > 0) {
+        setCoords(e.touches[0].clientX, e.touches[0].clientY)
+      }
+    },
+    [setCoords]
+  )
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (e.touches.length > 0) {
+        setCoords(e.touches[0].clientX, e.touches[0].clientY)
+      }
+    },
+    [setCoords]
+  )
+
+  const handleTouchEnd = useCallback(() => {
+    handleMouseLeave()
+  }, [handleMouseLeave])
+
   useEffect(() => {
     const onResize = () => {
-      if (cardRef.current && isHoveredRef.current) {
+      if (cardRef.current && isInteractingRef.current) {
         rectRef.current = cardRef.current.getBoundingClientRect()
       }
     }
@@ -196,6 +221,10 @@ export function Dynamic3DCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       onClick={onClick}
       {...(props as any)}
     >

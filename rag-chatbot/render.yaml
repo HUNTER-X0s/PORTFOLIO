@@ -22,7 +22,7 @@ services:
       - key: EMBED_MODEL
         value: sentence-transformers/all-MiniLM-L6-v2
       - key: CHROMA_PERSIST_DIR
-        value: ./chroma_db
+        value: /app/chroma_db
       - key: CHROMA_COLLECTION
         value: anurag_portfolio
       - key: CACHE_DIR

@@ -49,7 +49,7 @@ function SkillBar({ name, level, color, index, inView }: {
 }
 
 export default function Skills() {
-  const { ref, inView } = useInView(0.15)
+  const { ref, inView } = useInView(0.05)
   const activeRole = usePortfolioStore((s) => s.activeRole)
   const [activeCategory, setActiveCategory] = useState<SkillCategory>('frontend')
 

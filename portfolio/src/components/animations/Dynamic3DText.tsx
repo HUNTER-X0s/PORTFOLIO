@@ -12,8 +12,6 @@ interface Dynamic3DTextProps {
   enableDepth?: boolean
 }
 
-const IS_TOUCH = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
-
 export function Dynamic3DText({
   children,
   className,
@@ -26,7 +24,7 @@ export function Dynamic3DText({
   const textRef = useRef<HTMLDivElement>(null)
   const rafId = useRef<number | null>(null)
   const moveRafId = useRef<number | null>(null)
-  const isHoveredRef = useRef(false)
+  const isInteractingRef = useRef(false)
   const rectRef = useRef<DOMRect | null>(null)
 
   const current = useRef({ rx: 0, ry: 0, tz: 0 })
@@ -35,7 +33,7 @@ export function Dynamic3DText({
   const updateTransform = useCallback(() => {
     if (!textRef.current) return
 
-    const factor = isHoveredRef.current ? 0.22 : 0.12
+    const factor = isInteractingRef.current ? 0.22 : 0.12
     const cur = current.current
     const tar = target.current
 
@@ -50,11 +48,11 @@ export function Dynamic3DText({
       Math.abs(tar.ry - cur.ry) +
       Math.abs(tar.tz - cur.tz)
 
-    if (isHoveredRef.current || delta > 0.015) {
+    if (isInteractingRef.current || delta > 0.015) {
       rafId.current = requestAnimationFrame(updateTransform)
     } else {
       rafId.current = null
-      if (!isHoveredRef.current && textRef.current) {
+      if (!isInteractingRef.current && textRef.current) {
         textRef.current.style.transform = ''
         textRef.current.style.willChange = 'auto'
         textRef.current.style.transformStyle = 'flat'
@@ -72,12 +70,9 @@ export function Dynamic3DText({
     }
   }, [updateTransform])
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (IS_TOUCH) return
+  const setCoords = useCallback(
+    (clientX: number, clientY: number) => {
       if (moveRafId.current !== null) return
-      const clientX = e.clientX
-      const clientY = e.clientY
 
       moveRafId.current = requestAnimationFrame(() => {
         moveRafId.current = null
@@ -102,27 +97,58 @@ export function Dynamic3DText({
     [intensity, enableDepth, startLoop]
   )
 
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      setCoords(e.clientX, e.clientY)
+    },
+    [setCoords]
+  )
+
   const handleMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (IS_TOUCH) return
       if (containerRef.current) {
         rectRef.current = containerRef.current.getBoundingClientRect()
       }
-      isHoveredRef.current = true
-      handleMouseMove(e)
+      isInteractingRef.current = true
+      setCoords(e.clientX, e.clientY)
     },
-    [handleMouseMove]
+    [setCoords]
   )
 
   const handleMouseLeave = useCallback(() => {
-    if (IS_TOUCH) return
-    isHoveredRef.current = false
+    isInteractingRef.current = false
     rectRef.current = null
     target.current.rx = 0
     target.current.ry = 0
     target.current.tz = 0
     startLoop()
   }, [startLoop])
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (containerRef.current) {
+        rectRef.current = containerRef.current.getBoundingClientRect()
+      }
+      isInteractingRef.current = true
+      if (e.touches.length > 0) {
+        setCoords(e.touches[0].clientX, e.touches[0].clientY)
+      }
+    },
+    [setCoords]
+  )
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (e.touches.length > 0) {
+        setCoords(e.touches[0].clientX, e.touches[0].clientY)
+      }
+    },
+    [setCoords]
+  )
+
+  const handleTouchEnd = useCallback(() => {
+    handleMouseLeave()
+  }, [handleMouseLeave])
 
   useEffect(() => {
     return () => {
@@ -140,6 +166,10 @@ export function Dynamic3DText({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
     >
       <div
         ref={textRef}

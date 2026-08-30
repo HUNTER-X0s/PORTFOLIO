@@ -916,34 +916,36 @@ img, svg {
    PERFORMANCE & CONTENT VISIBILITY OPTIMIZATIONS
    ============================================================ */
 
-/* Mobile: skip off-screen layout/paint with content-visibility */
-@media (max-width: 767px) {
-  .section-optimized {
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 700px;
-  }
-}
-
-/* Desktop: use contain:layout style to isolate style recalculations
-   WITHOUT the expensive scroll-triggered re-layout content-visibility causes */
-@media (min-width: 768px) {
-  .section-optimized {
-    contain: style;
-  }
+/* Section layout stabilization for 100% smooth, lag-free anchor navigation */
+.section-optimized {
+  contain: style;
 }
 
 /* Glass elements: lightweight stacking isolation */
 .glass,
-.glass-card {
+.glass-card,
+.glass-dropdown,
+.glass-strong {
   isolation: isolate;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
-/* Scrolling: never force GPU compositing on the body scroll container */
+/* High-performance touch and smooth scroll across all devices */
 html {
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
-/* Optimize smooth scrolling across all devices */
+/* GPU hardware acceleration for interactive 3D cards and badges */
+.btn-3d,
+.text-3d-interactive,
+.terminal-window {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Optimize smooth scrolling for accessibility preferences */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

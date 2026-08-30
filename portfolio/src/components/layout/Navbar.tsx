@@ -60,21 +60,17 @@ export default function Navbar() {
   const handleNavClick = (href: string) => {
     playClick()
     const id = href.replace('#', '')
+    const el = document.getElementById(id)
 
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false)
-      setTimeout(() => {
-        const el = document.getElementById(id)
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-      }, 250)
-    } else {
-      const el = document.getElementById(id)
+    }
+
+    requestAnimationFrame(() => {
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
-    }
+    })
   }
 
   return (

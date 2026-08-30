@@ -8,7 +8,7 @@ import { Dynamic3DCard } from '@/components/animations/Dynamic3DCard'
 import { Dynamic3DText } from '@/components/animations/Dynamic3DText'
 
 export default function Blog() {
-  const { ref, inView } = useInView(0.1)
+  const { ref, inView } = useInView(0.05)
 
   return (
     <div className="py-10 sm:py-14 md:py-20">

@@ -9,7 +9,7 @@ import { Dynamic3DCard } from '@/components/animations/Dynamic3DCard'
 import { Dynamic3DText } from '@/components/animations/Dynamic3DText'
 
 export default function ValueProp() {
-  const { ref, inView } = useInView(0.2)
+  const { ref, inView } = useInView(0.05)
   const activeRole = usePortfolioStore((s) => s.activeRole)
   const setActiveRole = usePortfolioStore((s) => s.setActiveRole)
   const content = roleContents[activeRole] || roleContents['fullstack']

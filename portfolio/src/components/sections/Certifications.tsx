@@ -51,8 +51,8 @@ function CertCard({ cert, index }: { cert: Certification; index: number }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0, transition: { duration: 0.3, delay: index * 0.05, ease: [0.19, 1, 0.22, 1] } }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0, transition: { duration: 0.25, delay: Math.min(index * 0.02, 0.1), ease: [0.19, 1, 0.22, 1] } }}
       className="h-full"
     >
       <Dynamic3DCard intensity={12} depth={16} glowColor={`${cert.issuerColor}25`} className="h-full">

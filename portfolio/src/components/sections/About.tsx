@@ -19,7 +19,7 @@ const itemVariants = {
 }
 
 export default function About() {
-  const { ref, inView } = useInView(0.2)
+  const { ref, inView } = useInView(0.05)
 
   return (
     <div className="py-10 sm:py-14 md:py-20">
