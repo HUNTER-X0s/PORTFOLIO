@@ -16,7 +16,7 @@ services:
       - key: GROQ_API_KEY
         sync: false           # You will paste this in Render dashboard
       - key: GROQ_MODEL
-        value: llama-3.1-8b-instant
+        value: openai/gpt-oss-120b
       - key: USE_OLLAMA_EMBED
         value: "false"        # No Ollama on cloud — use sentence-transformers
       - key: EMBED_MODEL

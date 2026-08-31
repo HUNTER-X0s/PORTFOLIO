@@ -51,10 +51,71 @@ function SourceBadge({ source }: { source: { category: string; topic: string; sc
   )
 }
 
+// ── Convert markdown tables to clean bullet points ───────────
+function convertTablesToBullets(text: string): string {
+  if (!text || !text.includes('|')) return text
+
+  const lines = text.split('\n')
+  const newLines: string[] = []
+  let tableRows: string[][] = []
+  let inTable = false
+
+  const processTable = (rows: string[][]) => {
+    if (rows.length === 0) return []
+    // Filter out separator lines (like |---|---|)
+    const validRows = rows.filter(r => !r.every(cell => /^[-: ]+$/.test(cell.trim())))
+    if (validRows.length <= 1) {
+      return rows.map(r => r.join(' · ').trim()).filter(Boolean)
+    }
+    const headers = validRows[0].map(h => h.trim())
+    const output: string[] = []
+    for (let i = 1; i < validRows.length; i++) {
+      const cells = validRows[i].map(c => c.trim())
+      if (cells.length === 0 || cells.every(c => !c)) continue
+      const title = cells[0] || `Item ${i}`
+      const details: string[] = []
+      for (let j = 1; j < cells.length; j++) {
+        if (cells[j]) {
+          const headerLabel = headers[j] ? `**${headers[j]}**: ` : ''
+          details.push(`${headerLabel}${cells[j]}`)
+        }
+      }
+      if (details.length > 0) {
+        output.push(`- **${title}** — ${details.join(' · ')}`)
+      } else {
+        output.push(`- **${title}**`)
+      }
+    }
+    return output
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim()
+    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+      inTable = true
+      const cells = trimmed.slice(1, -1).split('|')
+      tableRows.push(cells)
+    } else {
+      if (inTable) {
+        newLines.push(...processTable(tableRows))
+        tableRows = []
+        inTable = false
+      }
+      newLines.push(lines[i])
+    }
+  }
+  if (inTable && tableRows.length > 0) {
+    newLines.push(...processTable(tableRows))
+  }
+
+  return newLines.join('\n')
+}
+
 // ── Clean content helper ──────────────────────────────────────
 function cleanMessageContent(text: string): string {
   if (!text) return ''
-  return text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trimStart()
+  const stripped = text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trimStart()
+  return convertTablesToBullets(stripped)
 }
 
 // ── Message bubble ────────────────────────────────────────────
@@ -84,9 +145,9 @@ function MessageBubble({
         </div>
       )}
 
-      <div className="max-w-[86%] space-y-1.5 overflow-hidden">
+      <div className="max-w-[92%] sm:max-w-[88%] min-w-0 space-y-1.5 overflow-hidden">
         <div
-          className="px-4 py-3 rounded-2xl text-xs sm:text-sm leading-relaxed overflow-hidden break-words"
+          className="px-4 py-3 rounded-2xl text-xs sm:text-sm leading-relaxed break-words [overflow-wrap:anywhere] [word-break:break-word] overflow-hidden"
           style={isUser ? {
             background: 'linear-gradient(135deg, rgba(0,229,255,0.16), rgba(124,58,237,0.16))',
             border: '1px solid rgba(0,229,255,0.25)',
@@ -102,24 +163,24 @@ function MessageBubble({
           }}
         >
           {isUser ? (
-            <p className="whitespace-pre-wrap">{message.content}</p>
+            <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{message.content}</p>
           ) : (
-            <div className="space-y-1.5 markdown-content">
+            <div className="space-y-1.5 markdown-content break-words [overflow-wrap:anywhere]">
               <ReactMarkdown
                 components={{
-                  h1: ({ children }) => <h1 className="text-sm sm:text-base font-bold text-white mt-3 mb-1.5 pb-1 border-b border-cyan/20">{children}</h1>,
-                  h2: ({ children }) => <h2 className="text-xs sm:text-sm font-bold text-cyan-300 mt-2.5 mb-1 flex items-center gap-1.5">{children}</h2>,
-                  h3: ({ children }) => <h3 className="text-xs sm:text-xs font-semibold text-cyan-400 mt-2 mb-0.5">{children}</h3>,
-                  h4: ({ children }) => <h4 className="text-xs font-semibold text-white/90 mt-1.5 mb-0.5">{children}</h4>,
-                  p: ({ children }) => <p className="mb-1.5 last:mb-0 leading-relaxed text-text-primary text-xs sm:text-sm">{children}</p>,
+                  h1: ({ children }) => <h1 className="text-sm sm:text-base font-bold text-white mt-3 mb-1.5 pb-1 border-b border-cyan/20 break-words [overflow-wrap:anywhere]">{children}</h1>,
+                  h2: ({ children }) => <h2 className="text-xs sm:text-sm font-bold text-cyan-300 mt-2.5 mb-1 flex items-center gap-1.5 break-words [overflow-wrap:anywhere]">{children}</h2>,
+                  h3: ({ children }) => <h3 className="text-xs sm:text-xs font-semibold text-cyan-400 mt-2 mb-0.5 break-words [overflow-wrap:anywhere]">{children}</h3>,
+                  h4: ({ children }) => <h4 className="text-xs font-semibold text-white/90 mt-1.5 mb-0.5 break-words [overflow-wrap:anywhere]">{children}</h4>,
+                  p: ({ children }) => <p className="mb-1.5 last:mb-0 leading-relaxed text-text-primary text-xs sm:text-sm break-words [overflow-wrap:anywhere]">{children}</p>,
                   strong: ({ children }) => <strong className="text-cyan font-semibold">{children}</strong>,
                   em: ({ children }) => <em className="text-text-primary not-italic font-medium">{children}</em>,
-                  ul: ({ children }) => <ul className="my-2 space-y-1.5 pl-0.5">{children}</ul>,
-                  ol: ({ children }) => <ol className="my-2 space-y-1.5 list-decimal list-inside pl-0.5 text-text-secondary text-xs sm:text-sm">{children}</ol>,
+                  ul: ({ children }) => <ul className="my-2 space-y-1.5 pl-0.5 max-w-full overflow-hidden">{children}</ul>,
+                  ol: ({ children }) => <ol className="my-2 space-y-1.5 list-decimal list-inside pl-0.5 text-text-secondary text-xs sm:text-sm max-w-full overflow-hidden">{children}</ol>,
                   li: ({ children }) => (
-                    <li className="flex items-start gap-2 text-xs sm:text-sm text-text-primary leading-relaxed">
+                    <li className="flex items-start gap-2 text-xs sm:text-sm text-text-primary leading-relaxed min-w-0 w-full">
                       <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan flex-shrink-0 mt-1.5 shadow-[0_0_6px_#00e5ff]" />
-                      <span className="flex-1">{children}</span>
+                      <span className="flex-1 min-w-0 break-words [overflow-wrap:anywhere]">{children}</span>
                     </li>
                   ),
                   a: ({ href, children }) => (
@@ -127,7 +188,7 @@ function MessageBubble({
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-0.5 text-cyan hover:text-cyan-300 underline underline-offset-2 transition-colors font-mono text-xs"
+                      className="inline-flex items-center gap-0.5 text-cyan hover:text-cyan-300 underline underline-offset-2 transition-colors font-mono text-xs break-all"
                     >
                       {children}
                       <ExternalLink size={10} className="inline ml-0.5 opacity-70 flex-shrink-0" />
@@ -142,9 +203,9 @@ function MessageBubble({
                   tbody: ({ children }) => <tbody className="divide-y divide-white/5">{children}</tbody>,
                   tr: ({ children }) => <tr className="hover:bg-white/[0.02] transition-colors">{children}</tr>,
                   th: ({ children }) => <th className="px-2.5 py-1.5 text-left text-[10px] font-bold text-cyan tracking-wider uppercase">{children}</th>,
-                  td: ({ children }) => <td className="px-2.5 py-1.5 text-[11px] text-text-secondary whitespace-normal">{children}</td>,
+                  td: ({ children }) => <td className="px-2.5 py-1.5 text-[11px] text-text-secondary whitespace-normal break-words">{children}</td>,
                   code: ({ children }) => (
-                    <code className="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-cyan-300 font-mono text-[11px]">{children}</code>
+                    <code className="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-cyan-300 font-mono text-[11px] break-all">{children}</code>
                   ),
                   blockquote: ({ children }) => (
                     <blockquote className="my-2 pl-3 border-l-2 border-cyan/50 text-text-secondary italic text-xs bg-cyan/[0.04] py-1 rounded-r-lg">{children}</blockquote>

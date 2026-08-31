@@ -79,9 +79,9 @@ function VoiceMessageBubble({ msg }: { msg: { role: string; text: string; timest
       }
 
       return (
-        <span key={lineIdx} className={cn("block mb-1.5 last:mb-0", isBullet && "flex items-start gap-1.5")}>
+        <span key={lineIdx} className={cn("block mb-1.5 last:mb-0 min-w-0", isBullet && "flex items-start gap-1.5")}>
           {isBullet && <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan flex-shrink-0 mt-1 shadow-[0_0_6px_#00e5ff]" />}
-          <span className="flex-1 leading-relaxed text-text-secondary">{formatted}</span>
+          <span className="flex-1 min-w-0 break-words [overflow-wrap:anywhere] leading-relaxed text-text-secondary">{formatted}</span>
         </span>
       )
     })
@@ -98,9 +98,9 @@ function VoiceMessageBubble({ msg }: { msg: { role: string; text: string; timest
           <Sparkles size={9} className="text-cyan-400" />
         </div>
       )}
-      <div className="max-w-[88%] space-y-1">
+      <div className="max-w-[92%] sm:max-w-[88%] min-w-0 space-y-1 overflow-hidden">
         <div
-          className="px-3 py-2 rounded-xl text-xs leading-relaxed whitespace-pre-wrap break-words"
+          className="px-3 py-2 rounded-xl text-xs leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere] [word-break:break-word]"
           style={isUser ? {
             background: 'linear-gradient(135deg, rgba(0,229,255,0.12), rgba(124,58,237,0.12))',
             border: '1px solid rgba(0,229,255,0.18)',

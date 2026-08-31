@@ -468,8 +468,9 @@ CORE INTELLIGENCE & RELEVANCE RULES:
    - If asked about hiring/availability (e.g. "Is Anurag available for hire?"), answer directly with a clear "Yes, Anurag is actively available for hire..." followed by targeted details (target roles, experience highlights, contact channels).
    - If asked technical or coding questions (e.g. "Explain RAG", "Compare Next.js vs React"), explain smartly with clear, structured bullet points.
    - If asked for quick facts (CGPA, college name, email, GitHub), answer directly in 1-2 points without fluff.
-3. STRICT POINTED FORMATTING:
-   - Format responses using markdown bullet points (`- **Key**: Details`) and clean `###` section headers where applicable.
+3. STRICT POINTED FORMATTING & NO TABLES (CRITICAL):
+   - Format all responses using markdown bullet points (`- **Key**: Details`) and clean `###` section headers where applicable.
+   - STRICT PROHIBITION: NEVER generate markdown tables (no `| col | col |` syntax). Tables break layout and overflow in compact chat windows. Always present metrics, model architectures, comparisons, evaluations, and technical stats as clean BULLET POINTS (e.g. `- **XGBoost (Best)**: MAPE 12.3% · RMSE 2.12 kWh · R² 0.71`).
    - Avoid long monolithic prose paragraphs; keep points easily scannable and executive-ready.
 4. TONE & ACCURACY:
    - Professional, articulate, intelligent, polite, and confident.
@@ -503,18 +504,18 @@ Candidate Snapshot: Anurag Swain | 3rd-Year B.Tech CSE @ GCE Kalahandi (CGPA 8.1
 
 QUESTION: {query}
 
-INSTRUCTION: Provide a brief, point-wise response with 2-4 bullet points maximum. STRICTLY DO NOT use any # headings, section headers, or prose paragraphs. Keep it brief and clear for voice readout."""
+INSTRUCTION: Provide a brief, point-wise response with 2-4 bullet points maximum. STRICTLY DO NOT use any # headings, markdown tables, or prose paragraphs. Keep it brief and clear for voice readout."""
             return prompt
 
         response_hint = {
             "quick": (
-                "Answer directly with 1-2 pointed lines. Provide only the specific information requested."
+                "Answer directly with 1-2 pointed lines. Provide only the specific information requested. DO NOT use markdown tables."
             ),
             "medium": (
-                "Provide a smart, well-organized response in pointed format using `- **Label**: Description` and `###` headers if helpful. Keep it focused and relevant."
+                "Provide a smart, well-organized response in pointed format using `- **Label**: Description` and `###` headers if helpful. DO NOT use markdown tables; use bullet points for metrics and comparisons."
             ),
             "detailed": (
-                "Provide a comprehensive, high-depth breakdown in structured bullet points with `###` headers, metrics, and outcomes. Ensure every point is relevant to the question."
+                "Provide a comprehensive, high-depth breakdown in structured bullet points with `###` headers, metrics, and outcomes. DO NOT use markdown tables under any circumstance; present all metrics, model architectures, and evaluations as clean bullet points (`- **Model/Metric**: Details`)."
             ),
         }[complexity]
 
@@ -526,7 +527,7 @@ INSTRUCTION: Provide a brief, point-wise response with 2-4 bullet points maximum
 
 USER QUESTION: {query}
 
-INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed format."""
+INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed format (STRICTLY NO TABLES)."""
         return prompt
 
 
@@ -912,7 +913,7 @@ INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed 
         )
 
     def _clean_response_text(self, text: str) -> str:
-        """Strip <think> blocks, markdown thinking dumps, and reasoning preambles."""
+        """Strip <think> blocks, markdown thinking dumps, reasoning preambles, and convert markdown tables to bullets."""
         if not text:
             return ""
         cleaned = re.sub(r"<think>[\s\S]*?</think>", "", text).strip()
@@ -923,7 +924,6 @@ INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed 
 
         # If plain text chain-of-thought is emitted
         if "thinking process" in cleaned.lower() or "thought process" in cleaned.lower():
-            # Check for standard output dividers emitted by reasoning models
             markers = [
                 r"(?i)(?:\[Output Generation\]|\bOutput generation\.?|\bFinal Output:?|\bOutput:?)\s*(?:->\s*\*?[A-Za-z]+\*?)?\s*[\"']?",
                 r"(?i)(?:\bDraft:\s*\n)(?=[\s\S]*?(?:- \*\*|###))",
@@ -936,11 +936,57 @@ INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed 
                         cleaned = candidate
                         break
 
-            # If still starts with reasoning, grab from the actual bullet content or formal intro
             if re.match(r"(?i)^\s*(?:Here(?:'s| is) a thinking process|Thinking Process)", cleaned):
                 matches = list(re.finditer(r"(?m)^(?:Certainly\b|Anurag\b|- \*\*|### )", cleaned))
                 if matches:
                     cleaned = cleaned[matches[-1].start():].strip()
+
+        # Convert any residual markdown tables to clean bulleted format
+        if "|" in cleaned:
+            lines = cleaned.split("\n")
+            new_lines = []
+            table_rows = []
+            in_table = False
+
+            def process_table(rows):
+                if not rows:
+                    return []
+                valid_rows = [r for r in rows if not all(re.match(r"^[-:\s]+$", cell.strip()) for cell in r)]
+                if len(valid_rows) <= 1:
+                    return [" · ".join(c.strip() for c in r if c.strip()) for r in valid_rows]
+                headers = [h.strip() for h in valid_rows[0]]
+                output = []
+                for row in valid_rows[1:]:
+                    cells = [c.strip() for c in row]
+                    if not any(cells):
+                        continue
+                    title = cells[0] if cells[0] else "Metric"
+                    details = []
+                    for j in range(1, len(cells)):
+                        if cells[j]:
+                            header_label = f"**{headers[j]}**: " if j < len(headers) and headers[j] else ""
+                            details.append(f"{header_label}{cells[j]}")
+                    if details:
+                        output.append(f"- **{title}** — {' · '.join(details)}")
+                    else:
+                        output.append(f"- **{title}**")
+                return output
+
+            for line in lines:
+                trimmed = line.strip()
+                if trimmed.startswith("|") and trimmed.endswith("|"):
+                    in_table = True
+                    cells = [c.strip() for c in trimmed[1:-1].split("|")]
+                    table_rows.append(cells)
+                else:
+                    if in_table:
+                        new_lines.extend(process_table(table_rows))
+                        table_rows = []
+                        in_table = False
+                    new_lines.append(line)
+            if in_table and table_rows:
+                new_lines.extend(process_table(table_rows))
+            cleaned = "\n".join(new_lines)
 
         return cleaned.strip()
 
@@ -956,9 +1002,10 @@ INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed 
         if api_key and not api_key.startswith("your_"):
             models_to_try = [
                 os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
+                "openai/gpt-oss-120b",
                 "groq/compound-mini",
-                "qwen/qwen3.6-27b",
                 "qwen/qwen3.8-27b",
+                "openai/gpt-oss-20b",
             ]
             for model_name in models_to_try:
                 try:
