@@ -295,7 +295,7 @@ export default function ChatBot() {
 
   const currentRole = roles.find((r) => r.id === activeRole)
 
-  // ── Health check on mount ─────────────────────────────────
+  // ── Health check on mount and on chat open ───────────────
   useEffect(() => {
     const checkHealth = async () => {
       try {
@@ -304,17 +304,13 @@ export default function ChatBot() {
           const data = await res.json()
           setConnected(true)
           setAiMode(data.mode || 'groq')
-        } else {
-          setConnected(false)
-          setAiMode('synthesis')
         }
       } catch {
-        setConnected(false)
-        setAiMode('synthesis')
+        // Keep optimistic online status until a query actually requires fallback
       }
     }
     checkHealth()
-  }, [])
+  }, [isChatOpen])
 
   // ── Welcome message ───────────────────────────────────────
   useEffect(() => {

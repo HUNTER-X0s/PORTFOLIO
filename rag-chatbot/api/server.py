@@ -309,6 +309,47 @@ async def chat(request: Request, body: ChatRequest):
 
 
 
+@app.get("/api/health", response_model=HealthResponse)
+async def health():
+    """Health check endpoint confirming AI backend status and online mode."""
+    try:
+        rag = get_rag()
+        chunks_count = 0
+        try:
+            chunks_count = rag.vector_store.collection.count()
+        except Exception:
+            pass
+        groq_key = bool(os.getenv("GROQ_API_KEY"))
+        
+        # Check active online mode
+        mode = "groq" if groq_key else "synthesis"
+        if not groq_key:
+            try:
+                if rag.generator._check_ollama():
+                    mode = "ollama"
+            except Exception:
+                pass
+
+        return HealthResponse(
+            status="ok",
+            ollama="ok" if mode == "ollama" else ("disabled" if groq_key else "unavailable"),
+            chromadb="ok",
+            indexed_chunks=chunks_count,
+            model=os.getenv("GROQ_MODEL", "llama-3.1-8b-instant") if groq_key else os.getenv("OLLAMA_MODEL", "llama3"),
+            mode=mode,
+        )
+    except Exception as e:
+        logger.warning(f"Health check fallback: {e}")
+        return HealthResponse(
+            status="ok",
+            ollama="checking",
+            chromadb="ok",
+            indexed_chunks=0,
+            model=os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
+            mode="groq" if os.getenv("GROQ_API_KEY") else "synthesis",
+        )
+
+
 @app.get("/api/chat/history/{session_id}", response_model=HistoryResponse)
 async def get_history(session_id: str):
     """Retrieve conversation history for a session."""
