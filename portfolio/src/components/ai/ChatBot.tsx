@@ -111,11 +111,64 @@ function convertTablesToBullets(text: string): string {
   return newLines.join('\n')
 }
 
+// ── Auto-link URLs, Emails, and Social IDs into valid markdown links ──
+function autoLinkContent(text: string): string {
+  if (!text) return ''
+
+  let processed = text
+
+  // 1. Convert unlinked email addresses to mailto: links (e.g. anurag.swain35@gmail.com)
+  processed = processed.replace(
+    /(?<!\[.*\]\()(?<!href=["'])\b([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\b/g,
+    '[$1](mailto:$1)'
+  )
+
+  // 2. Convert unlinked GitHub handles / IDs (e.g. GitHub: HUNTER_X0s or GitHub: HUNTER-X0s)
+  processed = processed.replace(
+    /(?:GitHub:\s*)(?!\[)(HUNTER[-_]X0s[A-Za-z0-9_/-]*)/gi,
+    (match, id) => `GitHub: [${id}](https://github.com/${id.replace(/_/g, '-')})`
+  )
+
+  // 3. Convert unlinked LinkedIn handles/urls (e.g. LinkedIn: anurag-swain-cse07 or linkedin.com/in/...)
+  processed = processed.replace(
+    /(?:LinkedIn:\s*)(?!\[)(?:https?:\/\/(?:www\.)?linkedin\.com\/in\/|linkedin\.com\/in\/)?([a-zA-Z0-9_-]+)/gi,
+    (match, id) => `LinkedIn: [${id}](https://www.linkedin.com/in/${id})`
+  )
+
+  // 4. Convert unlinked Twitter/X handles (e.g. Twitter/X: @Anurag_hunter07 or Anurag_hunter07)
+  processed = processed.replace(
+    /(?:Twitter(?:\/X)?:\s*)(?!\[)(?:https?:\/\/(?:www\.)?(?:twitter|x)\.com\/|@)?([a-zA-Z0-9_]+)/gi,
+    (match, id) => `Twitter/X: [@${id}](https://x.com/${id})`
+  )
+
+  // 5. Convert unlinked Instagram handles (e.g. Instagram: vi_ll_a_in or @_vi_ll_a_in_)
+  processed = processed.replace(
+    /(?:Instagram:\s*)(?!\[)(?:https?:\/\/(?:www\.)?instagram\.com\/|@)?([a-zA-Z0-9_]+)/gi,
+    (match, id) => {
+      const handle = id.startsWith('_') ? id : `_${id}_`
+      return `Instagram: [@${handle}](https://www.instagram.com/${handle})`
+    }
+  )
+
+  // 6. Convert any remaining unlinked domain URLs (e.g. github.com/... or linkedin.com/...)
+  processed = processed.replace(
+    /(?<!\[.*?\]\()(?<!href=["'])((?:https?:\/\/|www\.)[^\s<>)"]+|(?:github\.com|linkedin\.com|x\.com|twitter\.com|instagram\.com|vercel\.app|render\.com)\/[^\s<>)"]+)/gi,
+    (match, url) => {
+      const cleanUrl = url.replace(/[.,;:]+$/, '')
+      const href = cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`
+      return `[${cleanUrl}](${href})`
+    }
+  )
+
+  return processed
+}
+
 // ── Clean content helper ──────────────────────────────────────
 function cleanMessageContent(text: string): string {
   if (!text) return ''
   const stripped = text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trimStart()
-  return convertTablesToBullets(stripped)
+  const tableConverted = convertTablesToBullets(stripped)
+  return autoLinkContent(tableConverted)
 }
 
 // ── Message bubble ────────────────────────────────────────────
@@ -183,17 +236,49 @@ function MessageBubble({
                       <span className="flex-1 min-w-0 break-words [overflow-wrap:anywhere]">{children}</span>
                     </li>
                   ),
-                  a: ({ href, children }) => (
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-0.5 text-cyan hover:text-cyan-300 underline underline-offset-2 transition-colors font-mono text-xs break-all"
-                    >
-                      {children}
-                      <ExternalLink size={10} className="inline ml-0.5 opacity-70 flex-shrink-0" />
-                    </a>
-                  ),
+                  a: ({ href, children }) => {
+                    let targetHref = (href || '').trim()
+
+                    // Handle direct email or phone protocols
+                    if (targetHref.startsWith('mailto:') || targetHref.startsWith('tel:')) {
+                      return (
+                        <a
+                          href={targetHref}
+                          className="inline-flex items-center gap-0.5 text-cyan hover:text-cyan-300 underline underline-offset-2 transition-colors font-mono text-xs break-all"
+                        >
+                          {children}
+                        </a>
+                      )
+                    }
+
+                    // Normalize IDs or bare handles into full external URLs
+                    if (targetHref === 'HUNTER_X0s' || targetHref === 'HUNTER-X0s') {
+                      targetHref = 'https://github.com/HUNTER-X0s'
+                    } else if (targetHref === 'vi_ll_a_in' || targetHref === '_vi_ll_a_in_') {
+                      targetHref = 'https://www.instagram.com/_vi_ll_a_in/'
+                    } else if (targetHref === 'Anurag_hunter07' || targetHref === '@Anurag_hunter07') {
+                      targetHref = 'https://x.com/Anurag_hunter07'
+                    } else if (targetHref.includes('anurag-swain-cse07') && !targetHref.startsWith('http')) {
+                      targetHref = `https://www.linkedin.com/in/anurag-swain-cse07/`
+                    } else if (!targetHref.startsWith('http://') && !targetHref.startsWith('https://')) {
+                      targetHref = `https://${targetHref}`
+                    }
+
+                    return (
+                      <a
+                        href={targetHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                        }}
+                        className="inline-flex items-center gap-0.5 text-cyan hover:text-cyan-300 underline underline-offset-2 transition-colors font-mono text-xs break-all hover:underline cursor-pointer relative z-20 pointer-events-auto"
+                      >
+                        {children}
+                        <ExternalLink size={10} className="inline ml-0.5 opacity-70 flex-shrink-0" />
+                      </a>
+                    )
+                  },
                   table: ({ children }) => (
                     <div className="my-2.5 overflow-x-auto rounded-xl border border-white/10 bg-surface-2/70 backdrop-blur-sm shadow-md">
                       <table className="min-w-full divide-y divide-white/10 text-xs font-mono">{children}</table>
