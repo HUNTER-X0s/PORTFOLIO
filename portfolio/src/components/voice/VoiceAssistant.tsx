@@ -202,8 +202,14 @@ function NotSupportedScreen() {
       <AlertCircle size={28} className="text-yellow-400" />
       <div>
         <h3 className="text-sm font-semibold text-white mb-1">Browser Not Supported</h3>
-        <p className="text-xs text-white/80 leading-relaxed max-w-[220px]">
-          Voice recognition requires Chrome, Edge, or Safari. Please switch browsers to use Jarvis Mode.
+        <p className="text-xs text-white/80 leading-relaxed max-w-[220px] mb-2">
+          Jarvis Voice Mode requires a browser that supports the Web Speech API.
+        </p>
+        <p className="text-[10px] text-white/60 leading-relaxed max-w-[220px]">
+          <strong className="text-cyan-400">Mobile:</strong> Use Chrome for Android or Safari on iOS 14.5+
+        </p>
+        <p className="text-[10px] text-white/60 leading-relaxed max-w-[220px]">
+          <strong className="text-cyan-400">Desktop:</strong> Use Chrome, Edge, or Safari.
         </p>
       </div>
     </div>

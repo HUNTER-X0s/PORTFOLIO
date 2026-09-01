@@ -60,6 +60,19 @@ function checkSupport() {
   return !!((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)
 }
 
+// ── Mobile / tablet detection ──────────────────────────────────
+function isMobileOrTablet() {
+  if (typeof navigator === 'undefined') return false
+  return /android|iphone|ipad|ipod|mobile|tablet/i.test(navigator.userAgent)
+}
+
+// ── iOS Safari detection ────────────────────────────────────────
+function isIOSSafari() {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent
+  return /iP(hone|od|ad)/i.test(ua) && /Safari/i.test(ua)
+}
+
 // ── Strip markdown & polish pronunciation for clean Jarvis TTS ─
 function stripMarkdown(text: string): string {
   return text
@@ -621,8 +634,10 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
     const rec = new SR()
     rec.lang           = LANG
     rec.interimResults = true
-    rec.continuous     = false
-    rec.maxAlternatives = 3
+    // On mobile: use continuous=true so the mic stays open longer;
+    // on desktop: continuous=false is fine since there's no auto-stop issue.
+    rec.continuous      = isMobileOrTablet() ? true : false
+    rec.maxAlternatives = isMobileOrTablet() ? 1 : 3
 
     rec.onstart = () => {
       setStatus('listening')
@@ -644,14 +659,30 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
       if (final) {
         setFinalTranscript(final)
         finalTranscriptRef.current = final
+        // On mobile with continuous=true, auto-submit when we get a final result
+        if (isMobileOrTablet()) {
+          rec.stop()
+        }
       }
     }
 
     rec.onerror = (e: any) => {
+      // On mobile, 'aborted' errors are normal lifecycle events — ignore them
+      if (e.error === 'aborted') return
+      // 'no-speech' on mobile is common if the user pauses; don't treat as fatal
+      if (e.error === 'no-speech') {
+        setError('No speech detected. Please tap the mic and speak clearly.')
+        setStatus('idle')
+        return
+      }
       const msg = e.error === 'not-allowed'
-        ? 'Microphone permission denied. Please allow microphone access.'
-        : e.error === 'no-speech'
-        ? 'No speech detected. Please try again.'
+        ? 'Microphone permission denied. Please allow microphone access in your browser settings.'
+        : e.error === 'network'
+        ? 'Network error. Please check your connection and try again.'
+        : e.error === 'audio-capture'
+        ? 'Microphone not found. Please ensure your device has a working mic.'
+        : e.error === 'service-not-allowed'
+        ? 'Speech recognition not allowed. Ensure you are on HTTPS.'
         : `Voice error: ${e.error}`
       setError(msg)
       setStatus('error')
@@ -683,25 +714,69 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
     if (!isSupported) return
     setError(null)
 
-    // Stop any ongoing speech
-    stopSpeaking()
+    // Stop any ongoing speech synthesis first.
+    // On mobile, TTS and SpeechRecognition cannot run simultaneously.
+    // Wait briefly after stopping TTS to let the audio hardware release.
+    if (window.speechSynthesis?.speaking || window.speechSynthesis?.pending) {
+      window.speechSynthesis.cancel()
+      utterancesRef.current = []
+      setIsSpeaking(false)
+      // Give the audio subsystem time to release on mobile
+      await new Promise<void>((resolve) => setTimeout(resolve, isMobileOrTablet() ? 400 : 100))
+    }
 
     try {
+      // Abort any existing recognition session
       if (recognitionRef.current) {
-        recognitionRef.current.abort()
+        try { recognitionRef.current.abort() } catch {}
+        recognitionRef.current = null
+        // Brief pause for mobile browsers to fully release mic
+        if (isMobileOrTablet()) {
+          await new Promise<void>((resolve) => setTimeout(resolve, 250))
+        }
       }
+
+      // On iOS Safari, request mic permission explicitly first
+      if (isIOSSafari() && hasPermission !== true) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+          stream.getTracks().forEach((t) => t.stop())
+          setHasPermission(true)
+        } catch {
+          setHasPermission(false)
+          setError('Microphone permission denied. Please allow microphone access.')
+          setStatus('error')
+          return
+        }
+      }
+
       const rec = initRecognition()
       if (!rec) return
       recognitionRef.current = rec
       transcriptRef.current = ''
       finalTranscriptRef.current = ''
-      rec.start()
+      setFinalTranscript('')
+
+      // Start recognition — wrap in try/catch for mobile 'InvalidStateError'
+      try {
+        rec.start()
+      } catch (startErr: any) {
+        // InvalidStateError: recognition already started — abort and retry once
+        if (startErr?.name === 'InvalidStateError') {
+          try { rec.abort() } catch {}
+          await new Promise<void>((resolve) => setTimeout(resolve, 300))
+          try { rec.start() } catch {}
+        } else {
+          throw startErr
+        }
+      }
+
       await startAnalyser()
     } catch (e: any) {
-      setError('Could not start microphone. Please try again.')
+      setError('Could not start microphone. Please tap the mic button again.')
       setStatus('error')
     }
-  }, [isSupported, initRecognition, stopSpeaking, startAnalyser])
+  }, [isSupported, hasPermission, initRecognition, stopSpeaking, startAnalyser])
 
   // ── Stop listening ────────────────────────────────────────────
   const stopListening = useCallback(() => {
@@ -720,9 +795,29 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
       return true
     } catch {
       setHasPermission(false)
+      setError('Microphone access denied. Please enable it in your browser settings.')
       return false
     }
   }, [])
+
+  // ── Proactively check/request mic permission on startup ──────
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !isSupported) return
+    // Use the Permissions API if available (non-blocking)
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: 'microphone' as PermissionName })
+        .then((result) => {
+          if (result.state === 'granted') setHasPermission(true)
+          else if (result.state === 'denied') setHasPermission(false)
+          // 'prompt' means we leave it null until user taps mic
+          result.addEventListener('change', () => {
+            if (result.state === 'granted') setHasPermission(true)
+            else if (result.state === 'denied') setHasPermission(false)
+          })
+        })
+        .catch(() => {/* permissions API not available — leave null */})
+    }
+  }, [isSupported])
 
   const clearHistory = useCallback(() => {
     setMessages([])
