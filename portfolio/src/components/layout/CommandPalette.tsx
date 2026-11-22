@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ArrowRight, Hash, ExternalLink, Github, Linkedin, Twitter, Instagram, Code2, X, Music, Volume2 } from 'lucide-react'
+import { Search, ArrowRight, Hash, ExternalLink, Github, Linkedin, Twitter, Instagram, Code2, X, Music, Volume2, FileText } from 'lucide-react'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { navItems, projects, personalInfo } from '@/data/portfolio'
 import { useCommandPalette, useSound } from '@/hooks'
@@ -117,9 +117,9 @@ export default function CommandPalette() {
       },
       {
         id: 'action-resume',
-        label: 'Download Resume',
-        description: 'Get PDF resume',
-        icon: 'external',
+        label: 'View Resume (PDF)',
+        description: 'Open PDF resume',
+        icon: 'file-text',
         shortcut: undefined,
         action: () => { window.open(personalInfo.resumeUrl, '_blank'); playClick() },
         category: 'action' as const,
@@ -190,6 +190,7 @@ export default function CommandPalette() {
       case 'threads': return <ThreadsIcon size={16} className={cls} />
       case 'code': return <Code2 className={cls} />
       case 'external': return <ExternalLink className={cls} />
+      case 'file-text': return <FileText className={cls} />
       case 'music': return <Music className={cls} />
       case 'volume': return <Volume2 className={cls} />
       default: return <Hash className={cls} />

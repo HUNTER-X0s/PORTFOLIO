@@ -107,6 +107,11 @@ chatbot.log
 ehthumbs.db
 Thumbs.db
 desktop.ini
+temp_*
+Untitled*
+*_backup*
+*.bak
+portfolio/public/textures/space/milky_way*.png
 
 # IDEs and Editors
 .idea/

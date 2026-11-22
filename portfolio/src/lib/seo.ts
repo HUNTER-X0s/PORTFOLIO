@@ -135,7 +135,7 @@ export const SEO_CONFIG = {
   author: personalInfo.name,
   twitter: '@Anurag_hunter07',
   github: 'HUNTER-X0s',
-  linkedin: 'anurag-swain-cse07',
+  linkedin: 'anurag-swain-dev',
   locale: 'en_IN',
   ogImage: absoluteUrl('/opengraph-image'),
 }
@@ -174,13 +174,11 @@ export function generateMetadata(overrides?: MetadataOverrides): Metadata {
     },
     icons: {
       icon: [
-        { url: '/icon.svg', type: 'image/svg+xml' },
-        { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-        { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+        { url: '/icon.svg?v=2026', type: 'image/svg+xml' },
       ],
-      shortcut: ['/icon.svg'],
+      shortcut: ['/icon.svg?v=2026'],
       apple: [
-        { url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+        { url: '/icon.svg?v=2026' },
       ],
     },
     manifest: '/manifest.webmanifest',
@@ -518,7 +516,7 @@ export const faqSchema = {
       name: 'How can I contact or hire Anurag Swain?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'You can contact Anurag Swain directly via the contact form on his portfolio at https://anuragswain.vercel.app, via email at anurag.swain35@gmail.com, or through LinkedIn at https://www.linkedin.com/in/anurag-swain-cse07/.',
+        text: 'You can contact Anurag Swain directly via the contact form on his portfolio at https://anuragswain.vercel.app, via email at anurag.swain35@gmail.com, or through LinkedIn at https://www.linkedin.com/in/anurag-swain-dev/.',
       },
     },
     {
@@ -542,7 +540,7 @@ export const faqSchema = {
       name: 'Where can I find Anurag Swain online?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Anurag Swain can be found at: Portfolio: https://anuragswain.vercel.app | GitHub: https://github.com/HUNTER-X0s | LinkedIn: https://www.linkedin.com/in/anurag-swain-cse07/ | Email: anurag.swain35@gmail.com',
+        text: 'Anurag Swain can be found at: Portfolio: https://anuragswain.vercel.app | GitHub: https://github.com/HUNTER-X0s | LinkedIn: https://www.linkedin.com/in/anurag-swain-dev/ | Email: anurag.swain35@gmail.com',
       },
     },
   ],

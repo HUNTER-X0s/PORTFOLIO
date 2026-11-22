@@ -60,6 +60,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${syne.variable} ${plusJakarta.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <link rel="icon" href="/icon.svg?v=2026" type="image/svg+xml" sizes="any" />
+        <link rel="shortcut icon" href="/icon.svg?v=2026" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/icon.svg?v=2026" />
+      </head>
       <body className="font-body antialiased">
         <script
           type="application/ld+json"

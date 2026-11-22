@@ -11,6 +11,10 @@ import logging
 import re
 from typing import Optional
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+os.environ["ANONYMIZED_TELEMETRY"] = "False"
 
 import chromadb
 from chromadb.config import Settings
@@ -551,10 +555,11 @@ INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed 
         if use_cache and not history:
             cached = self._query_cache.get(cache_key)
             if cached and isinstance(cached, dict) and cached.get("reply"):
-                reply_txt = cached["reply"]
-                if not any(err in reply_txt for err in ["GROQ_API_KEY", "Groq Error", "model_not_found", "invalid_request_error"]):
-                    logger.info(f"📦 Cache hit for query: {query[:50]}...")
-                    return {**cached, "cached": True}
+                if cached.get("mode") != "synthesis":
+                    reply_txt = cached["reply"]
+                    if not any(err in reply_txt for err in ["GROQ_API_KEY", "Groq Error", "model_not_found", "invalid_request_error"]):
+                        logger.info(f"📦 Cache hit for query: {query[:50]}...")
+                        return {**cached, "cached": True}
 
         # 1. Detect complexity for adaptive response length
         complexity = self._detect_query_complexity(query)
@@ -597,7 +602,7 @@ INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed 
             "cached": False,
         }
 
-        if use_cache and not history and reply.strip() and not any(err in reply for err in ["GROQ_API_KEY", "Groq Error", "model_not_found"]):
+        if use_cache and not history and reply.strip() and mode != "synthesis" and not any(err in reply for err in ["GROQ_API_KEY", "Groq Error", "model_not_found"]):
             self._query_cache.set(cache_key, result, expire=3600)
 
         return result
@@ -623,12 +628,13 @@ INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed 
         if use_cache and not history:
             cached = self._query_cache.get(cache_key)
             if cached and isinstance(cached, dict) and cached.get("reply"):
-                reply_txt = cached["reply"]
-                if not any(err in reply_txt for err in ["GROQ_API_KEY", "Groq Error", "model_not_found"]):
-                    logger.info(f"📦 Cache hit for query: {query[:50]}...")
-                    yield f"data: {json.dumps({'text': cached['reply']})}\n\n"
-                    yield f"data: {json.dumps({'done': True, 'mode': cached.get('mode', 'groq'), 'sources': cached['sources'], 'confidence': cached['confidence'], 'cached': True})}\n\n"
-                    return
+                if cached.get("mode") != "synthesis":
+                    reply_txt = cached["reply"]
+                    if not any(err in reply_txt for err in ["GROQ_API_KEY", "Groq Error", "model_not_found"]):
+                        logger.info(f"📦 Cache hit for query: {query[:50]}...")
+                        yield f"data: {json.dumps({'text': cached['reply']})}\n\n"
+                        yield f"data: {json.dumps({'done': True, 'mode': cached.get('mode', 'groq'), 'sources': cached['sources'], 'confidence': cached['confidence'], 'cached': True})}\n\n"
+                        return
 
         # 1. Detect complexity for adaptive streaming
         complexity = self._detect_query_complexity(query)
@@ -668,7 +674,7 @@ INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed 
             "cached": False,
         }
 
-        if use_cache and not history and full_reply.strip():
+        if use_cache and not history and full_reply.strip() and reply_mode != "synthesis":
             self._query_cache.set(cache_key, result, expire=3600)
             
         yield f"data: {json.dumps({'done': True, 'mode': reply_mode, 'sources': sources, 'confidence': round(avg_confidence, 3), 'cached': False})}\n\n"
@@ -1001,10 +1007,9 @@ INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed 
         # ── 1. Try Groq (high-speed cloud LLM) ────────────────────────
         if api_key and not api_key.startswith("your_"):
             models_to_try = [
-                os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
-                "openai/gpt-oss-120b",
-                "groq/compound-mini",
+                os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"),
                 "qwen/qwen3.8-27b",
+                "openai/gpt-oss-120b",
                 "openai/gpt-oss-20b",
             ]
             for model_name in models_to_try:
@@ -1113,10 +1118,10 @@ INSTRUCTION: {response_hint} Answer intelligently and directly in clean pointed 
         # ── 1. Stream from Groq (high-speed cloud LLM) ────────────────────
         if api_key and not api_key.startswith("your_"):
             models_to_try = [
-                os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
-                "groq/compound-mini",
-                "qwen/qwen3.6-27b",
+                os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"),
                 "qwen/qwen3.8-27b",
+                "openai/gpt-oss-120b",
+                "openai/gpt-oss-20b",
             ]
             for model_name in models_to_try:
                 try:

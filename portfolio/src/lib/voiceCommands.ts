@@ -127,7 +127,7 @@ export const VOICE_COMMANDS: VoiceCommand[] = [
   // ── Open LinkedIn
   {
     patterns: [/(?:open|go to|show)\s+(?:his\s+)?linkedin$/i],
-    action: () => ({ type: 'openLink', url: 'https://linkedin.com/in/anurag-swain-cse07' }),
+    action: () => ({ type: 'openLink', url: 'https://www.linkedin.com/in/anurag-swain-dev/' }),
     description: 'Open LinkedIn profile',
     example: 'Open LinkedIn',
   },

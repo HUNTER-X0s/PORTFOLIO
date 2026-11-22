@@ -23,7 +23,7 @@ export default function Analytics() {
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           <motion.div
             initial={{ opacity: 0, y: 24 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={{ opacity: 1, y: 0 }}
             className="section-header"
           >
             <p className="section-label">07 / Analytics & Certifications</p>
@@ -47,7 +47,7 @@ export default function Analytics() {
                     <motion.div
                       key={cert.id}
                       initial={{ opacity: 0, y: 20 }}
-                      animate={inView ? { opacity: 1, y: 0 } : {}}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.1 }}
                       className="glass-card p-5 flex items-start gap-4"
                     >
@@ -135,7 +135,7 @@ export default function Analytics() {
                       <div className="flex-1 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
                         <motion.div
                           initial={{ scaleX: 0 }}
-                          animate={inView ? { scaleX: lang.percentage / 100 } : {}}
+                          animate={{ scaleX: lang.percentage / 100 }}
                           transition={{ delay: 0.3 + i * 0.08, duration: 1, ease: [0.19, 1, 0.22, 1] }}
                           className="h-full rounded-full origin-left"
                           style={{ background: lang.color }}

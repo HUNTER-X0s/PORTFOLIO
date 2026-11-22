@@ -27,8 +27,8 @@ export default function About() {
         <motion.div
           ref={ref as React.RefObject<HTMLDivElement>}
           variants={containerVariants}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          initial={false}
+          animate="visible"
         >
           {/* Header */}
           <motion.div variants={itemVariants} className="section-header">
@@ -38,6 +38,9 @@ export default function About() {
                 Who <span className="text-gradient">I Am</span>
               </h2>
             </Dynamic3DText>
+            <p className="section-subtitle">
+              Software engineer &amp; AI builder passionate about high-performance computing, sovereign architectures, and intelligent systems.
+            </p>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-start">
@@ -57,13 +60,13 @@ export default function About() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 </div>
                 <div className="text-center sm:text-left flex-1 pt-2">
-                  <h3 className="font-display text-2xl font-bold text-text-primary mb-2">
+                  <h3 className="font-display text-2xl sm:text-3xl font-bold text-text-primary mb-2">
                     {personalInfo.name}
                   </h3>
-                  <p className="text-sm font-mono text-cyan uppercase tracking-widest mb-3">
+                  <p className="text-xs sm:text-sm font-mono text-cyan uppercase tracking-widest mb-3 font-semibold">
                     {personalInfo.title}
                   </p>
-                  <p className="text-text-secondary leading-relaxed text-sm">
+                  <p className="text-text-secondary leading-relaxed text-base sm:text-lg">
                     {personalInfo.shortBio}
                   </p>
                 </div>
@@ -80,7 +83,7 @@ export default function About() {
                 , Odisha.
               </motion.p>
 
-              <motion.p variants={itemVariants} className="text-text-secondary leading-relaxed">
+              <motion.p variants={itemVariants} className="text-text-secondary text-base sm:text-lg leading-relaxed">
                 I build things at the intersection of{' '}
                 <span className="text-violet font-medium">AI engineering</span> and{' '}
                 <span className="text-neon-orange font-medium">full-stack development</span> — from
@@ -89,7 +92,7 @@ export default function About() {
                 and experiences that feel like magic to users.
               </motion.p>
 
-              <motion.p variants={itemVariants} className="text-text-secondary leading-relaxed">
+              <motion.p variants={itemVariants} className="text-text-secondary text-base sm:text-lg leading-relaxed">
                 I&apos;ve completed AI, web, and data-focused internships, shipped production applications, and lead the
                 AI/ML division of my college tech club. I&apos;m currently seeking{' '}
                 <span className="text-cyan font-medium">SDE / AI / ML roles</span> where I can work
@@ -113,8 +116,8 @@ export default function About() {
                         <Icon size={15} style={{ color }} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs text-text-secondary">{label}</p>
-                        <p className="text-sm font-medium text-text-primary truncate">{value}</p>
+                        <p className="text-xs sm:text-sm font-mono text-text-secondary">{label}</p>
+                        <p className="text-sm sm:text-base font-semibold text-text-primary truncate">{value}</p>
                       </div>
                     </div>
                   </Dynamic3DCard>
@@ -127,10 +130,10 @@ export default function About() {
               {/* Currently doing */}
               <motion.div variants={itemVariants}>
                 <Dynamic3DCard intensity={10} depth={18} glowColor="rgba(0, 229, 255, 0.2)">
-                  <div className="glass-card p-6 space-y-4">
+                  <div className="glass-card p-5 sm:p-6 space-y-4">
                     <div className="flex items-center gap-2">
-                      <Cpu size={16} className="text-cyan" />
-                      <h3 className="font-display font-semibold text-text-primary">Current Focus</h3>
+                      <Cpu size={18} className="text-cyan" />
+                      <h3 className="font-display font-bold text-xl sm:text-2xl text-text-primary">Current Focus</h3>
                     </div>
                     <div className="space-y-3">
                       {[
@@ -148,24 +151,24 @@ export default function About() {
                         },
                         {
                           title: 'Open Source',
-                          desc: '42 public repos · 234 stars · 1,847 commits',
+                          desc: '29 public repos · 250+ commits · Active Builder',
                           badge: 'Active',
                           color: '#00FF87',
                         },
                       ].map((item) => (
                         <div
                           key={item.title}
-                          className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.12] transition-colors"
+                          className="flex items-start gap-3 p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.12] transition-colors"
                         >
                           <div
-                            className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0"
+                            className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
                             style={{ background: item.color, boxShadow: `0 0 6px ${item.color}` }}
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-sm font-medium text-text-primary">{item.title}</span>
+                              <span className="text-base sm:text-lg font-semibold text-text-primary">{item.title}</span>
                               <span
-                                className="text-xs px-2 py-0.5 rounded-full font-mono"
+                                className="text-xs sm:text-sm px-2.5 py-0.5 rounded-full font-mono font-medium"
                                 style={{
                                   background: `${item.color}15`,
                                   border: `1px solid ${item.color}25`,
@@ -175,7 +178,7 @@ export default function About() {
                                 {item.badge}
                               </span>
                             </div>
-                            <p className="text-xs text-text-secondary mt-0.5">{item.desc}</p>
+                            <p className="text-sm sm:text-base text-text-secondary mt-1 leading-relaxed">{item.desc}</p>
                           </div>
                         </div>
                       ))}
@@ -187,37 +190,47 @@ export default function About() {
               {/* Languages & Hobbies */}
               <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <Dynamic3DCard intensity={12} depth={16} glowColor="rgba(124, 58, 237, 0.2)">
-                  <div className="glass-card p-4 sm:p-5 h-full">
-                    <p className="text-xs font-mono text-text-secondary mb-3 uppercase tracking-widest">
-                      Languages
-                    </p>
-                    <div className="space-y-2.5">
-                      {personalInfo.languages.map((lang) => (
-                        <div key={lang.language} className="lang-row">
-                          <span className="lang-name">{lang.language}</span>
-                          <span className="lang-badge">
-                            {lang.level}
-                          </span>
-                        </div>
-                      ))}
+                  <div className="glass-card p-5 sm:p-6 h-full flex flex-col justify-between">
+                    <div>
+                      <p className="text-xs sm:text-sm font-mono text-cyan uppercase tracking-widest mb-1.5 font-semibold">
+                        Communication
+                      </p>
+                      <h3 className="font-display font-bold text-xl sm:text-2xl text-text-primary mb-3">
+                        Languages
+                      </h3>
+                      <div className="space-y-2.5">
+                        {personalInfo.languages.map((lang) => (
+                          <div key={lang.language} className="lang-row">
+                            <span className="lang-name text-base sm:text-[17px] font-medium">{lang.language}</span>
+                            <span className="lang-badge text-xs sm:text-sm px-2.5 py-0.5 rounded-full font-mono">
+                              {lang.level}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </Dynamic3DCard>
 
                 <Dynamic3DCard intensity={12} depth={16} glowColor="rgba(0, 255, 135, 0.2)">
-                  <div className="glass-card p-4 sm:p-5 h-full">
-                    <p className="text-xs font-mono text-text-secondary mb-3 uppercase tracking-widest">
-                      Beyond Code
-                    </p>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                      {personalInfo.hobbies.map((hobby) => (
-                        <span
-                          key={hobby}
-                          className="text-xs px-2.5 py-1 rounded-full text-text-secondary border border-white/[0.06] bg-white/[0.02] hover:border-cyan/30 hover:text-text-primary hover:shadow-[0_0_10px_rgba(0,229,255,0.2)] transition-all cursor-default"
-                        >
-                          {hobby}
-                        </span>
-                      ))}
+                  <div className="glass-card p-5 sm:p-6 h-full flex flex-col justify-between">
+                    <div>
+                      <p className="text-xs sm:text-sm font-mono text-neon-green uppercase tracking-widest mb-1.5 font-semibold">
+                        Interests
+                      </p>
+                      <h3 className="font-display font-bold text-xl sm:text-2xl text-text-primary mb-3">
+                        Beyond Code
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {personalInfo.hobbies.map((hobby) => (
+                          <span
+                            key={hobby}
+                            className="text-xs sm:text-sm px-3 py-1 rounded-full font-mono font-medium text-text-secondary border border-white/[0.08] bg-white/[0.03] hover:border-cyan/30 hover:text-text-primary hover:shadow-[0_0_10px_rgba(0,229,255,0.2)] transition-all cursor-default"
+                          >
+                            {hobby}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </Dynamic3DCard>
@@ -226,9 +239,9 @@ export default function About() {
               {/* Tagline */}
               <motion.div variants={itemVariants}>
                 <Dynamic3DCard intensity={14} depth={20} glowColor="rgba(0, 229, 255, 0.25)">
-                  <div className="glass-card p-5 text-center relative overflow-hidden">
+                  <div className="glass-card p-5 sm:p-6 text-center relative overflow-hidden">
                     <div className="absolute inset-0 opacity-5" style={{ background: 'radial-gradient(circle at center, #00E5FF, transparent 70%)' }} />
-                    <p className="font-display text-xl font-bold text-gradient relative z-10 text-3d-interactive">
+                    <p className="font-display text-xl sm:text-2xl font-bold text-gradient relative z-10 text-3d-interactive">
                       &ldquo;{personalInfo.tagline}&rdquo;
                     </p>
                   </div>

@@ -14,6 +14,7 @@ export default function AmbientSound() {
   const currentTrackIndex = usePortfolioStore((s) => s.currentTrackIndex)
   const volume = usePortfolioStore((s) => s.volume)
   const nextTrack = usePortfolioStore((s) => s.nextTrack)
+  const customTracks = usePortfolioStore((s) => s.customTracks)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const currentTrackRef = useRef<number>(currentTrackIndex)
@@ -53,7 +54,11 @@ export default function AmbientSound() {
     // Global trigger for direct click gestures
     ;(window as any).__startBackgroundMusic = (trackIndex?: number) => {
       const idx = typeof trackIndex === 'number' ? trackIndex : currentTrackRef.current
-      const track = musicPlaylist[idx] || musicPlaylist[0]
+      const currentList = [
+        ...usePortfolioStore.getState().customTracks,
+        ...musicPlaylist,
+      ]
+      const track = currentList[idx] || currentList[0]
       if (track) {
         audio.src = track.src
         audio.volume = volume
@@ -83,11 +88,18 @@ export default function AmbientSound() {
     if (!audio) return
     if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current)
 
-    const track = musicPlaylist[currentTrackIndex] || musicPlaylist[0]
+    const playlist = [...customTracks, ...musicPlaylist]
+    const track = playlist[currentTrackIndex] || playlist[0]
 
     if (musicEnabled && track) {
       // If source changed or audio paused, update source and play
-      const targetSrc = window.location.origin + track.src
+      const isAbsoluteOrBlob =
+        track.src.startsWith('blob:') ||
+        track.src.startsWith('http://') ||
+        track.src.startsWith('https://') ||
+        track.src.startsWith('data:')
+
+      const targetSrc = isAbsoluteOrBlob ? track.src : window.location.origin + track.src
       if (audio.src !== targetSrc) {
         audio.src = track.src
         audio.load()

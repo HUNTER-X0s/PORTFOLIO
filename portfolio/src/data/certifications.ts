@@ -44,6 +44,40 @@ export interface Certification {
 // ALL CERTIFICATIONS
 // ============================================================
 export const certifications: Certification[] = [
+  // ── 0. NATIONAL INFORMATICS CENTRE — GOVT OF INDIA ────────
+  {
+    id: 'cert-nic-gov-2026',
+    title: 'National Informatics Centre (NIC) Internship Certificate — Govt of India',
+    issuer: 'National Informatics Centre, Govt of India',
+    issuerShortName: 'NIC / Govt of India',
+    issuerLogo: '/images/logos/nic.png',
+    issuerColor: '#006699',
+    issueDate: 'Aug 2026',
+    issueDateISO: '2026-08',
+    expiryDate: null,
+    doesExpire: false,
+    credentialId: 'NIC-ODISHA-2026-AI',
+    credentialUrl: 'https://github.com/HUNTER-X0s/CERTIFICATIONS',
+    fileUrl: '/certificates/nic-internship-certificate.pdf',
+    previewUrl: '/certificates/previews/nic-internship.jpg',
+    skills: [
+      'Nginx', 'Recharts', 'SQLite', 'Three.js', 'FastAPI', 'React Vite',
+      'Lucide React', 'CatBoost', 'XGBoost', 'LightGBM', 'Python', 'Predictive Analytics'
+    ],
+    category: 'ai_ml',
+    featured: true,
+    priority: 1,
+    badge: '🏛️',
+    description: 'Developed an AI-powered Liquor Production Forecasting Platform for National Informatics Centre (NIC) and Odisha State Excise Department.',
+    linkedProject: {
+      name: 'AI-Powered Liquor Production Forecasting Platform',
+      description: 'Government-grade full-stack forecasting decision system utilizing CatBoost, XGBoost, LightGBM, FastAPI, SQLite, Nginx, React Vite, and Recharts.',
+      techStack: ['Nginx', 'Recharts', 'SQLite', 'Three.js', 'FastAPI', 'React Vite', 'Lucide React', 'CatBoost', 'XGBoost', 'LightGBM'],
+      impact: 'Modernized Odisha State Excise monthly bottling quota planning with predictive gradient boosting analytics.'
+    },
+    roleRelevance: ['ai_engineer', 'ml_engineer', 'fullstack', 'data_scientist', 'backend']
+  },
+
   // ── 1. INFOSYS — AI INTERNSHIP ──────────────────────────
   {
     id: 'cert-infosys-ai-2025',
@@ -61,21 +95,20 @@ export const certifications: Certification[] = [
     fileUrl: '/certificates/infosys-ai-internship-2025.pdf',
     previewUrl: '/certificates/previews/infosys-ai-internship.jpg',
     skills: [
-      'Artificial Intelligence', 'Machine Learning', 'Natural Language Processing',
-      'Python', 'Conversational AI', 'LLM APIs', 'Dialogue Management',
-      'Intent Classification', 'Prompt Engineering',
+      'Artificial Intelligence', 'Machine Learning', 'Random Forest',
+      'Support Vector Machines (SVM)', 'Neural Networks', 'OCR', 'HuggingFace', 'LangChain',
+      'Python', 'REST APIs', 'FastAPI', 'Scikit-Learn'
     ],
     category: 'ai_ml',
     featured: true,
     priority: 1,
     badge: '🤖',
-    description: 'Completed 3-month AI internship at one of the world\'s largest IT companies, building a production NLP chatbot with multi-turn dialogue management.',
+    description: 'Completed 3-month AI internship at Infosys, developing an AI-Powered Heart Disease Prediction System with OCR medical data extraction.',
     linkedProject: {
-      name: 'AI Chat Bot',
-      description: 'Multi-turn conversational AI chatbot with NLP intent classification, entity recognition, and LLM-powered response generation, built during the Infosys Virtual Internship 2.0.',
-      techStack: ['Python', 'NLP', 'LLM APIs', 'Machine Learning', 'Intent Classification'],
-      githubUrl: 'https://github.com/HUNTER-X0s/AI_CHAT_BOT',
-      impact: 'Production-ready NLP chatbot receiving ⭐1 community star; demonstrated full conversational AI pipeline from intent recognition to contextual response generation.',
+      name: 'AI-Powered Heart Disease Prediction System & Medical OCR',
+      description: 'Clinical risk prediction web platform combining Random Forest, SVM & Neural Networks with automated OCR medical document extraction and authenticated REST APIs.',
+      techStack: ['Python', 'Machine Learning', 'Random Forest', 'SVM', 'Neural Networks', 'OCR', 'HuggingFace', 'LangChain', 'REST APIs'],
+      impact: 'End-to-end clinical AI application combining OCR extraction with multi-model predictive ML inference, eliminating manual biometric input errors by ~85%.',
     },
     roleRelevance: ['ai_engineer', 'ml_engineer', 'dl_engineer', 'fullstack'],
   },
@@ -333,6 +366,9 @@ export const certsByRoleForResume: Record<string, string[]> = {
   frontend:      ['cert-eisystems-webdev-2025', 'cert-infosys-ai-2025'],
   backend:       ['cert-eisystems-webdev-2025', 'cert-infosys-ai-2025', 'cert-edunet-ibm-cloud-2025'],
   ai_engineer:   ['cert-infosys-ai-2025', 'cert-edunet-ibm-cloud-2025', 'cert-aicte-ev-2025', 'cert-microgenesis-dl-2025'],
+  devops:        ['cert-edunet-ibm-cloud-2025', 'cert-eisystems-webdev-2025', 'cert-infosys-ai-2025'],
+  networking:    ['cert-edunet-ibm-cloud-2025', 'cert-eisystems-webdev-2025'],
+  cybersecurity: ['cert-edunet-ibm-cloud-2025', 'cert-infosys-ai-2025'],
   ml_engineer:   ['cert-aicte-ev-2025', 'cert-microgenesis-dl-2025', 'cert-infosys-ai-2025', 'cert-shadowfox-ds-2025'],
   dl_engineer:   ['cert-microgenesis-dl-2025', 'cert-infosys-ai-2025', 'cert-edunet-ibm-cloud-2025'],
   data_scientist:['cert-aicte-ev-2025', 'cert-shadowfox-ds-2025', 'cert-edunet-ai-analytics-2025'],

@@ -16,6 +16,7 @@ import { VoiceWaveform, VoiceOrb } from './VoiceWaveform'
 import { VOICE_SUGGESTIONS } from '@/lib/voiceCommands'
 import { cn } from '@/lib/utils'
 import { useSound } from '@/hooks'
+import PhantomIconUI from './PhantomIconUI'
 
 // ── Status label ──────────────────────────────────────────────
 const STATUS_LABEL: Record<string, string> = {
@@ -223,6 +224,7 @@ export default function VoiceAssistant() {
   const [isOpen,    setIsOpen]    = useState(false)
   const [muteVoice, setMuteVoice] = useState(false)
   const [showTips,  setShowTips]  = useState(false)
+  const [isBtnHovered, setIsBtnHovered] = useState(false)
 
   const { playClick, playJarvisChime } = useSound()
 
@@ -270,53 +272,70 @@ export default function VoiceAssistant() {
 
   return (
     <>
-      {/* ── FAB ─────────────────────────────────────────────── */}
-      <motion.button
-        onClick={() => {
-          const next = !isOpen
-          setIsOpen(next)
-          if (next) {
-            playJarvisChime()
-          } else {
-            playClick()
-          }
+      {/* ── Floating Voice Assistant Trigger (Jarvis with Phantom Multicolor Silk Vortex) ─────────── */}
+      <motion.div
+        animate={isOpen ? { y: 0 } : { y: [0, -8, 0] }}
+        transition={{
+          repeat: isOpen ? 0 : Infinity,
+          duration: 3.4,
+          ease: 'easeInOut',
+          delay: 0.2,
         }}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.93 }}
-        title="Jarvis Voice Mode"
-        className="fixed bottom-3 left-3 sm:bottom-5 sm:left-5 md:bottom-6 md:left-6 z-[70] w-12 h-12 sm:w-13 sm:h-13 md:w-14 md:h-14 rounded-2xl flex items-center justify-center transition-transform"
-        style={{
-          background: 'linear-gradient(135deg, rgba(0,229,255,0.18), rgba(124,58,237,0.18))',
-          border: '1px solid rgba(0,229,255,0.38)',
-          backdropFilter: 'blur(16px)',
-          boxShadow: isOpen
-            ? '0 8px 32px rgba(0,229,255,0.25)'
-            : '0 8px 32px rgba(0,229,255,0.15)',
-        }}
+        className="fixed bottom-3 left-3 sm:bottom-5 sm:left-5 md:bottom-6 md:left-6 z-[70]"
       >
-        <AnimatePresence mode="wait">
-          {isOpen
-            ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
-                <X size={18} className="text-cyan-400 sm:w-5 sm:h-5" />
-              </motion.div>
-            : <motion.div key="m" initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.7, opacity: 0 }}>
-                <Mic size={18} className={cn('sm:w-5 sm:h-5', isActive ? 'text-violet-400' : 'text-cyan-400')} />
-              </motion.div>
-          }
-        </AnimatePresence>
+        <motion.button
+          onClick={() => {
+            const next = !isOpen
+            setIsOpen(next)
+            if (next) {
+              playJarvisChime()
+            } else {
+              playClick()
+            }
+          }}
+          onMouseEnter={() => setIsBtnHovered(true)}
+          onMouseLeave={() => setIsBtnHovered(false)}
+          whileHover={{ scale: 1.14 }}
+          whileTap={{ scale: 0.9 }}
+          title="Jarvis AI Voice Assistant — Phantom Mode"
+          className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all cursor-pointer group bg-transparent border-0 outline-none p-0 focus:outline-none"
+        >
+          {/* Phantom Fluid Multicolor Silk Ribbon Vortex Ring */}
+          <PhantomIconUI isHovered={isBtnHovered} isActive={isOpen || isActive} />
 
-        {/* Pulse indicator matching ChatBot */}
-        {!isOpen && (
-          <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-cyan-400 border-2 border-[#0A0A18] animate-pulse" />
-        )}
-        
-        {/* Label */}
-        {!isOpen && (
-          <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 text-[7px] sm:text-[8px] font-mono text-white/60 whitespace-nowrap tracking-wider">
-            JARVIS
-          </div>
-        )}
-      </motion.button>
+          <AnimatePresence mode="wait">
+            {isOpen ? (
+              <motion.div
+                key="x"
+                initial={{ rotate: -90, scale: 0.6, opacity: 0 }}
+                animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                exit={{ rotate: 90, scale: 0.6, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="z-10 flex items-center justify-center"
+              >
+                <X size={20} className="text-white sm:w-5 sm:h-5 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="m"
+                initial={{ scale: 0.6, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.6, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="z-10 flex items-center justify-center"
+              >
+                <Mic
+                  size={20}
+                  className={cn(
+                    'sm:w-5 sm:h-5 group-hover:scale-115 transition-transform duration-200 filter drop-shadow-[0_0_10px_rgba(0,229,255,0.95)] drop-shadow-[0_0_16px_rgba(139,92,246,0.8)]',
+                    isActive ? 'text-violet-300 animate-pulse' : 'text-white'
+                  )}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
+      </motion.div>
 
       {/* ── Expanded Panel ───────────────────────────────────── */}
       <AnimatePresence>

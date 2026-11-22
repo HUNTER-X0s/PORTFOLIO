@@ -124,15 +124,27 @@ export default function CustomCursor() {
     }
   }, []) // Empty dependency array ensures listeners are never torn down
 
-  const outerSize = cursorVariant === 'hover' ? 46 : cursorVariant === 'click' ? 26 : 34
-  const innerSize = cursorVariant === 'click' ? 6 : 5
-  const outerBorderColor =
-    cursorVariant === 'hover'
-      ? 'rgba(0, 229, 255, 0.95)'
-      : cursorVariant === 'click'
-      ? 'rgba(255, 107, 43, 0.95)'
-      : 'rgba(0, 229, 255, 0.75)'
-  const innerColor = cursorVariant === 'click' ? '#FF6B2B' : '#00E5FF'
+  const isHover = cursorVariant === 'hover'
+  const isClick = cursorVariant === 'click'
+
+  const outerSize = isHover ? 52 : isClick ? 28 : 38
+  const innerSize = isHover ? 8 : isClick ? 6 : 6
+  const outerBorderColor = isHover
+    ? 'rgba(0, 229, 255, 0.95)'
+    : isClick
+    ? 'rgba(255, 107, 43, 0.95)'
+    : 'rgba(0, 229, 255, 0.80)'
+  const innerColor = isClick ? '#FF6B2B' : '#00E5FF'
+
+  const outerGlow = isHover
+    ? '0 0 24px rgba(0, 229, 255, 0.75), inset 0 0 12px rgba(0, 229, 255, 0.35)'
+    : isClick
+    ? '0 0 20px rgba(255, 107, 43, 0.75), inset 0 0 10px rgba(255, 107, 43, 0.35)'
+    : '0 0 16px rgba(0, 229, 255, 0.45), inset 0 0 8px rgba(0, 229, 255, 0.20)'
+
+  const innerGlow = isClick
+    ? '0 0 12px #FF6B2B, 0 0 24px rgba(255, 107, 43, 0.8)'
+    : '0 0 10px #00E5FF, 0 0 20px rgba(0, 229, 255, 0.75)'
 
   if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
     return null
@@ -140,7 +152,7 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Outer ring */}
+      {/* Outer glowing ring */}
       <div
         ref={outerRef}
         id="custom-cursor-outer"
@@ -149,14 +161,12 @@ export default function CustomCursor() {
           width: outerSize,
           height: outerSize,
           border: `1.5px solid ${outerBorderColor}`,
-          boxShadow: cursorVariant === 'hover'
-            ? '0 0 20px rgba(0,229,255,0.6), inset 0 0 10px rgba(0,229,255,0.2)'
-            : '0 0 10px rgba(0,229,255,0.3)',
-          transition: 'width 0.15s ease, height 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease',
+          boxShadow: outerGlow,
+          transition: 'width 0.16s cubic-bezier(0.16, 1, 0.3, 1), height 0.16s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.16s ease, box-shadow 0.16s ease, opacity 0.2s ease',
         }}
       />
 
-      {/* Inner dot */}
+      {/* Inner glowing precision core */}
       <div
         ref={innerRef}
         id="custom-cursor-inner"
@@ -165,8 +175,8 @@ export default function CustomCursor() {
           width: innerSize,
           height: innerSize,
           background: innerColor,
-          boxShadow: `0 0 10px ${innerColor}, 0 0 20px ${innerColor}`,
-          transition: 'width 0.12s ease, height 0.12s ease, background 0.12s ease, opacity 0.2s ease',
+          boxShadow: innerGlow,
+          transition: 'width 0.12s ease, height 0.12s ease, background 0.12s ease, box-shadow 0.12s ease, opacity 0.2s ease',
         }}
       />
     </>

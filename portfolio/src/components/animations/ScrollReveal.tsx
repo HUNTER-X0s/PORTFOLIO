@@ -55,8 +55,7 @@ export function StaggerReveal({ children, className, delay = 0 }: StaggerRevealP
         },
       }}
       initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: '180px 0px 180px 0px', amount: 'some' }}
+      animate="show"
       className={className}
     >
       {children}

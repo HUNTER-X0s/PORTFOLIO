@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Music, Volume2, VolumeX, X, Sparkles, Disc3 } from 'lucide-react'
+import { Music, Volume2, VolumeX, X, Sparkles } from 'lucide-react'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
-import { musicPlaylist } from '@/data/music'
+import { musicPlaylist, detectMusicMetadata } from '@/data/music'
 import { useSound } from '@/hooks'
 import { cn } from '@/lib/utils'
 
@@ -15,11 +15,13 @@ export default function MusicModal() {
     setMusicEnabled,
     currentTrackIndex,
     setCurrentTrackIndex,
+    customTracks,
   } = usePortfolioStore()
 
   const { playClick } = useSound()
   const [visible, setVisible] = useState(false)
   const [selectedIdx, setSelectedIdx] = useState<number>(0)
+  const allTracks = [...customTracks, ...musicPlaylist]
 
   useEffect(() => {
     // Show promptly on page mount (300ms)
@@ -85,9 +87,10 @@ export default function MusicModal() {
             {/* Header */}
             <div className="flex items-start justify-between mb-3 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="relative w-10 h-10 rounded-xl bg-cyan/15 border border-cyan/30 flex items-center justify-center shadow-[0_0_15px_rgba(0,229,255,0.3)]">
+                <div className="relative w-10 h-10 rounded-xl bg-cyan/15 border border-cyan/30 flex items-center justify-center shadow-[0_0_15px_rgba(0,229,255,0.3)] flex-shrink-0">
                   <Music size={18} className="text-cyan animate-pulse" />
                   <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-cyan animate-ping" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-cyan" />
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
@@ -99,6 +102,7 @@ export default function MusicModal() {
               </div>
 
               <button
+                type="button"
                 onClick={handleClose}
                 className="text-text-secondary/70 hover:text-text-primary transition-colors p-1.5 rounded-lg hover:bg-white/[0.06]"
                 title="Dismiss"
@@ -118,7 +122,7 @@ export default function MusicModal() {
                 Featured Vibes:
               </p>
               <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto custom-scrollbar pr-1">
-                {musicPlaylist.slice(0, 6).map((track, idx) => (
+                {allTracks.slice(0, 6).map((track, idx) => (
                   <button
                     key={track.id}
                     onClick={() => {
@@ -132,7 +136,11 @@ export default function MusicModal() {
                         : 'bg-white/[0.03] border-white/[0.06] text-text-secondary hover:text-text-primary hover:bg-white/[0.06]'
                     )}
                   >
-                    <span className="text-sm">{track.icon}</span>
+                    <span className="text-sm">
+                      {track.isCustom && (!track.icon || track.icon === '🎧' || track.icon === '🎵')
+                        ? detectMusicMetadata(track.title).icon
+                        : track.icon}
+                    </span>
                     <span className="truncate font-medium">{track.title}</span>
                   </button>
                 ))}

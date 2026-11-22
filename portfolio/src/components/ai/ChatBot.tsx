@@ -11,8 +11,9 @@ import ReactMarkdown from 'react-markdown'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { useSound } from '@/hooks'
 import type { ChatMessage } from '@/types'
-import { generateId } from '@/lib/utils'
+import { generateId, cn } from '@/lib/utils'
 import { roles } from '@/data/portfolio'
+import ShuttleIconUI from './ShuttleIconUI'
 
 // ── Config ────────────────────────────────────────────────────
 const API_URL = process.env.NEXT_PUBLIC_CHATBOT_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
@@ -50,6 +51,7 @@ function SourceBadge({ source }: { source: { category: string; topic: string; sc
     </span>
   )
 }
+
 
 // ── Convert markdown tables to clean bullet points ───────────
 function convertTablesToBullets(text: string): string {
@@ -258,8 +260,8 @@ function MessageBubble({
                       targetHref = 'https://www.instagram.com/_vi_ll_a_in/'
                     } else if (targetHref === 'Anurag_hunter07' || targetHref === '@Anurag_hunter07') {
                       targetHref = 'https://x.com/Anurag_hunter07'
-                    } else if (targetHref.includes('anurag-swain-cse07') && !targetHref.startsWith('http')) {
-                      targetHref = `https://www.linkedin.com/in/anurag-swain-cse07/`
+                    } else if (targetHref.includes('anurag-swain') && !targetHref.startsWith('http')) {
+                      targetHref = `https://www.linkedin.com/in/anurag-swain-dev/`
                     } else if (!targetHref.startsWith('http://') && !targetHref.startsWith('https://')) {
                       targetHref = `https://${targetHref}`
                     }
@@ -433,6 +435,7 @@ export default function ChatBot() {
   const [connected, setConnected] = useState<boolean | null>(true)
   const [aiMode, setAiMode] = useState<string>('groq')
   const [showScrollBtn, setShowScrollBtn] = useState(false)
+  const [isBtnHovered, setIsBtnHovered] = useState(false)
 
   const bottomRef  = useRef<HTMLDivElement>(null)
   const messagesRef = useRef<HTMLDivElement>(null)
@@ -717,27 +720,27 @@ export default function ChatBot() {
 
     // ── WHO IS HE / IDENTITY ──────────────────────────────
     if (score(['who is', 'who are', 'about him', 'introduce', 'tell me about', 'who is anurag', 'overview', 'summary', 'profile']) >= 1)
-      return `### 🧑‍💻 Anurag Swain — Full-Stack Developer & AI/ML Engineer\n\n#### 👤 Core Identity\n- **Full Name**: Anurag Swain\n- **Age / Birthday**: 19 years old (Born 16 January 2006)\n- **Location**: Bhubaneswar, Odisha, India\n- **Current Status**: 3rd-Year B.Tech in CSE @ GCE Kalahandi (BPUT)\n- **Academic CGPA**: **8.10 / 10.00** (Graduating in 2027)\n\n#### 💼 Professional Experience\n- **5 Internships Completed (2025)**: Across AI, Deep Learning, Full-Stack, and Data Science\n- **AI & NLP Research**: Built production NLP chatbot at Infosys and computer vision CNNs at MicroGenesis\n- **Full-Stack Engineering**: React.js, Next.js 14, Node.js, Express, FastAPI, MongoDB, MySQL\n- **Open Source**: 14+ GitHub repositories with community stars\n- **Certified**: IBM SkillsBuild, AICTE, and Infosys Springboard`
+      return `### 🧑‍💻 Anurag Swain — Full-Stack Developer & AI/ML Engineer\n\n#### 👤 Core Identity\n- **Full Name**: Anurag Swain\n- **Age / Birthday**: 19 years old (Born 16 January 2006)\n- **Location**: Bhubaneswar, Odisha, India\n- **Current Status**: 3rd-Year B.Tech in CSE @ GCE Kalahandi (BPUT)\n- **Academic CGPA**: **8.10 / 10.00** (Graduating in 2027)\n\n#### 💼 Professional Experience\n- **5 Internships Completed**: Across National Informatics Centre (Govt of India), Infosys, EISystems, Edunet/IBM, and MicroGenesis\n- **AI & ML Engineering**: Built AI-powered clinical risk models at Infosys and computer vision CNNs at MicroGenesis\n- **Full-Stack Engineering**: React.js, Next.js 14, Node.js, Express, FastAPI, MongoDB, MySQL\n- **Open Source**: 14+ GitHub repositories with community recognition\n- **Certified**: National Informatics Centre, IBM SkillsBuild, AICTE, and Infosys Springboard`
 
     // ── CONTACT ───────────────────────────────────────────
     if (score(['contact', 'email', 'mail', 'reach', 'phone', 'call', 'get in touch', 'connect', 'message him']) >= 1)
-      return `### 📬 Contact & Connect with Anurag Swain\n\n#### 📞 Direct Channels\n- **Primary Email**: [anurag.swain35@gmail.com](mailto:anurag.swain35@gmail.com)\n- **Alternate Email**: [anuragswain01@outlook.com](mailto:anuragswain01@outlook.com)\n- **Phone / WhatsApp**: +91-7008973337\n- **Location**: OldTown, Bhubaneswar, Odisha, India (PIN 751002)\n- **Response Time**: Under 24 hours guaranteed\n\n#### 🌐 Social & Developer Profiles\n- **LinkedIn**: [linkedin.com/in/anurag-swain-cse07](https://www.linkedin.com/in/anurag-swain-cse07/)\n- **GitHub**: [github.com/HUNTER-X0s](https://github.com/HUNTER-X0s)\n- **Twitter / X**: [@Anurag_hunter07](https://x.com/Anurag_hunter07)\n- **Instagram**: [@_vi_ll_a_in_](https://www.instagram.com/_vi_ll_a_in/)\n- **Threads**: [@_vi_ll_a_in_](https://www.threads.com/@_vi_ll_a_in_)`
+      return `### 📬 Contact & Connect with Anurag Swain\n\n#### 📞 Direct Channels\n- **Primary Email**: [anurag.swain35@gmail.com](mailto:anurag.swain35@gmail.com)\n- **Alternate Email**: [anuragswain01@outlook.com](mailto:anuragswain01@outlook.com)\n- **Phone / WhatsApp**: +91-7008973337\n- **Location**: OldTown, Bhubaneswar, Odisha, India (PIN 751002)\n- **Response Time**: Under 24 hours guaranteed\n\n#### 🌐 Social & Developer Profiles\n- **LinkedIn**: [linkedin.com/in/anurag-swain-dev](https://www.linkedin.com/in/anurag-swain-dev/)\n- **GitHub**: [github.com/HUNTER-X0s](https://github.com/HUNTER-X0s)\n- **Twitter / X**: [@Anurag_hunter07](https://x.com/Anurag_hunter07)\n- **Instagram**: [@_vi_ll_a_in_](https://www.instagram.com/_vi_ll_a_in/)\n- **Threads**: [@_vi_ll_a_in_](https://www.threads.com/@_vi_ll_a_in_)`
 
     // ── INSTAGRAM ─────────────────────────────────────────
     if (score(['instagram', 'insta']) >= 1)
-      return `### 📸 Social & Community Profiles\n\n- **Instagram**: [@_vi_ll_a_in_](https://www.instagram.com/_vi_ll_a_in/)\n- **Threads**: [@_vi_ll_a_in_](https://www.threads.com/@_vi_ll_a_in/)\n- **Twitter / X**: [@Anurag_hunter07](https://x.com/Anurag_hunter07)\n- **LinkedIn**: [anurag-swain-cse07](https://www.linkedin.com/in/anurag-swain-cse07/)\n- **GitHub**: [HUNTER-X0s](https://github.com/HUNTER-X0s)`
+      return `### 📸 Social & Community Profiles\n\n- **Instagram**: [@_vi_ll_a_in_](https://www.instagram.com/_vi_ll_a_in/)\n- **Threads**: [@_vi_ll_a_in_](https://www.threads.com/@_vi_ll_a_in/)\n- **Twitter / X**: [@Anurag_hunter07](https://x.com/Anurag_hunter07)\n- **LinkedIn**: [anurag-swain-dev](https://www.linkedin.com/in/anurag-swain-dev/)\n- **GitHub**: [HUNTER-X0s](https://github.com/HUNTER-X0s)`
 
     // ── GITHUB ────────────────────────────────────────────
     if (score(['github', 'repository', 'repo', 'open source', 'code', 'hunter-x0s']) >= 1)
-      return `### 🐙 GitHub Overview — [github.com/HUNTER-X0s](https://github.com/HUNTER-X0s)\n\n- **Public Repositories**: 14 open-source repositories\n- **Community Recognition**: 3 starred repositories\n- **Primary Languages**: Python, JavaScript, Jupyter Notebook, C++, Java\n\n#### 📦 Featured Repositories:\n- **AI_CHAT_BOT**: NLP conversational chatbot built at Infosys (Python, ⭐1) → [View](https://github.com/HUNTER-X0s/AI_CHAT_BOT)\n- **EV-VEHICLE-CHARGING-DEMAND-PREDICTION**: ML regression pipeline ($R^2=0.86$, ⭐1) → [View](https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION)\n- **RESEARCH_AGENT**: Autonomous multi-source research synthesis agent (IBM SkillsBuild) → [View](https://github.com/HUNTER-X0s/RESEARCH_AGENT)\n- **Currency_Converter**: Real-time 150+ currency converter web app (⭐1) → [View](https://hunter-x0s.github.io/Currency_Converter/)\n- **SHADOW-FOX_DATASCIENCE_INTERNSHIP**: Complete data science & predictive modeling notebooks → [View](https://github.com/HUNTER-X0s/SHADOW-FOX_DATASCIENCE_INTERNSHIP)\n- **CERTIFICATIONS**: Centralized repository of all official certificates → [View](https://github.com/HUNTER-X0s/CERTIFICATIONS)`
+      return `### 🐙 GitHub Overview — [github.com/HUNTER-X0s](https://github.com/HUNTER-X0s)\n\n- **Public Repositories**: 14 open-source repositories\n- **Community Recognition**: 3 starred repositories\n- **Primary Languages**: Python, JavaScript, Jupyter Notebook, C++, Java\n\n#### 📦 Featured Repositories:\n- **AI_CHAT_BOT**: NLP conversational chatbot (Python, ⭐1) → [View](https://github.com/HUNTER-X0s/AI_CHAT_BOT)\n- **EV-VEHICLE-CHARGING-DEMAND-PREDICTION**: ML regression pipeline ($R^2=0.86$, ⭐1) → [View](https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION)\n- **RESEARCH_AGENT**: Autonomous multi-source research synthesis agent (IBM SkillsBuild) → [View](https://github.com/HUNTER-X0s/RESEARCH_AGENT)\n- **Currency_Converter**: Real-time 150+ currency converter web app (⭐1) → [View](https://hunter-x0s.github.io/Currency_Converter/)\n- **SHADOW-FOX_DATASCIENCE_INTERNSHIP**: Complete data science & predictive modeling notebooks → [View](https://github.com/HUNTER-X0s/SHADOW-FOX_DATASCIENCE_INTERNSHIP)\n- **CERTIFICATIONS**: Centralized repository of all official certificates → [View](https://github.com/HUNTER-X0s/CERTIFICATIONS)`
 
     // ── LINKEDIN ──────────────────────────────────────────
     if (score(['linkedin']) >= 1)
-      return `### 💼 LinkedIn Profile Overview\n\n- **Profile URL**: [linkedin.com/in/anurag-swain-cse07](https://www.linkedin.com/in/anurag-swain-cse07/)\n- **Skill Endorsements**: 12+ verified technical endorsements from MicroGenesis TechSoft Bangalore\n- **Certifications**: All 5 professional internship credentials listed (Infosys, EISystems, Edunet/IBM, MicroGenesis, Shadow Fox)\n- **Networking**: Open for technical networking, internship inquiries, and engineering opportunities`
+      return `### 💼 LinkedIn Profile Overview\n\n- **Profile URL**: [linkedin.com/in/anurag-swain-dev](https://www.linkedin.com/in/anurag-swain-dev/)\n- **Skill Endorsements**: 12+ verified technical endorsements from MicroGenesis TechSoft Bangalore\n- **Certifications**: All official internship credentials listed (National Informatics Centre, Infosys, EISystems, Edunet/IBM, MicroGenesis, Shadow Fox)\n- **Networking**: Open for technical networking, internship inquiries, and engineering opportunities`
 
     // ── LOCATION ──────────────────────────────────────────
     if (score(['location', 'where', 'city', 'bhubaneswar', 'odisha', 'india', 'based', 'live']) >= 1)
-      return `### 📍 Location & Relocation Information\n\n- **Current Residence**: Bhubaneswar, Odisha, India (PIN: 751002)\n- **College Campus**: Government College of Engineering, Kalahandi, Odisha\n- **Past On-Site Work**: Bangalore (MicroGenesis TechSoft, Golden Enclave, Old Airport Road)\n- **Relocation Availability**: Fully open to relocate for full-time and on-site internship roles (Bangalore, Hyderabad, Pune, NCR, Remote)`
+      return `### 📍 Location & Relocation Information\n\n- **Current Residence**: Bhubaneswar, Odisha, India (PIN: 751002)\n- **College Campus**: Government College of Engineering, Kalahandi, Odisha\n- **Past On-Site Work**: Sachivalaya Marg, Bhubaneswar (National Informatics Centre) & Bangalore (MicroGenesis TechSoft)\n- **Relocation Availability**: Fully open to relocate for full-time and on-site internship roles (Bangalore, Hyderabad, Pune, NCR, Remote)`
 
     // ── AGE / DOB ─────────────────────────────────────────
     if (score(['age', 'born', 'birthday', 'dob', 'date of birth', 'old is he', 'how old']) >= 1)
@@ -749,31 +752,31 @@ export default function ChatBot() {
 
     // ── EDUCATION ─────────────────────────────────────────
     if (score(['education', 'college', 'university', 'school', 'degree', 'study', 'gcek', 'bput', 'kendriya vidyalaya', 'class 10', 'class 12', 'cbse']) >= 1)
-      return `### 🎓 Educational Background\n\n#### 1. 🏫 Undergraduate Degree (2023 – 2027)\n- **Degree**: B.Tech in Computer Science and Engineering (CSE)\n- **Institution**: Government College of Engineering, Kalahandi (GCEK)\n- **University**: BPUT Odisha\n- **Academic Performance**: **CGPA 8.10 / 10.00**\n- **Extracurricular**: Active technical member of **KiloBots Robotics Club**\n\n#### 2. 🏫 Senior Secondary / Class XII (2023)\n- **School**: Kendriya Vidyalaya No-6, Pokhariput, Bhubaneswar\n- **Board**: CBSE (Science — Physics, Chemistry, Mathematics, Biology)\n- **Leadership**: Appointed **Ashoka House Sports Captain**\n\n#### 3. 🏫 Secondary / Class X (2021)\n- **School**: Kendriya Vidyalaya No-6, Pokhariput, Bhubaneswar\n- **Board**: CBSE`
+      return `### 🎓 Educational Background\n\n#### 1. 🏫 Undergraduate Degree (2023 – 2027)\n- **Degree**: Bachelor of Technology - BTech, Computer Science and Engineering\n- **Institution**: Government College of Engineering, Kalahandi (GCE Kalahandi) under BPUT\n- **Curriculum & Core**: C, C++, Python, Java, JavaScript, SQL, DSA, Web Dev, DBMS, Cloud Computing, OS\n- **Activities**: Member of Kilobots Robotics Club, participant in athletics & sports, tech-fests and cultural events volunteer & participant\n\n#### 2. 🏫 Senior Secondary / Class XII (2021 – 2023)\n- **School**: Kendriya Vidyalaya\n- **Curriculum**: 12th Grade (Senior Secondary), Science (PCMB) under CBSE\n- **Activities**: Ashoka House Sports Captain, Competitive Chess, Badminton, Pro Competitive Gaming\n\n#### 3. 🏫 Secondary / Class X (2020 – 2021)\n- **School**: Kendriya Vidyalaya (KV)\n- **Curriculum**: 10th Grade (Secondary School), General Education under CBSE\n- **Activities**: Cricket (Club Level Player), Football Player, Tech Enthusiast (Microsoft Office Suite, HTML5, Linux, Teams), Event Volunteer`
 
     // ── SKILLS / TECH STACK ───────────────────────────────
     if (score(['skill', 'tech', 'stack', 'language', 'strongest', 'good at', 'expertise', 'proficient', 'technology', 'know', 'what can he do']) >= 1)
-      return `### 💡 Technical Skills & Core Competencies\n\n#### 🐍 Programming Languages\n- **Python (88%)**: Primary language for AI/ML, NLP, data analysis, and backend APIs\n- **JavaScript (82%)**: Core web development, dynamic DOM, asynchronous workflows\n- **C / C++ (80% / 78%)**: Algorithms, Data Structures, and systems programming\n- **Java (75%)**: Object-oriented software design and enterprise fundamentals\n- **SQL (80%)**: Relational schema design, complex joins, and query optimization\n- **PHP (60%)**: Server-side scripting\n\n#### 🤖 AI / Machine Learning / Deep Learning\n- **Scikit-Learn (82%)**: Supervised regression, classification, and Random Forest\n- **TensorFlow & Keras (80%)**: Deep neural network architecture design and training\n- **PyTorch (78%)**: Custom CNN architectures (VGG, ResNet)\n- **Computer Vision (75%)**: OpenCV image preprocessing and feature extraction\n- **NLP & RAG Systems**: Multi-turn dialogue, vector embeddings, and ChromaDB\n\n#### 🌐 Full-Stack Web Development\n- **React.js (78%)**: Custom hooks, state management, component architecture\n- **Next.js 14 (74%)**: Server-Side Rendering (SSR), App Router, dynamic routes\n- **Node.js (73%) & Express.js**: RESTful API design and backend services\n- **Python FastAPI**: High-speed asynchronous AI/RAG microservices\n- **Databases**: MongoDB (70%) NoSQL modeling and MySQL (78%) relational DBs\n- **Styling**: Tailwind CSS (75%), HTML5/CSS3 (85%), responsive design\n\n#### 📊 Data Science & Analytics\n- **Pandas & NumPy (85%)**: Data ingestion, manipulation, and numerical computing\n- **Matplotlib & Seaborn (80%)**: Statistical data visualization and EDA\n- **Jupyter Notebook (85%)**: Reproducible analysis workflows\n- **Tableau (74%)**: Interactive business intelligence dashboards\n- **Power BI (68%)**: KPI tracking and analytics reports\n\n#### 🛠️ Tools & DevOps\n- **Git & GitHub (82%)**: Version control, branch management, collaborative workflows\n- **Docker**: Containerization and reproducible deployment\n- **Cloud & Deployment**: Vercel Edge, Render.com, IBM Watson Cloud APIs\n- **Operating Systems**: Linux / Ubuntu (68%) CLI proficiency\n- **Dev Tools**: VS Code (88%), Postman API testing, Figma wireframing`
+      return `### 💡 Technical Skills & Core Competencies\n\n#### 🐍 Programming Languages\n- **Python (92%)**: Primary language for AI/ML, NLP, data analysis, and backend APIs\n- **JavaScript (88%)**: Core web development, dynamic DOM, asynchronous workflows\n- **TypeScript (86%)**: Full-stack MERN with strict type safety\n- **C / C++ (80% / 82%)**: Algorithms, Data Structures, and systems programming\n- **Core Java (78%)**: Object-oriented software design and enterprise fundamentals\n- **SQL (88%)**: Relational schema design, complex joins, and query optimization\n- **PHP (75%) & Shell Scripting (82%)**: Server-side scripting & automation\n\n#### 🤖 AI / Machine Learning / Deep Learning\n- **CatBoost, XGBoost & LightGBM (86-88%)**: High-accuracy gradient boosting models (NIC Forecasting Platform)\n- **Scikit-Learn (88%)**: Supervised regression, classification, Random Forest\n- **TensorFlow & Keras (84%)**: Deep neural network architecture design and training\n- **PyTorch (84%)**: Custom CNN architectures (VGG, ResNet) and lane detection\n- **Computer Vision (86%)**: OpenCV video frame processing and real-time lane tracking\n- **NLP & LangChain**: Conversational AI, multi-turn dialogue, vector embeddings\n\n#### 🌐 Full-Stack Web Development\n- **React.js (88%) & React Vite (86%)**: High-performance UI and stateful dashboards\n- **Next.js (86%)**: Server-Side Rendering (SSR), App Router, dynamic routes\n- **Three.js (86%)**: 3D WebGL spatial visualization and interactive cosmos\n- **Node.js (84%) & Express.js (82%)**: Scalable REST APIs and backend services\n- **FastAPI (88%)**: High-speed asynchronous AI microservices and decision support\n- **Databases**: SQLite (86%), MySQL (86%), MongoDB (84%)\n- **Styling**: Tailwind CSS (88%), Bootstrap (80%), Recharts (85%), Lucide React\n\n#### 📊 Data Science & Analytics\n- **Tableau (86%) & Microsoft Power BI (86%)**: Interactive business intelligence dashboards\n- **Pandas & NumPy (90% / 88%)**: High-throughput data ingestion, manipulation, and numerical computing\n- **Matplotlib & Seaborn (86%)**: Statistical data visualization and EDA\n\n#### 🛠️ Tools & DevOps\n- **Postman API (88%)**: API testing, collection automation, and integration verification\n- **Docker & AWS (86%)**: Amazon EC2, Amazon S3, containerized microservices\n- **Nginx (85%)**: Reverse proxy, load balancing, and production web servers\n- **Git & GitHub (90%)**: Version control, branch management, collaborative workflows\n- **Operating Systems**: Linux / Ubuntu (88%) and Windows (88%)`
 
     // ── PROJECTS ──────────────────────────────────────────
     if (score(['project', 'built', 'made', 'created', 'developed', 'work', 'portfolio', 'github project', 'demo']) >= 1)
-      return `### 🚀 Key Featured Projects\n\n#### 1. 🤖 AI Chat Bot (Conversational NLP System)\n- **Tech Stack**: Python, NLP, LLM API Integration, Session Dialogue Management\n- **Role**: Developed during Infosys AI Internship\n- **Highlights**: Multi-turn context memory, intent parsing, and entity recognition\n- **GitHub**: [HUNTER-X0s/AI_CHAT_BOT](https://github.com/HUNTER-X0s/AI_CHAT_BOT) (⭐1)\n\n#### 2. 🚗 EV Vehicle Charging Demand Prediction\n- **Tech Stack**: Python, Scikit-Learn, Random Forest, Pandas, Matplotlib\n- **Role**: Developed under AICTE Internship Cycle-2 at Edunet Foundation\n- **Accuracy**: Achieved $R^2=0.86$ (86% variance explained) with 18% RMSE reduction\n- **GitHub**: [HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION](https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION) (⭐1)\n\n#### 3. 🔍 Autonomous Research Agent\n- **Tech Stack**: Python, IBM Watson Cloud APIs, NLP Summarization\n- **Role**: Capstone project for IBM SkillsBuild\n- **Highlights**: Multi-source research synthesis, automated extraction, and executive brief drafting\n- **GitHub**: [HUNTER-X0s/RESEARCH_AGENT](https://github.com/HUNTER-X0s/RESEARCH_AGENT)\n\n#### 4. 💱 Currency Converter Web Application\n- **Tech Stack**: Vanilla JavaScript, HTML5, CSS3, Live Exchange Rate APIs\n- **Highlights**: Real-time currency conversions across 150+ currencies with localStorage caching\n- **Live Demo**: [hunter-x0s.github.io/Currency_Converter](https://hunter-x0s.github.io/Currency_Converter/) (⭐1)\n\n#### 5. 🌐 AI-Powered 3D Portfolio Platform\n- **Tech Stack**: Next.js 14, Three.js, RAG AI Pipeline, Web Speech API (Jarvis Voice), TailwindCSS\n- **Highlights**: 60fps particle physics, dual-mode RAG chatbot, voice control, command palette`
+      return `### 🚀 Key Featured Projects\n\n#### 1. 🏛️ AI-Powered Liquor Production Forecasting Platform\n- **Tech Stack**: FastAPI, CatBoost, XGBoost, LightGBM, React Vite, Three.js, Recharts, SQLite, Nginx\n- **Role**: Developed for National Informatics Centre (NIC) & Odisha State Excise Department\n- **Highlights**: Predictive bottling quota planning, 3D facility mapping, and automated monthly analytics\n\n#### 2. 🫀 AI-Powered Heart Disease Prediction & Medical OCR\n- **Tech Stack**: Python, Random Forest, SVM, Neural Networks, OCR, REST APIs, FastAPI\n- **Role**: Developed during Infosys AI Internship\n- **Highlights**: Automated biometric data extraction from medical reports via OCR and real-time cardiovascular risk probability scoring\n\n#### 3. 🛒 Scalable Full-Stack MERN E-Commerce Platform\n- **Tech Stack**: React.js, Next.js, Node.js, Express.js, TypeScript, Tailwind CSS, Bootstrap, MongoDB, Postman API\n- **Role**: Developed during EISystems Technologies Internship (~30% faster response times)\n\n#### 4. 🚗 EV Vehicle Charging Demand Prediction\n- **Tech Stack**: Python, Scikit-Learn, Random Forest, Tableau, Microsoft Power BI\n- **Role**: AICTE Internship Cycle-2 at Edunet Foundation ($R^2=0.86$, ⭐1)\n- **GitHub**: [HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION](https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION)\n\n#### 5. 🛣️ Autonomous Driving Road Lane Detection System\n- **Tech Stack**: OpenCV, PyTorch, TensorFlow, Keras, Python\n- **Role**: MicroGenesis TechSoft Bangalore (Real-time polynomial lane tracking)\n\n#### 6. 🤖 Autonomous Research Agent\n- **Tech Stack**: Python, Amazon Web Services (EC2, S3), Docker, IBM Watson\n- **Role**: AI & Cloud Technologies Internship Capstone (Edunet Foundation & IBM)`
 
     // ── EV PROJECT ────────────────────────────────────────
     if (score(['ev', 'electric vehicle', 'charging demand', 'demand prediction']) >= 1)
-      return `### 🚗 EV Vehicle Charging Demand Prediction Project\n\n- **Objective**: Forecast electric vehicle charging station loads to optimize smart grid power distribution\n- **Program**: AICTE Internship Cycle-2 at Edunet Foundation\n- **Model Architecture**: Random Forest Regressor & Ridge Regression with temporal feature engineering\n- **Performance Metric**: Achieved an **$R^2$ Score of 0.86** (86% variance explained) with an 18% RMSE reduction\n- **Tech Stack**: Python, Scikit-Learn, Pandas, NumPy, Matplotlib, Seaborn, Jupyter Notebook\n- **Repository**: [github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION](https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION) (⭐1)`
+      return `### 🚗 EV Vehicle Charging Demand Prediction Project\n\n- **Objective**: Forecast electric vehicle charging station loads to optimize smart grid power distribution\n- **Program**: AICTE Internship Cycle-2 at Edunet Foundation\n- **Model Architecture**: Random Forest Regressor & Ridge Regression with temporal feature engineering\n- **Performance Metric**: Achieved an **$R^2$ Score of 0.86** (86% variance explained) with an 18% RMSE reduction\n- **Tech Stack**: Python, Scikit-Learn, Pandas, NumPy, Matplotlib, Seaborn, Tableau, Microsoft Power BI\n- **Repository**: [github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION](https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION) (⭐1)`
 
-    // ── AI CHATBOT PROJECT ────────────────────────────────
-    if (score(['ai chat', 'chatbot project', 'chat bot', 'nlp project', 'infosys project']) >= 1)
-      return `### 🤖 AI Chat Bot Project (Infosys AI Internship)\n\n- **Objective**: Design and deploy a context-aware conversational agent for customer support workflows\n- **Program**: Infosys Springboard Virtual Internship 2.0 (August – October 2025)\n- **Key Features**:\n  - Multi-turn context and state tracking\n  - Custom intent classification and named entity recognition (NER)\n  - Integration with LLM APIs for enhanced answer generation\n  - Evaluated with precision and recall metrics\n- **Tech Stack**: Python, NLP libraries, LLM APIs, Jupyter Notebook\n- **Repository**: [github.com/HUNTER-X0s/AI_CHAT_BOT](https://github.com/HUNTER-X0s/AI_CHAT_BOT) (⭐1)`
+    // ── INFOSYS HEART DISEASE PREDICTION PROJECT ───────────
+    if (score(['heart disease', 'ocr', 'medical ocr', 'infosys project']) >= 1)
+      return `### 🫀 AI-Powered Heart Disease Prediction System & Medical OCR (Infosys AI Internship)\n\n- **Objective**: Develop an AI-powered clinical decision support system combining document OCR extraction and predictive ML classifiers\n- **Program**: Infosys Springboard Virtual Internship 2.0 (August – October 2025)\n- **Key Features**:\n  - Automated OCR extraction of clinical biomarkers directly from medical test reports, eliminating manual data entry latency by ~85%\n  - Machine learning risk classification combining Random Forest, SVM, and Neural Networks\n  - Full-stack authenticated clinical web application with secure REST APIs and real-time risk dashboards\n  - Evaluated with precision, recall, and F1-score metrics\n- **Tech Stack**: Python, Random Forest, SVM, Neural Networks, OCR, REST APIs, FastAPI, Scikit-Learn, HuggingFace, LangChain\n- **Deliverable**: Core Infosys internship deliverable with top-tier evaluation`
 
     // ── INTERNSHIP / EXPERIENCE ───────────────────────────
     if (score(['intern', 'experience', 'company', 'work', 'job', 'employer', 'worked at', 'past role', 'professional']) >= 1)
-      return `### 💼 Professional Experience (5 Internships in 2025)\n\n#### 1. 🏢 Infosys — AI Intern\n- **Duration**: August 2025 – October 2025 (3 months · Remote)\n- **Project**: Developed conversational AI Chat Bot with multi-turn dialogue management\n- **Tech**: Python, NLP Preprocessing, LLM APIs, Intent Classification\n- **Credential**: Infosys Springboard Virtual Internship 2.0 Completion Certificate\n\n#### 2. 💻 EISystems Technologies — Web Development Intern\n- **Duration**: July 2025 – September 2025 (3 months · Remote)\n- **Project**: Built production full-stack web applications\n- **Tech**: React.js, Next.js, Node.js, Express.js, MongoDB, RESTful APIs\n- **Optimizations**: Applied code splitting, lazy loading, and component-driven architecture\n\n#### 3. ☁️ Edunet Foundation & IBM — AI & Analytics Intern\n- **Duration**: July 2025 – August 2025 (2 months · Remote)\n- **Project 1**: AICTE-certified EV Charging Demand Prediction ML pipeline ($R^2=0.86$)\n- **Project 2**: Autonomous Research Agent for IBM SkillsBuild\n- **Tech**: Python, Scikit-Learn, Tableau, Microsoft Power BI, IBM Watson Cloud APIs\n\n#### 4. 🧠 MicroGenesis TechSoft, Bangalore — Deep Learning Intern\n- **Duration**: June 2025 – July 2025 (2 months · Hybrid In-Person)\n- **Project**: Computer Vision and Convolutional Neural Networks\n- **Tech**: PyTorch, TensorFlow, Keras, OpenCV, Python\n- **Recognition**: 12+ technical skill endorsements on LinkedIn\n\n#### 5. 📊 Shadow Fox — Data Science Intern\n- **Duration**: 2025 (1 month · Remote)\n- **Project**: End-to-end exploratory data analysis (EDA) and predictive modeling\n- **Tech**: Python, Pandas, NumPy, Scikit-Learn, Matplotlib, Seaborn\n\n#### ⏱️ Aggregate Industry Experience\n- **Total Duration**: ~12 months of structured industry work across AI, Web Dev, DL, and Data Science`
+      return `### 💼 Professional Experience (5 Verified Internships)\n\n#### 1. 🏛️ National Informatics Centre (NIC), Govt of India — Intern\n- **Duration**: June 2026 – August 2026 (3 months · On-site Bhubaneswar)\n- **Project**: AI-Powered Liquor Production Demand Forecasting Platform for Odisha State Excise Department\n- **Tech**: CatBoost, XGBoost, LightGBM, FastAPI, SQLite, Nginx, React Vite, Three.js, Recharts\n- **Credential**: National Informatics Centre (Govt of India) Internship Certificate\n\n#### 2. 🏢 Infosys — AI Intern\n- **Duration**: August 2025 – October 2025 (3 months · Remote)\n- **Project**: AI-Powered Heart Disease Prediction System with OCR Medical Data Extraction\n- **Tech**: Python, Random Forest, SVM, Neural Networks, OCR, HuggingFace, LangChain, REST APIs\n- **Credential**: Infosys Springboard Virtual Internship 2.0 Completion Certificate\n\n#### 3. 💻 EISystems Technologies — Web Development Intern\n- **Duration**: July 2025 – September 2025 (3 months · Remote)\n- **Project**: Scalable full-stack MERN e-commerce platform (~30% faster response times)\n- **Tech**: React.js, Next.js, TypeScript, Node.js, Express.js, MongoDB, Tailwind CSS, Bootstrap, Postman API\n- **Credential**: Official Web Development Internship Certificate\n\n#### 4. ☁️ Edunet Foundation & IBM — AI & Analytics Intern\n- **Duration**: July 2025 – August 2025 (2 months · Remote)\n- **Project 1**: AICTE-certified EV Charging Demand Prediction ML pipeline with Tableau & Power BI\n- **Project 2**: Autonomous Research Agent deployed with Docker on AWS (EC2, S3) and IBM Watson\n- **Credential**: Dual certifications from Edunet Foundation & AICTE\n\n#### 5. 🧠 MicroGenesis TechSoft, Bangalore — Deep Learning Intern\n- **Duration**: June 2025 – July 2025 (2 months · Hybrid In-Person)\n- **Project**: Autonomous Driving Road Lane Detection System with OpenCV & Deep CNNs\n- **Tech**: PyTorch, TensorFlow, Keras, OpenCV, Python\n- **Recognition**: 12+ technical skill endorsements on LinkedIn & Internship Certificate\n\n#### ⏱️ Aggregate Industry Experience\n- **Total Duration**: ~13+ months of hands-on engineering across Government and Industry`
 
     // ── INFOSYS ───────────────────────────────────────────
     if (score(['infosys']) >= 1)
-      return `### 🏢 Infosys AI Internship Summary\n\n- **Role**: Artificial Intelligence Intern\n- **Duration**: August – October 2025 (3 months · Remote)\n- **Program**: Infosys Springboard Virtual Internship 2.0\n- **Key Deliverable**: Developed the AI Chat Bot project featuring context tracking and intent recognition\n- **Technologies**: Python, NLP Preprocessing, LLM API integration, Session Memory\n- **Certificate**: Infosys Virtual Internship 2.0 Completion Certificate\n- **Repository**: [github.com/HUNTER-X0s/AI_CHAT_BOT](https://github.com/HUNTER-X0s/AI_CHAT_BOT) (⭐1)`
+      return `### 🏢 Infosys AI Internship Summary\n\n- **Role**: Artificial Intelligence Intern\n- **Duration**: August – October 2025 (3 months · Remote)\n- **Program**: Infosys Springboard Virtual Internship 2.0\n- **Key Deliverable**: Developed the AI-Powered Heart Disease Prediction System & Medical OCR platform\n- **Technologies**: Python, Machine Learning (Random Forest, SVM, Neural Networks), OCR, REST APIs, HuggingFace, LangChain\n- **Certificate**: Infosys Virtual Internship 2.0 Completion Certificate`
 
     // ── MICROGENESIS / DEEP LEARNING ──────────────────────
     if (score(['microgenesis', 'deep learning', 'bangalore', 'computer vision', 'cnn', 'tensorflow', 'pytorch', 'opencv']) >= 1)
@@ -805,19 +808,19 @@ export default function ChatBot() {
 
     // ── STRENGTHS / WHY HIRE ──────────────────────────────
     if (score(['strength', 'why hire', 'value', 'best', 'recommend', 'good candidate', 'should i hire', 'what makes', 'unique', 'stand out', 'advantage']) >= 1)
-      return `### ⭐ Why Anurag Swain Stands Out\n\n- **1. Exceptional Experience for a 3rd-Year Student**: 5 professional internships completed in 2025 across AI, Deep Learning, Full-Stack, and Data Science\n- **2. Production AI Capability**: Real-world experience building NLP chatbots at Infosys, computer vision at MicroGenesis, and regression models for AICTE\n- **3. Full-Stack Mastery**: Able to architect end-to-end web apps from React/Next.js frontends down to Node/FastAPI backends and databases\n- **4. Strong CS Core**: 8.10 CGPA demonstrating solid foundations in algorithms, OOP, database design, and systems\n- **5. Execution Speed**: 14 public GitHub repositories delivering production-ready, well-documented code`
+      return `### ⭐ Why Anurag Swain Stands Out\n\n- **1. Exceptional Experience for a 3rd-Year Student**: 5 professional internships completed across National Informatics Centre (Govt of India), Infosys, EISystems, Edunet/IBM, and MicroGenesis\n- **2. Production AI Capability**: Real-world experience building clinical risk models at Infosys, computer vision at MicroGenesis, and regression models for AICTE\n- **3. Full-Stack Mastery**: Able to architect end-to-end web apps from React/Next.js frontends down to Node/FastAPI backends and databases\n- **4. Strong CS Core**: 8.10 CGPA demonstrating solid foundations in algorithms, OOP, database design, and systems\n- **5. Execution Speed**: 14 public GitHub repositories delivering production-ready, well-documented code`
 
     // ── CLUBS / ACTIVITIES ────────────────────────────────
     if (score(['club', 'robot', 'kilobot', 'extra', 'activity', 'volunteer', 'fest', 'competition', 'sports captain']) >= 1)
-      return `### 🏅 Clubs & Leadership Activities\n\n- **KiloBots Robotics Club (GCE Kalahandi)**: Active technical member contributing to autonomous robotics and embedded systems\n- **Sports Leadership**: Served as **Ashoka House Sports Captain** at Kendriya Vidyalaya\n- **Hackathons & Fests**: Active participant and volunteer at collegiate engineering fests and tech hackathons`
+      return `### 🏅 Clubs & Leadership Activities\n\n- **Kilobots Robotics Club (GCE Kalahandi)**: Active technical member contributing to autonomous robotics, automation and embedded systems\n- **Sports Leadership**: Served as **Ashoka House Sports Captain** at Kendriya Vidyalaya\n- **Hackathons & Fests**: Active participant and volunteer at collegiate engineering fests, cultural events, and tech hackathons`
 
     // ── SOCIAL PROFILES ───────────────────────────────────
     if (score(['social', 'twitter', 'x.com', 'threads', 'profile', 'follow', 'handle', 'username']) >= 1)
-      return `### 🌐 Official Online Profiles\n\n- **LinkedIn**: [linkedin.com/in/anurag-swain-cse07](https://www.linkedin.com/in/anurag-swain-cse07/)\n- **GitHub**: [github.com/HUNTER-X0s](https://github.com/HUNTER-X0s)\n- **Twitter / X**: [@Anurag_hunter07](https://x.com/Anurag_hunter07)\n- **Instagram**: [@_vi_ll_a_in_](https://www.instagram.com/_vi_ll_a_in/)\n- **Threads**: [@_vi_ll_a_in_](https://www.threads.com/@_vi_ll_a_in_)\n- **Portfolio Website**: [anuragswain.vercel.app](https://anuragswain.vercel.app)`
+      return `### 🌐 Official Online Profiles\n\n- **LinkedIn**: [linkedin.com/in/anurag-swain-dev](https://www.linkedin.com/in/anurag-swain-dev/)\n- **GitHub**: [github.com/HUNTER-X0s](https://github.com/HUNTER-X0s)\n- **Twitter / X**: [@Anurag_hunter07](https://x.com/Anurag_hunter07)\n- **Instagram**: [@_vi_ll_a_in_](https://www.instagram.com/_vi_ll_a_in/)\n- **Threads**: [@_vi_ll_a_in_](https://www.threads.com/@_vi_ll_a_in_)\n- **Portfolio Website**: [anuragswain.vercel.app](https://anuragswain.vercel.app)`
 
     // ── RESUME ────────────────────────────────────────────
     if (score(['resume', 'cv', 'curriculum vitae', 'download', 'pdf']) >= 1)
-      return `### 📄 Anurag Swain's Resume\n\n- **Direct Download**: Click **"Download Resume"** in the **Hero Section** or the **Footer Resources** section\n- **Email Request**: [anurag.swain35@gmail.com](mailto:anurag.swain35@gmail.com)\n\n#### 📋 Resume Highlights:\n- **Academics**: 3rd-Year B.Tech CSE @ GCE Kalahandi (CGPA 8.10)\n- **Experience**: 5 Internships (Infosys, EISystems, Edunet/IBM, MicroGenesis, Shadow Fox)\n- **Skills**: Python, React, Next.js, TensorFlow, PyTorch, Scikit-Learn, MongoDB\n- **Credentials**: 7+ Verified Certifications\n- **Code**: 14 Open-Source GitHub Repositories`
+      return `### 📄 Anurag Swain's Resume\n\n- **Direct Download**: Click **"Download Resume"** in the **Hero Section** or the **Footer Resources** section\n- **Email Request**: [anurag.swain35@gmail.com](mailto:anurag.swain35@gmail.com)\n\n#### 📋 Resume Highlights:\n- **Academics**: 3rd-Year B.Tech CSE @ GCE Kalahandi (CGPA 8.10)\n- **Experience**: 5 Internships (NIC, Infosys, EISystems, Edunet/IBM, MicroGenesis)\n- **Skills**: Python, React, Next.js, TensorFlow, PyTorch, Scikit-Learn, MongoDB\n- **Credentials**: 7+ Verified Certifications\n- **Code**: 14 Open-Source GitHub Repositories`
 
     // ── PYTHON SKILLS ─────────────────────────────────────
     if (score(['python']) >= 1)
@@ -825,7 +828,7 @@ export default function ChatBot() {
 
     // ── AI / ML SKILLS ────────────────────────────────────
     if (score(['ai', 'machine learning', 'ml', 'deep learning', 'neural network', 'model', 'llm', 'nlp', 'generative', 'artificial intelligence']) >= 1)
-      return `### 🤖 AI, Machine Learning & Deep Learning Expertise\n\n#### 🧠 Machine Learning (82%)\n- **Algorithms**: Random Forest, Ridge/Lasso Regression, Gradient Boosting, SVM, K-Means\n- **Techniques**: Feature engineering, hyperparameter tuning, cross-validation, and metrics evaluation\n\n#### 🔬 Deep Learning & Computer Vision (80% / 78%)\n- **Architectures**: Convolutional Neural Networks (CNNs), VGG16, ResNet50\n- **Frameworks**: PyTorch, TensorFlow, Keras\n- **Computer Vision**: OpenCV (75%) for image filtering, preprocessing, and feature maps\n\n#### 💬 Natural Language Processing & Generative AI (75%)\n- **Dialogue Systems**: Multi-turn conversation tracking, intent classification, entity parsing\n- **RAG Architectures**: Vector similarity search (ChromaDB), prompt orchestration, and LLM inference\n\n#### 🚀 Practical Projects:\n- **AI Chat Bot** (Infosys) → [View](https://github.com/HUNTER-X0s/AI_CHAT_BOT)\n- **EV Demand Predictor** (AICTE) → [View](https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION)\n- **Research Agent** (IBM) → [View](https://github.com/HUNTER-X0s/RESEARCH_AGENT)`
+      return `### 🤖 AI, Machine Learning & Deep Learning Expertise\n\n#### 🧠 Machine Learning (82%)\n- **Algorithms**: Random Forest, Ridge/Lasso Regression, Gradient Boosting, SVM, K-Means\n- **Techniques**: Feature engineering, hyperparameter tuning, cross-validation, and metrics evaluation\n\n#### 🔬 Deep Learning & Computer Vision (80% / 78%)\n- **Architectures**: Convolutional Neural Networks (CNNs), VGG16, ResNet50\n- **Frameworks**: PyTorch, TensorFlow, Keras\n- **Computer Vision**: OpenCV (75%) for image filtering, preprocessing, and feature maps\n\n#### 💬 Natural Language Processing & Generative AI (75%)\n- **Dialogue Systems**: Multi-turn conversation tracking, intent classification, entity parsing\n- **RAG Architectures**: Vector similarity search (ChromaDB), prompt orchestration, and LLM inference\n\n#### 🚀 Practical Projects:\n- **Heart Disease Prediction & Medical OCR** (Infosys)\n- **EV Demand Predictor** (AICTE) → [View](https://github.com/HUNTER-X0s/EV-VEHICLE-CHARGING-DEMAND-PREDICTION)\n- **Research Agent** (IBM) → [View](https://github.com/HUNTER-X0s/RESEARCH_AGENT)`
 
     // ── WEB DEVELOPMENT ───────────────────────────────────
     if (score(['web', 'react', 'next', 'frontend', 'backend', 'full stack', 'node', 'javascript', 'html', 'css', 'mongodb', 'api']) >= 1)
@@ -862,36 +865,58 @@ export default function ChatBot() {
   // ── Render ────────────────────────────────────────────────
   return (
     <>
-      {/* FAB Button */}
-      <motion.button
-        onClick={() => { setChatOpen(!isChatOpen); playClick() }}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.93 }}
-        className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 z-[70] w-12 h-12 sm:w-13 sm:h-13 md:w-14 md:h-14 rounded-2xl flex items-center justify-center transition-transform"
-        style={{
-          background: 'linear-gradient(135deg, rgba(0,229,255,0.18), rgba(124,58,237,0.18))',
-          border: '1px solid rgba(0,229,255,0.38)',
-          backdropFilter: 'blur(16px)',
-          boxShadow: isChatOpen
-            ? '0 8px 32px rgba(0,229,255,0.25)'
-            : '0 8px 32px rgba(0,229,255,0.15)',
+      {/* FAB Button — Nexus Chatbot with Shuttle Multicolor Charging Animation */}
+      <motion.div
+        animate={isChatOpen ? { y: 0 } : { y: [0, -8, 0] }}
+        transition={{
+          repeat: isChatOpen ? 0 : Infinity,
+          duration: 3.2,
+          ease: 'easeInOut',
         }}
-        title="Chat with Portfolio AI"
+        className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 z-[70]"
       >
-        <AnimatePresence mode="wait">
-          {isChatOpen
-            ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}><X size={18} className="text-cyan sm:w-5 sm:h-5" /></motion.div>
-            : <motion.div key="s" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}><Sparkles size={18} className="text-cyan sm:w-5 sm:h-5" /></motion.div>}
-        </AnimatePresence>
-        {!isChatOpen && (
-          <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-cyan border-2 border-surface-1 animate-pulse" />
-        )}
-        {!isChatOpen && (
-          <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 text-[7px] sm:text-[8px] font-mono text-white/60 whitespace-nowrap tracking-wider">
-            NEXUS
-          </div>
-        )}
-      </motion.button>
+        <motion.button
+          onClick={() => { setChatOpen(!isChatOpen); playClick() }}
+          onMouseEnter={() => setIsBtnHovered(true)}
+          onMouseLeave={() => setIsBtnHovered(false)}
+          whileHover={{ scale: 1.14 }}
+          whileTap={{ scale: 0.9 }}
+          className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all cursor-pointer group bg-transparent border-0 outline-none p-0 focus:outline-none"
+          title="Nexus AI Chat — Shuttle Mode"
+        >
+          {/* Shuttle Multicolor Plasma Corona Ring */}
+          <ShuttleIconUI isHovered={isBtnHovered} isActive={isChatOpen} />
+
+          <AnimatePresence mode="wait">
+            {isChatOpen ? (
+              <motion.div
+                key="x"
+                initial={{ rotate: -90, scale: 0.6, opacity: 0 }}
+                animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                exit={{ rotate: 90, scale: 0.6, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="z-10 flex items-center justify-center"
+              >
+                <X size={20} className="text-white sm:w-5 sm:h-5 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="s"
+                initial={{ rotate: 90, scale: 0.6, opacity: 0 }}
+                animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                exit={{ rotate: -90, scale: 0.6, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="z-10 flex items-center justify-center"
+              >
+                <Sparkles
+                  size={20}
+                  className="text-white sm:w-5 sm:h-5 filter drop-shadow-[0_0_10px_rgba(0,229,255,0.95)] drop-shadow-[0_0_16px_rgba(192,38,211,0.8)] group-hover:scale-115 transition-transform duration-200"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
+      </motion.div>
 
       {/* Chat Window — Dynamically scaled for all screen dimensions */}
       <AnimatePresence>
@@ -926,7 +951,7 @@ export default function ChatBot() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 sm:gap-2 mt-0.5">
-                    <p className="text-[8px] sm:text-[10px] text-text-secondary truncate">Anurag Portfolio AI</p>
+                    <p className="text-[8px] sm:text-[10px] text-text-secondary truncate">ANURAG PORTFOLIO AI</p>
                     <ConnectionBadge connected={connected} mode={aiMode} />
                   </div>
                 </div>

@@ -17,20 +17,19 @@ const CommandPalette = dynamic(() => import('@/components/layout/CommandPalette'
 const AmbientSound = dynamic(() => import('@/components/layout/AmbientSound'), { ssr: false })
 const MusicModal = dynamic(() => import('@/components/layout/MusicModal'), { ssr: false })
 const ParticleField = dynamic(() => import('@/components/three/ParticleField'), { ssr: false })
+const HUDOverlay = dynamic(() => import('@/components/space/HUDOverlay'), { ssr: false })
 
-// Hero is above the fold — keep statically imported for FCP
+// Page Sections (Statically imported for instant rendering and zero black-screen lag on anchor jumps)
 import Hero from '@/components/sections/Hero'
-
-// Below-fold sections stay code-split, but still server-render for crawlable HTML.
-const About = dynamic(() => import('@/components/sections/About'))
-const Skills = dynamic(() => import('@/components/sections/Skills'))
-const Projects = dynamic(() => import('@/components/sections/Projects'))
-const Experience = dynamic(() => import('@/components/sections/Experience'))
-const Education = dynamic(() => import('@/components/sections/Education'))
-const ValueProp = dynamic(() => import('@/components/sections/ValueProp'))
-const Certifications = dynamic(() => import('@/components/sections/Certifications'))
-const Blog = dynamic(() => import('@/components/sections/Blog'))
-const Contact = dynamic(() => import('@/components/sections/Contact'))
+import About from '@/components/sections/About'
+import Skills from '@/components/sections/Skills'
+import Projects from '@/components/sections/Projects'
+import Experience from '@/components/sections/Experience'
+import Education from '@/components/sections/Education'
+import ValueProp from '@/components/sections/ValueProp'
+import Certifications from '@/components/sections/Certifications'
+import Blog from '@/components/sections/Blog'
+import Contact from '@/components/sections/Contact'
 
 // AI Chatbot & Voice Assistant (Dynamically Loaded)
 const ChatBot = dynamic(() => import('@/components/ai/ChatBot'), { ssr: false })
@@ -61,6 +60,20 @@ export default function HomePage() {
     return () => clearTimeout(timer)
   }, [setIsLoaded])
 
+  // Handle direct anchor link navigation smoothly upon page load
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const id = window.location.hash.replace('#', '')
+      const timer = setTimeout(() => {
+        const el = document.getElementById(id)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 200)
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
   return (
     <>
       {/* Global UI Layer */}
@@ -69,8 +82,9 @@ export default function HomePage() {
       <CommandPalette />
       <AmbientSound />
       <MusicModal />
+      <HUDOverlay />
 
-      {/* 3D Particle Background — sharp stars, 3D dynamic */}
+      {/* 3D Particle Background â€” sharp stars, 3D dynamic */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <ParticleField />
       </div>
@@ -86,28 +100,6 @@ export default function HomePage() {
         <Navbar />
 
         <main className="noise-overlay">
-          {/* Grid overlay */}
-          <div
-            className="fixed inset-0 pointer-events-none z-0 bg-grid opacity-20"
-            aria-hidden="true"
-          />
-
-          {/* Ambient glow orbs */}
-          <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-            <div
-              className="absolute -top-48 -left-48 w-[600px] h-[600px] rounded-full opacity-[0.06]"
-              style={{ background: 'radial-gradient(circle, #00E5FF, transparent 70%)' }}
-            />
-            <div
-              className="absolute top-1/3 -right-32 w-[500px] h-[500px] rounded-full opacity-[0.07]"
-              style={{ background: 'radial-gradient(circle, #7C3AED, transparent 70%)' }}
-            />
-            <div
-              className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] rounded-full opacity-[0.05]"
-              style={{ background: 'radial-gradient(circle, #FF6B2B, transparent 70%)' }}
-            />
-          </div>
-
           {/* Page Sections */}
           <section id="hero" style={{ scrollMarginTop: '72px' }}>
             <Hero />

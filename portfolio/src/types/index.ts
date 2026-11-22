@@ -12,6 +12,9 @@ export type RoleId =
   | 'ml_engineer'
   | 'dl_engineer'
   | 'ai_engineer'
+  | 'devops'
+  | 'networking'
+  | 'cybersecurity'
 
 export interface Role {
   id: RoleId
@@ -24,14 +27,27 @@ export interface Role {
 }
 
 export type SkillCategory =
+  | 'languages'
+  | 'web_dev'
   | 'frontend'
   | 'backend'
-  | 'database'
+  | 'python_stack'
   | 'ai_ml'
-  | 'data_science'
+  | 'genai_llm'
+  | 'rag_apps'
+  | 'agentic_ai'
+  | 'database'
+  | 'cloud_devops'
+  | 'networking'
+  | 'cybersecurity'
+  | 'version_control'
+  | 'visualization'
+  | 'ui_ux'
+  | 'dev_tools'
+  | 'os'
   | 'cloud'
+  | 'data_science'
   | 'tools'
-  | 'languages'
 
 export interface Skill {
   name: string
@@ -72,6 +88,8 @@ export interface Project {
   roles: RoleId[]
   year: number
   category: string
+  badge?: string
+  competition?: string
 }
 
 export interface ExperienceItem {
@@ -109,6 +127,8 @@ export interface Education {
   endYear: number | 'Present'
   grade?: string
   activities: string[]
+  description?: string[]
+  skills?: string[]
   logoUrl?: string
 }
 

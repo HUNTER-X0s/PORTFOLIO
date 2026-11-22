@@ -12,7 +12,7 @@
     "dev:portfolio": "cd portfolio && npm run dev",
     "dev:server": "cd server && npm run dev",
     "dev:admin": "cd admin && npm run dev",
-    "dev:chatbot": "cd rag-chatbot && python main.py"
+    "dev:chatbot": "cd rag-chatbot && (if exist .venv\\Scripts\\python.exe (.venv\\Scripts\\python.exe main.py) else (python main.py))"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

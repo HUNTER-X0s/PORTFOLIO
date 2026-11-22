@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, subscribeWithSelector } from 'zustand/middleware'
 import type { RoleId, ChatMessage } from '@/types'
-import { musicPlaylist } from '@/data/music'
+import { musicPlaylist, type MusicTrack } from '@/data/music'
 
 interface PortfolioStore {
   // Role system
@@ -25,11 +25,14 @@ interface PortfolioStore {
   currentTrackIndex: number
   volume: number
   isMusicPlayerOpen: boolean
+  customTracks: MusicTrack[]
   setMusicEnabled: (enabled: boolean) => void
   setMusicAsked: (asked: boolean) => void
   setCurrentTrackIndex: (index: number) => void
   setVolume: (volume: number) => void
   setMusicPlayerOpen: (open: boolean) => void
+  addCustomTrack: (track: MusicTrack) => void
+  removeCustomTrack: (id: string) => void
   nextTrack: () => void
   prevTrack: () => void
 
@@ -92,20 +95,40 @@ export const usePortfolioStore = create<PortfolioStore>()(
         currentTrackIndex: 0,
         volume: 0.4,
         isMusicPlayerOpen: false,
+        customTracks: [],
         setMusicEnabled: (enabled) => set({ musicEnabled: enabled }),
         setMusicAsked: (asked) => set({ musicAsked: asked }),
         setCurrentTrackIndex: (index) => set({ currentTrackIndex: index }),
         setVolume: (vol) => set({ volume: vol }),
         setMusicPlayerOpen: (open) => set({ isMusicPlayerOpen: open }),
+        addCustomTrack: (track) =>
+          set((state) => ({
+            customTracks: [track, ...state.customTracks],
+            currentTrackIndex: 0,
+            musicEnabled: true,
+          })),
+        removeCustomTrack: (id) =>
+          set((state) => {
+            const updated = state.customTracks.filter((t) => t.id !== id)
+            return {
+              customTracks: updated,
+              currentTrackIndex: 0,
+            }
+          }),
         nextTrack: () =>
-          set((state) => ({
-            currentTrackIndex: (state.currentTrackIndex + 1) % musicPlaylist.length,
-          })),
+          set((state) => {
+            const total = state.customTracks.length + musicPlaylist.length
+            return {
+              currentTrackIndex: (state.currentTrackIndex + 1) % (total || 1),
+            }
+          }),
         prevTrack: () =>
-          set((state) => ({
-            currentTrackIndex:
-              (state.currentTrackIndex - 1 + musicPlaylist.length) % musicPlaylist.length,
-          })),
+          set((state) => {
+            const total = state.customTracks.length + musicPlaylist.length
+            return {
+              currentTrackIndex: (state.currentTrackIndex - 1 + total) % (total || 1),
+            }
+          }),
 
         // Theme
         theme: 'dark',

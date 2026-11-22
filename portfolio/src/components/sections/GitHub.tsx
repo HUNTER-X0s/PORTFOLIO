@@ -22,11 +22,11 @@ function StatCard({ label, value, icon: Icon, color }: {
       >
         <Icon size={18} style={{ color }} />
       </div>
-      <div className="font-display font-bold text-2xl text-text-primary">
+      <div className="font-display font-bold text-2xl sm:text-3xl text-text-primary">
         {inView ? <CountUp end={value} duration={2} separator="," /> : '0'}
         {value > 999 && !label.includes('Repos') ? '+' : ''}
       </div>
-      <div className="text-xs text-text-secondary mt-1">{label}</div>
+      <div className="text-xs sm:text-sm font-mono text-text-secondary mt-1">{label}</div>
     </div>
   )
 }
@@ -40,14 +40,14 @@ export default function GitHub() {
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           <motion.div
             initial={{ opacity: 0, y: 24 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={{ opacity: 1, y: 0 }}
             className="section-header"
           >
             <p className="section-label">05 / GitHub</p>
             <h2 className="section-title">
               Open Source <span className="text-gradient">Activity</span>
             </h2>
-            <p className="text-text-secondary mt-3">
+            <p className="section-subtitle">
               Real-time code activity — shipped consistently, not just for show.
             </p>
           </motion.div>
@@ -55,7 +55,7 @@ export default function GitHub() {
           {/* Stats grid */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-10 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-1 lg:[&>*:last-child]:col-span-1"
           >
@@ -71,11 +71,11 @@ export default function GitHub() {
             {/* Top Languages */}
             <motion.div
               initial={{ opacity: 0, x: -24 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
               className="glass-card p-6"
             >
-              <h3 className="font-display font-semibold text-text-primary mb-5">Top Languages</h3>
+              <h3 className="font-display font-bold text-xl sm:text-2xl text-text-primary mb-5">Top Languages</h3>
 
               {/* Bar chart */}
               <div className="flex rounded-lg overflow-hidden h-3 mb-5">
@@ -97,19 +97,19 @@ export default function GitHub() {
                         className="w-3 h-3 rounded-full"
                         style={{ background: lang.color }}
                       />
-                      <span className="text-sm text-text-primary truncate">{lang.name}</span>
+                      <span className="text-sm sm:text-base font-medium text-text-primary truncate">{lang.name}</span>
                     </div>
                     <div className="flex items-center gap-3 flex-1">
                       <div className="flex-1 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
                         <motion.div
                           initial={{ scaleX: 0 }}
-                          animate={inView ? { scaleX: lang.percentage / 100 } : {}}
+                          animate={{ scaleX: lang.percentage / 100 }}
                           transition={{ delay: 0.5 + i * 0.08, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
                           className="h-full rounded-full origin-left"
                           style={{ background: lang.color }}
                         />
                       </div>
-                      <span className="text-xs font-mono text-text-secondary w-9 text-right flex-shrink-0">
+                      <span className="text-xs sm:text-sm font-mono text-text-secondary w-10 text-right flex-shrink-0">
                         {lang.percentage}%
                       </span>
                     </div>
@@ -121,7 +121,7 @@ export default function GitHub() {
             {/* Streak & profile */}
             <motion.div
               initial={{ opacity: 0, x: 24 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.35 }}
               className="space-y-4"
             >
@@ -129,13 +129,13 @@ export default function GitHub() {
               <div className="glass-card p-6 text-center relative overflow-hidden">
                 <div className="absolute inset-0 opacity-5" style={{ background: 'radial-gradient(circle at center, #FF6B2B, transparent 70%)' }} />
                 <div className="relative z-10">
-                  <div className="font-mono text-xs text-text-secondary uppercase tracking-widest mb-3">
+                  <div className="font-mono text-xs sm:text-sm text-text-secondary uppercase tracking-widest mb-3">
                     Current Streak
                   </div>
                   <div className="font-display font-bold text-5xl text-neon-orange">
                     {githubStats.contributionStreak}
                   </div>
-                  <div className="text-text-secondary text-sm mt-1">days consecutive</div>
+                  <div className="text-text-secondary text-sm sm:text-base mt-1">days consecutive</div>
                 </div>
               </div>
 
@@ -151,10 +151,10 @@ export default function GitHub() {
                     <Github size={20} className="text-text-primary" />
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-text-primary">
+                    <div className="text-sm sm:text-base font-semibold text-text-primary">
                       @{githubStats.username}
                     </div>
-                    <div className="text-xs text-text-secondary">
+                    <div className="text-xs sm:text-sm text-text-secondary">
                       {githubStats.publicRepos} repos · {githubStats.followers} followers
                     </div>
                   </div>
@@ -167,11 +167,11 @@ export default function GitHub() {
           {/* GitHub Calendar */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             className="glass-card p-6"
           >
-            <h3 className="font-display font-semibold text-text-primary mb-5">
+            <h3 className="font-display font-bold text-xl sm:text-2xl text-text-primary mb-5">
               Contribution Graph
             </h3>
             <div className="w-full flex justify-center items-center py-2 overflow-x-auto no-scrollbar">

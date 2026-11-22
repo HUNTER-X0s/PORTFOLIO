@@ -162,7 +162,7 @@ export function Dynamic3DText({
   return (
     <div
       ref={containerRef}
-      style={{ display: 'inline-block' }}
+      style={{ display: as === 'span' ? 'inline-block' : 'block', width: 'fit-content' }}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -175,7 +175,7 @@ export function Dynamic3DText({
         ref={textRef}
         className={cn('select-none', className)}
       >
-        <Tag className="inline-block" style={{ isolation: 'isolate' }}>
+        <Tag className={cn(as === 'span' ? 'inline-block' : 'block', 'w-fit')} style={{ isolation: 'isolate' }}>
           {children}
         </Tag>
       </div>

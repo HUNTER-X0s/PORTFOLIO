@@ -49,7 +49,7 @@ export default function Contact() {
 
 
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-      try { navigator.vibrate([30, 50, 30]) } catch {}
+      try { navigator.vibrate([30, 50, 30]) } catch { }
     }
 
     // Fire network request in background
@@ -73,8 +73,8 @@ export default function Contact() {
       <div className="section-container">
         <div ref={ref as React.RefObject<HTMLDivElement>}>
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            initial={false}
+            animate={{ opacity: 1, y: 0 }}
             className="section-header"
           >
             <p className="section-label">09 / Contact</p>
@@ -83,43 +83,42 @@ export default function Contact() {
                 Let&apos;s <span className="text-gradient">Build Together</span>
               </h2>
             </Dynamic3DText>
-            <p className="text-text-secondary mt-3 max-w-xl">
+            <p className="section-subtitle">
               Open to full-time roles, internships, and exciting collaborations. Let&apos;s talk.
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-start">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-12 items-start">
             {/* Left — Contact info */}
             <motion.div
-              initial={{ opacity: 0, x: -24 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: 0.2 }}
+              initial={false}
+              animate={{ opacity: 1, x: 0 }}
               className="space-y-6"
             >
               <div className="space-y-3.5">
                 {/* Email card with quick copy */}
                 <Dynamic3DCard intensity={12} depth={15} glowColor="rgba(0, 229, 255, 0.25)">
-                  <div className="flex items-center justify-between p-4 rounded-xl glass border border-white/[0.08] hover:border-cyan/40 transition-all group h-full">
+                  <div className="flex items-center justify-between p-5 sm:p-6 rounded-2xl glass border border-white/[0.08] hover:border-cyan/40 transition-all group h-full">
                     <a
                       href={`mailto:${personalInfo.email}`}
                       className="flex items-center gap-4 flex-1 min-w-0"
                     >
                       <div
-                        className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
                         style={{ background: 'rgba(0, 229, 255, 0.12)', border: '1px solid rgba(0, 229, 255, 0.25)' }}
                       >
-                        <Mail size={18} className="text-cyan" />
+                        <Mail size={20} className="text-cyan" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs text-text-secondary font-mono">Email Address</p>
-                        <p className="text-sm font-medium text-text-primary group-hover:text-cyan transition-colors truncate text-3d-interactive">
+                        <p className="text-xs sm:text-sm text-text-secondary font-mono">Email Address</p>
+                        <p className="text-base sm:text-lg font-bold font-display text-text-primary group-hover:text-cyan transition-colors truncate text-3d-interactive">
                           {personalInfo.email}
                         </p>
                       </div>
                     </a>
                     <button
                       onClick={copyEmail}
-                      className="p-2 rounded-lg text-text-secondary hover:text-cyan hover:bg-cyan/10 transition-all ml-2 flex-shrink-0"
+                      className="p-2.5 rounded-xl text-text-secondary hover:text-cyan hover:bg-cyan/10 transition-all ml-2 flex-shrink-0"
                       title="Copy email"
                     >
                       {copiedEmail ? <Check size={16} className="text-neon-green" /> : <Copy size={16} />}
@@ -129,16 +128,16 @@ export default function Contact() {
 
                 {/* Location card */}
                 <Dynamic3DCard intensity={12} depth={15} glowColor="rgba(124, 58, 237, 0.25)">
-                  <div className="flex items-center gap-4 p-4 rounded-xl glass border border-white/[0.08] hover:border-violet/40 transition-all group h-full">
+                  <div className="flex items-center gap-4 p-5 sm:p-6 rounded-2xl glass border border-white/[0.08] hover:border-violet/40 transition-all group h-full">
                     <div
-                      className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                      className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
                       style={{ background: 'rgba(124, 58, 237, 0.12)', border: '1px solid rgba(124, 58, 237, 0.25)' }}
                     >
-                      <MapPin size={18} className="text-violet" />
+                      <MapPin size={20} className="text-violet" />
                     </div>
                     <div>
-                      <p className="text-xs text-text-secondary font-mono">Location</p>
-                      <p className="text-sm font-medium text-text-primary group-hover:text-violet transition-colors text-3d-interactive">
+                      <p className="text-xs sm:text-sm text-text-secondary font-mono">Location</p>
+                      <p className="text-base sm:text-lg font-bold font-display text-text-primary group-hover:text-violet transition-colors text-3d-interactive">
                         {personalInfo.location}
                       </p>
                     </div>
@@ -148,10 +147,10 @@ export default function Contact() {
 
               {/* Social links */}
               <div>
-                <p className="text-xs font-mono text-text-secondary uppercase tracking-widest mb-3">
+                <p className="text-xs sm:text-sm font-mono text-text-secondary uppercase tracking-widest mb-3">
                   Find me on
                 </p>
-                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 sm:gap-3">
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-2.5">
                   {personalInfo.social.map((s) => {
                     return (
                       <Dynamic3DCard key={s.platform} intensity={15} depth={16} glowColor="rgba(0, 229, 255, 0.25)">
@@ -162,11 +161,13 @@ export default function Contact() {
                           onClick={() => playClick()}
                           whileHover={{ scale: 1.08, y: -2 }}
                           whileTap={{ scale: 0.95 }}
-                          className="flex flex-col items-center justify-center gap-2 p-3 sm:p-4 rounded-xl glass border border-white/[0.08] hover:border-cyan/40 transition-all group w-full h-full text-center"
+                          className="flex flex-col items-center justify-center gap-2 px-1.5 py-3 sm:px-2 sm:py-3.5 rounded-xl glass border border-white/[0.08] hover:border-cyan/40 transition-all group w-full h-full text-center"
                           title={s.platform}
                         >
                           <SocialIcon platform={s.platform} size={22} className="text-text-secondary group-hover:text-cyan transition-colors" />
-                          <span className="text-[11px] sm:text-xs font-medium text-text-secondary group-hover:text-text-primary transition-colors truncate w-full">{s.platform}</span>
+                          <span className="text-[11.5px] min-[400px]:text-xs sm:text-[12.5px] lg:text-[12px] xl:text-[13px] font-medium text-text-secondary group-hover:text-text-primary transition-colors whitespace-nowrap tracking-tight w-full text-center block">
+                            {s.platform}
+                          </span>
                         </motion.a>
                       </Dynamic3DCard>
                     )
@@ -176,13 +177,15 @@ export default function Contact() {
 
               {/* Availability badge */}
               <Dynamic3DCard intensity={10} depth={15} glowColor="rgba(0, 255, 135, 0.2)">
-                <div className="glass-card p-5 relative overflow-hidden">
+                <div className="glass-card p-5 sm:p-6 rounded-2xl relative overflow-hidden border border-white/[0.08] hover:border-neon-green/40 transition-all group">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-neon-green/5 rounded-full blur-2xl pointer-events-none" />
-                  <div className="flex items-center gap-3 relative z-10">
+                  <div className="flex items-center gap-3 sm:gap-3.5 relative z-10">
                     <span className="w-2.5 h-2.5 rounded-full bg-neon-green animate-ping-slow flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-semibold text-text-primary text-3d-interactive">Available for Opportunities</p>
-                      <p className="text-xs text-text-secondary mt-0.5">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-display font-bold text-base sm:text-lg text-text-primary text-3d-interactive leading-tight">
+                        Available for Opportunities
+                      </p>
+                      <p className="text-xs sm:text-[13px] md:text-[13.5px] xl:text-sm text-text-secondary mt-1 leading-normal whitespace-nowrap tracking-tight">
                         Open to full-time SDE, AI, and ML roles. Response time: &lt; 24 hours
                       </p>
                     </div>
@@ -193,9 +196,8 @@ export default function Contact() {
 
             {/* Right — Interactive Dynamic Contact Form (Non-3D Tilt, Flat Ergonomic) */}
             <motion.div
-              initial={{ opacity: 0, x: 24 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: 0.3 }}
+              initial={false}
+              animate={{ opacity: 1, x: 0 }}
               className="relative"
             >
               {/* Interactive Ambient Aura behind form that reacts to focused field */}
@@ -205,26 +207,34 @@ export default function Contact() {
                   background: activeField === 'message'
                     ? 'radial-gradient(circle at 50% 70%, rgba(0, 255, 135, 0.2), transparent 70%)'
                     : activeField === 'email'
-                    ? 'radial-gradient(circle at 75% 30%, rgba(0, 229, 255, 0.25), transparent 70%)'
-                    : activeField === 'company'
-                    ? 'radial-gradient(circle at 50% 40%, rgba(124, 58, 237, 0.25), transparent 70%)'
-                    : 'radial-gradient(circle at 50% 30%, rgba(0, 229, 255, 0.15), rgba(124, 58, 237, 0.1), transparent 70%)',
+                      ? 'radial-gradient(circle at 75% 30%, rgba(0, 229, 255, 0.25), transparent 70%)'
+                      : activeField === 'company'
+                        ? 'radial-gradient(circle at 50% 40%, rgba(124, 58, 237, 0.25), transparent 70%)'
+                        : 'radial-gradient(circle at 50% 30%, rgba(0, 229, 255, 0.15), rgba(124, 58, 237, 0.1), transparent 70%)',
                 }}
               />
 
-              <div className="relative glass-card p-6 sm:p-7 rounded-2xl border border-white/[0.1] shadow-2xl backdrop-blur-xl space-y-6 overflow-hidden">
+              <div
+                className="relative p-6 sm:p-7 rounded-2xl border border-white/[0.12] hover:border-cyan/65 shadow-2xl backdrop-blur-2xl space-y-6 overflow-hidden bg-[#070A16]/92 transition-all duration-300 hover:shadow-[0_0_35px_rgba(0,229,255,0.28),0_0_70px_rgba(0,229,255,0.12),inset_0_0_20px_rgba(0,229,255,0.05)]"
+                style={{
+                  transform: 'none',
+                  transformStyle: 'flat',
+                  willChange: 'auto',
+                  WebkitFontSmoothing: 'antialiased',
+                  MozOsxFontSmoothing: 'grayscale',
+                  textRendering: 'optimizeLegibility',
+                }}
+              >
                 {/* Form top accent bar */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan via-violet to-transparent opacity-80" />
-
-
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-4">
                     {/* Name Field */}
                     <div>
-                      <label className="text-xs font-mono text-text-secondary uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                        <User size={11} className={activeField === 'name' ? 'text-cyan' : 'text-text-tertiary'} />
-                        <span>Name *</span>
+                      <label className="text-xs sm:text-sm font-mono font-medium text-slate-200 uppercase tracking-wider mb-1.5 flex items-center gap-1.5 select-none">
+                        <User size={13} className={activeField === 'name' ? 'text-cyan' : 'text-slate-400'} />
+                        <span className="tracking-wide">Name *</span>
                       </label>
                       <div className="relative">
                         <input
@@ -235,16 +245,21 @@ export default function Contact() {
                           onBlur={() => setActiveField(null)}
                           onChange={(e) => setForm({ ...form, name: e.target.value })}
                           placeholder="Your full name"
-                          className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.08] text-text-primary placeholder-white/25 text-sm focus:outline-none focus:border-cyan/60 focus:bg-cyan/[0.03] focus:shadow-[0_0_16px_rgba(0,229,255,0.15)] transition-all font-body"
+                          style={{
+                            WebkitFontSmoothing: 'antialiased',
+                            MozOsxFontSmoothing: 'grayscale',
+                            textRendering: 'optimizeLegibility',
+                          }}
+                          className="w-full px-4 py-3 rounded-xl bg-[#030611]/85 border border-white/[0.12] text-white placeholder-slate-400/60 text-sm sm:text-base focus:outline-none focus:border-cyan/70 focus:bg-[#030611]/95 focus:shadow-[0_0_18px_rgba(0,229,255,0.2)] transition-all font-body font-normal"
                         />
                       </div>
                     </div>
 
                     {/* Email Field */}
                     <div>
-                      <label className="text-xs font-mono text-text-secondary uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                        <Mail size={11} className={activeField === 'email' ? 'text-cyan' : 'text-text-tertiary'} />
-                        <span>Email *</span>
+                      <label className="text-xs sm:text-sm font-mono font-medium text-slate-200 uppercase tracking-wider mb-1.5 flex items-center gap-1.5 select-none">
+                        <Mail size={13} className={activeField === 'email' ? 'text-cyan' : 'text-slate-400'} />
+                        <span className="tracking-wide">Email *</span>
                       </label>
                       <div className="relative">
                         <input
@@ -255,7 +270,12 @@ export default function Contact() {
                           onBlur={() => setActiveField(null)}
                           onChange={(e) => setForm({ ...form, email: e.target.value })}
                           placeholder="name@company.com"
-                          className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.08] text-text-primary placeholder-white/25 text-sm focus:outline-none focus:border-cyan/60 focus:bg-cyan/[0.03] focus:shadow-[0_0_16px_rgba(0,229,255,0.15)] transition-all font-body"
+                          style={{
+                            WebkitFontSmoothing: 'antialiased',
+                            MozOsxFontSmoothing: 'grayscale',
+                            textRendering: 'optimizeLegibility',
+                          }}
+                          className="w-full px-4 py-3 rounded-xl bg-[#030611]/85 border border-white/[0.12] text-white placeholder-slate-400/60 text-sm sm:text-base focus:outline-none focus:border-cyan/70 focus:bg-[#030611]/95 focus:shadow-[0_0_18px_rgba(0,229,255,0.2)] transition-all font-body font-normal"
                         />
                       </div>
                     </div>
@@ -263,9 +283,9 @@ export default function Contact() {
 
                   {/* Company Field */}
                   <div>
-                    <label className="text-xs font-mono text-text-secondary uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                      <Building size={11} className={activeField === 'company' ? 'text-violet' : 'text-text-tertiary'} />
-                      <span>Company / Organization (optional)</span>
+                    <label className="text-xs sm:text-sm font-mono font-medium text-slate-200 uppercase tracking-wider mb-1.5 flex items-center gap-1.5 select-none">
+                      <Building size={13} className={activeField === 'company' ? 'text-violet' : 'text-slate-400'} />
+                      <span className="tracking-wide">Company / Organization (optional)</span>
                     </label>
                     <input
                       type="text"
@@ -274,18 +294,23 @@ export default function Contact() {
                       onBlur={() => setActiveField(null)}
                       onChange={(e) => setForm({ ...form, company: e.target.value })}
                       placeholder="e.g. Google, Microsoft, Startup, Freelance"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.08] text-text-primary placeholder-white/25 text-sm focus:outline-none focus:border-violet/60 focus:bg-violet/[0.03] focus:shadow-[0_0_16px_rgba(124,58,237,0.15)] transition-all font-body"
+                      style={{
+                        WebkitFontSmoothing: 'antialiased',
+                        MozOsxFontSmoothing: 'grayscale',
+                        textRendering: 'optimizeLegibility',
+                      }}
+                      className="w-full px-4 py-3 rounded-xl bg-[#030611]/85 border border-white/[0.12] text-white placeholder-slate-400/60 text-sm sm:text-base focus:outline-none focus:border-violet/70 focus:bg-[#030611]/95 focus:shadow-[0_0_18px_rgba(124,58,237,0.2)] transition-all font-body font-normal"
                     />
                   </div>
 
                   {/* Message Field */}
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-xs font-mono text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
-                        <MessageSquare size={11} className={activeField === 'message' ? 'text-neon-green' : 'text-text-tertiary'} />
-                        <span>Message *</span>
+                      <label className="text-xs sm:text-sm font-mono font-medium text-slate-200 uppercase tracking-wider flex items-center gap-1.5 select-none">
+                        <MessageSquare size={13} className={activeField === 'message' ? 'text-neon-green' : 'text-slate-400'} />
+                        <span className="tracking-wide">Message *</span>
                       </label>
-                      <span className="text-[10px] font-mono text-text-tertiary">
+                      <span className="text-xs font-mono font-medium text-slate-400">
                         {form.message.length} chars
                       </span>
                     </div>
@@ -300,13 +325,18 @@ export default function Contact() {
                         if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                           e.preventDefault()
                           if (form.name && form.email && form.message && status !== 'loading') {
-                            const fakeEvent = { preventDefault: () => {} } as React.FormEvent
+                            const fakeEvent = { preventDefault: () => { } } as React.FormEvent
                             handleSubmit(fakeEvent)
                           }
                         }
                       }}
                       placeholder="Tell me about the role, project requirements, or just start a conversation..."
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.08] text-text-primary placeholder-white/25 text-sm focus:outline-none focus:border-neon-green/60 focus:bg-neon-green/[0.02] focus:shadow-[0_0_16px_rgba(0,255,135,0.15)] transition-all resize-none font-body leading-relaxed"
+                      style={{
+                        WebkitFontSmoothing: 'antialiased',
+                        MozOsxFontSmoothing: 'grayscale',
+                        textRendering: 'optimizeLegibility',
+                      }}
+                      className="w-full px-4 py-3 rounded-xl bg-[#030611]/85 border border-white/[0.12] text-white placeholder-slate-400/60 text-sm sm:text-base focus:outline-none focus:border-neon-green/70 focus:bg-[#030611]/95 focus:shadow-[0_0_18px_rgba(0,255,135,0.2)] transition-all resize-none font-body font-normal leading-relaxed"
                     />
                   </div>
 
@@ -316,18 +346,21 @@ export default function Contact() {
                     disabled={status === 'loading' || status === 'success'}
                     whileHover={{ scale: 1.01, y: -1 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl font-semibold text-sm transition-all relative overflow-hidden group cursor-pointer shadow-lg"
+                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm sm:text-base tracking-wide transition-all relative overflow-hidden group cursor-pointer shadow-lg select-none hover:border-cyan hover:shadow-[0_0_28px_rgba(0,229,255,0.45)]"
                     style={{
                       background: status === 'success'
-                        ? 'linear-gradient(135deg, rgba(0,255,135,0.25), rgba(0,229,255,0.2))'
-                        : 'linear-gradient(135deg, rgba(0,229,255,0.2), rgba(124,58,237,0.25))',
+                        ? 'linear-gradient(135deg, rgba(0,255,135,0.28), rgba(0,229,255,0.22))'
+                        : 'linear-gradient(135deg, rgba(0,229,255,0.24), rgba(124,58,237,0.30))',
                       border: status === 'success'
-                        ? '1px solid rgba(0,255,135,0.6)'
-                        : '1px solid rgba(0,229,255,0.4)',
+                        ? '1px solid rgba(0,255,135,0.65)'
+                        : '1px solid rgba(0,229,255,0.5)',
                       color: status === 'success' ? '#00FF87' : '#FFFFFF',
                       boxShadow: status === 'success'
-                        ? '0 0 20px rgba(0,255,135,0.25)'
-                        : '0 0 20px rgba(0,229,255,0.15)',
+                        ? '0 0 24px rgba(0,255,135,0.3)'
+                        : '0 0 24px rgba(0,229,255,0.2)',
+                      WebkitFontSmoothing: 'antialiased',
+                      MozOsxFontSmoothing: 'grayscale',
+                      textRendering: 'optimizeLegibility',
                     }}
                   >
                     {/* Top button sheen */}
@@ -335,8 +368,8 @@ export default function Contact() {
 
                     {status === 'loading' && <Loader2 size={16} className="animate-spin" />}
                     {status === 'success' && <CheckCircle2 size={16} className="text-neon-green" />}
-                    {status === 'idle' && <Send size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-cyan" />}
-                    <span>{status === 'loading' ? 'Sending Message...' : status === 'success' ? 'Message Sent Successfully!' : "Send Message"}</span>
+                    {status === 'idle' && <Send size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-cyan flex-shrink-0" />}
+                    <span className="font-semibold text-sm sm:text-base text-white tracking-wide">{status === 'loading' ? 'Sending Message...' : status === 'success' ? 'Message Sent Successfully!' : "Send Message"}</span>
                   </motion.button>
 
                   <AnimatePresence>

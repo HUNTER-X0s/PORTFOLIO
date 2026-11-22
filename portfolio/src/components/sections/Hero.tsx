@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { ArrowDown, Download, Github, ExternalLink, Sparkles, Linkedin } from 'lucide-react'
+import { ArrowDown, FileText, Github, ExternalLink, Sparkles, Linkedin } from 'lucide-react'
 import { usePortfolioStore } from '@/store/usePortfolioStore'
 import { personalInfo, roleContents, roles } from '@/data/portfolio'
 import { useSound, useWindowSize } from '@/hooks'
@@ -117,21 +117,9 @@ export default function Hero() {
   const content = roleContents[activeRole] || roleContents['fullstack']
   const currentRole = roles.find((r) => r.id === activeRole) || roles.find((r) => r.id === 'fullstack') || roles[0]
 
-  // Dynamically reduce font size for long headlines to prevent bad wrapping
-  const headlineLen = (content.hero.headline + content.hero.subheadline).length
-  const headlineSizeClass =
-    headlineLen > 50
-      ? 'text-2xl xs:text-3xl sm:text-4xl md:text-4xl lg:text-[2.6rem] xl:text-[3.25rem]'
-      : headlineLen > 35
-      ? 'text-3xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-6xl'
-      : 'text-3xl xs:text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl'
-
-  const subheadlineSizeClass =
-    headlineLen > 50
-      ? 'text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-[1.85rem] xl:text-[2.25rem]'
-      : headlineLen > 35
-      ? 'text-xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-[2.15rem] xl:text-[2.75rem]'
-      : 'text-2xl xs:text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-[3.5rem]'
+  // Consistent typography across ALL roles matching the Full-Stack Developer stack
+  const headlineSizeClass = 'text-3xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-6xl'
+  const subheadlineSizeClass = 'text-xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-[2.15rem] xl:text-[2.75rem]'
 
   const handleScroll = (id: string) => {
     const el = document.getElementById(id)
@@ -159,12 +147,12 @@ export default function Hero() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-8 items-center">
           {/* Left — Main Content */}
           <div className="space-y-6 sm:space-y-8">
-            {/* Status badge */}
+            {/* Status badge & Achievements */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex items-center gap-3"
+              className="flex items-center gap-2.5 flex-wrap"
             >
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full glass border border-neon-green/25 text-neon-green">
                 <span className="w-2 h-2 rounded-full bg-neon-green animate-ping-slow" />
@@ -254,7 +242,7 @@ export default function Hero() {
                 whileTap={{ scale: 0.96 }}
                 className="flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm text-text-secondary border border-white/[0.12] glass hover:border-cyan/40 hover:text-text-primary transition-all btn-3d"
               >
-                <Download size={15} />
+                <FileText size={15} />
                 Resume
               </motion.a>
 
@@ -283,10 +271,10 @@ export default function Hero() {
               className="flex flex-wrap items-center gap-x-5 gap-y-3 sm:gap-x-8 pt-2 w-full"
             >
               {[
-                { label: 'Projects', value: '6+', color: '#00E5FF' },
-                { label: 'Internships', value: '5', color: '#7C3AED' },
-                { label: 'Stars', value: '3', color: '#FF6B2B' },
-                { label: 'Commits', value: '200+', color: '#00FF87' },
+                { label: 'GitHub Repos', value: '29', color: '#00E5FF' },
+                { label: 'Internships', value: '4', color: '#00FF87' },
+                { label: 'Certifications', value: '17', color: '#FFE500' },
+                { label: 'Commits', value: '250+', color: '#38BDF8' },
               ].map((stat) => (
                 <motion.div
                   key={stat.label}
@@ -315,7 +303,7 @@ export default function Hero() {
           >
             {/* Role selector hint */}
             <div className="w-full">
-              <div className="flex flex-wrap items-center gap-2 mb-3">
+              <div className="flex flex-wrap items-center gap-2 mb-4 sm:mb-5">
                 <span className="text-xs font-mono text-text-secondary">
                   Viewing as:
                 </span>

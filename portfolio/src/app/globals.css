@@ -238,12 +238,14 @@ img, svg {
 }
 
 .text-3d-title {
-  text-shadow: 0 2px 16px rgba(0,0,0,0.95), 0 0 24px rgba(0,229,255,0.3), 0 0 2px rgba(0,0,0,1);
-  transition: text-shadow 0.3s ease, transform 0.3s ease;
+  text-shadow: none;
+  filter: none;
+  transition: transform 0.3s ease;
 }
 
 .text-3d-title:hover {
-  text-shadow: 0 4px 24px rgba(0,0,0,0.98), 0 0 36px rgba(0,229,255,0.55), 0 0 70px rgba(124,58,237,0.35);
+  text-shadow: none;
+  filter: none;
 }
 
 /* 3D Interactive Floating Button */
@@ -531,37 +533,78 @@ img, svg {
 }
 
 .section-header {
-  margin-bottom: 3.5rem;
+  margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .section-label {
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--cyan);
   margin-bottom: 0.75rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 12px;
+  line-height: 1;
+  width: fit-content;
 }
 
 .section-label::before {
   content: '';
-  display: block;
+  display: inline-block;
   width: 24px;
-  height: 1px;
+  height: 2px;
   background: var(--cyan);
+  flex-shrink: 0;
+  border-radius: 1px;
 }
 
 .section-title {
   font-family: var(--font-display);
-  font-size: clamp(1.9rem, 4vw, 3.1rem);
+  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
   font-weight: 700;
   line-height: 1.12;
   color: var(--text-1);
-  letter-spacing: -0.01em;
-  text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+  letter-spacing: -0.02em;
+  text-shadow: none;
+}
+
+.section-lead,
+.section-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+  font-weight: 400;
+  line-height: 1.75;
+  color: var(--text-2);
+  max-width: 48rem;
+  margin-top: 0.85rem;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.6vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-1);
+}
+
+.card-body,
+.card-paragraph {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+  line-height: 1.7;
+  color: var(--text-2);
+}
+
+.card-meta-text {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--text-2);
 }
 
 /* ============================================================
@@ -618,23 +661,23 @@ img, svg {
     --container-px: 0.75rem;
   }
 
-  body { font-size: 14px; }
+  body { font-size: 15px; }
 
   .section-title {
-    font-size: clamp(1.3rem, 7.5vw, 1.65rem);
+    font-size: clamp(1.75rem, 7vw, 2.2rem);
     line-height: 1.15;
   }
 
-  .section-header { margin-bottom: 1.25rem; }
+  .section-header { margin-bottom: 1.5rem; }
 
   .section-label {
-    font-size: 0.58rem;
-    letter-spacing: 0.10em;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
   }
 
   .terminal-body {
     padding: 8px 10px;
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     line-height: 1.5;
   }
 
@@ -664,20 +707,20 @@ img, svg {
   }
 
   .section-title {
-    font-size: clamp(1.5rem, 7vw, 1.9rem);
-    line-height: 1.12;
+    font-size: clamp(1.85rem, 7vw, 2.4rem);
+    line-height: 1.14;
   }
 
-  .section-header { margin-bottom: 1.5rem; }
+  .section-header { margin-bottom: 1.75rem; }
 
   .section-label {
-    font-size: 0.63rem;
-    letter-spacing: 0.12em;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
   }
 
   .terminal-body {
     padding: 10px 12px;
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     line-height: 1.55;
   }
 
@@ -698,11 +741,11 @@ img, svg {
   }
 
   .section-title {
-    font-size: clamp(1.55rem, 6.5vw, 2.4rem);
-    line-height: 1.1;
+    font-size: clamp(2rem, 6.5vw, 2.75rem);
+    line-height: 1.12;
   }
 
-  .section-header { margin-bottom: 1.75rem; }
+  .section-header { margin-bottom: 2rem; }
 
   .terminal-window { max-width: 100%; }
 
@@ -737,7 +780,8 @@ img, svg {
   }
 
   .section-title {
-    font-size: clamp(1.75rem, 5.5vw, 2.5rem);
+    font-size: clamp(2.15rem, 5.5vw, 2.85rem);
+    line-height: 1.14;
   }
 
   .section-header { margin-bottom: 2.25rem; }
@@ -753,7 +797,8 @@ img, svg {
   }
 
   .section-title {
-    font-size: clamp(2rem, 4.5vw, 3rem);
+    font-size: clamp(2.35rem, 4.5vw, 3.25rem);
+    line-height: 1.12;
   }
 
   .section-header { margin-bottom: 3rem; }
@@ -815,11 +860,17 @@ img, svg {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-.custom-scrollbar::-webkit-scrollbar { width: 3px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { 
+  background: transparent; 
+  margin: 6px 0;
+}
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, var(--cyan) 0%, var(--violet) 100%);
-  border-radius: 2px;
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan);
 }
 
 .clip-text {
@@ -951,3 +1002,195 @@ html {
     scroll-behavior: auto;
   }
 }
+
+/* ============================================================
+   COSMIC 3D FORWARD SPACE-FLOATING TYPOGRAPHY & UI SYSTEM
+   ============================================================ */
+
+/* 1. Main Space Flight Perspective Rig */
+.space-flight-stage {
+  perspective: 1200px;
+  perspective-origin: 50% 30%;
+  transform-style: preserve-3d;
+}
+
+.space-flight-carrier {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* 2. Clean Typography (No luminous depth shadows) */
+.font-space-float,
+.text-3d-title {
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+h2, .section-title {
+  text-shadow: none;
+}
+
+/* 3. Floating Terminal Window in Space */
+.terminal-window {
+  transform-style: preserve-3d;
+  box-shadow:
+    0 10px 38px rgba(0, 0, 0, 0.65),
+    0 0 30px rgba(0, 229, 255, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  animation: terminalZeroGFloat 8.5s ease-in-out infinite alternate;
+  will-change: transform, box-shadow;
+}
+
+/* 4. Glass Cards & UI Containers Floating Forward (Cards only, never Navbar) */
+.glass-card,
+.card-3d {
+  transform-style: preserve-3d;
+  transform: translateZ(14px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+  will-change: transform;
+}
+
+.glass-card:hover,
+.card-3d:hover {
+  transform: translateY(-7px) translateZ(34px) scale(1.02);
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.7),
+    0 0 35px rgba(0, 229, 255, 0.32),
+    0 0 70px rgba(124, 58, 237, 0.20);
+  border-color: rgba(0, 229, 255, 0.45);
+}
+
+/* Navbar stays strictly anchored at the top without vertical hover shift */
+header,
+header:hover,
+.navbar-landscape,
+.navbar-landscape:hover {
+  transform: none !important;
+}
+
+
+/* 5. 3D Buttons & Interactive Controls */
+.btn-3d {
+  transform: translateZ(24px);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.btn-3d:hover {
+  transform: translateY(-4px) translateZ(40px) scale(1.06);
+  box-shadow:
+    0 8px 30px rgba(0, 229, 255, 0.45),
+    0 0 15px rgba(0, 229, 255, 0.3);
+}
+
+/* 6. Status Badges */
+.role-badge-float {
+  display: inline-block;
+  transform: translateZ(20px);
+  letter-spacing: 0.12em;
+}
+
+
+
+/* ============================================================
+   PORTFOLIO FLOATING WEIGHTLESSLY IN SPACE (Zero-G Drift)
+   ============================================================ */
+.section-container,
+.hero-content-deck {
+  animation: portfolioZeroGFloat 7.5s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes portfolioZeroGFloat {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.25deg);
+  }
+  100% {
+    transform: translateY(-2px) rotate(-0.15deg);
+  }
+}
+
+/* Counter-phase zero-G levitation for the terminal window */
+@keyframes terminalZeroGFloat {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.65),
+      0 0 25px rgba(0, 229, 255, 0.20),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  }
+  50% {
+    transform: translateY(4px) rotate(-0.2deg);
+    box-shadow:
+      0 16px 48px rgba(0, 0, 0, 0.72),
+      0 0 36px rgba(0, 229, 255, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+  100% {
+    transform: translateY(-1.5px) rotate(0.15deg);
+    box-shadow:
+      0 14px 44px rgba(0, 0, 0, 0.68),
+      0 0 28px rgba(0, 229, 255, 0.24),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+}
+
+/* ============================================================
+   SILK AURORA VORTEX ANIMATIONS (Option 1)
+   ============================================================ */
+@keyframes auroraVortexClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes auroraVortexCounter {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes auroraPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+}
+
+@keyframes auroraWaveActive {
+  0%, 100% {
+    transform: scale(0.97) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.04) rotate(180deg);
+  }
+}
+
+/* Backward compatibility aliases */
+@keyframes shuttleSpinClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shuttleSpinCounter {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes phantomSwirlClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes phantomSwirlCounter {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+
+

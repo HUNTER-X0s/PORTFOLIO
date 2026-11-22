@@ -18,21 +18,9 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ['portfolio', 'technology', 'developer'],
     icons: [
       {
-        src: '/icon.svg',
+        src: '/icon.svg?v=2026',
         sizes: 'any',
         type: 'image/svg+xml',
-        purpose: 'maskable',
-      },
-      {
-        src: '/icons/icon-192.png',
-        sizes: '192x192',
-        type: 'image/png',
-        purpose: 'any',
-      },
-      {
-        src: '/icons/icon-512.png',
-        sizes: '512x512',
-        type: 'image/png',
         purpose: 'maskable',
       },
     ],
@@ -42,14 +30,14 @@ export default function manifest(): MetadataRoute.Manifest {
         short_name: 'Projects',
         description: 'Browse featured AI and full-stack projects',
         url: '/#projects',
-        icons: [{ src: '/icon.svg', sizes: 'any' }],
+        icons: [{ src: '/icon.svg?v=2026', sizes: 'any' }],
       },
       {
         name: 'Contact Me',
         short_name: 'Contact',
         description: 'Get in touch with Anurag Swain',
         url: '/#contact',
-        icons: [{ src: '/icon.svg', sizes: 'any' }],
+        icons: [{ src: '/icon.svg?v=2026', sizes: 'any' }],
       },
     ],
   }
